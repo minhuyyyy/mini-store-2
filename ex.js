@@ -6,7 +6,7 @@ const onLogin = async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: "abc@gmail.com",
+        email: "abc@gmail.com",
         password: "r234598325",
       }),
     });
@@ -23,4 +23,33 @@ const onLogin = async () => {
   }
 };
 
-onLogin();
+const onRegister = async () => {
+  try {
+    const result = await fetch("http://vps.akabom.me/api/account", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: "string",
+        email: "string",
+        fullName: "string",
+        password: "string",
+        isActive: true,
+        imgUrl: "string",
+        role: "string",
+      }),
+    });
+
+    if (result.ok) {
+      console.log("Registered successfully");
+    } else {
+      console.log(result.body);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
+onRegister();
+// onLogin();
