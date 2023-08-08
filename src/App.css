@@ -1,0 +1,30 @@
+#table-row>tr:hover {
+  background-color: antiquewhite;
+}
+
+/* <Button
+key={'Home'}
+onClick={() => {
+  navigate('');
+  document.title = 'Mini Store'
+}}
+style={activeLink === '/' ? { ...navLinkStyle, ...activeLinkStyle } : { ...navLinkStyle }}
+sx={{
+  color: 'white', padding: '0px 14px', height: '60px'
+}}
+>
+<span>Home</span>
+</Button> 
+
+<FormControl sx={{ width: "80%" }}>
+<label>Product category</label>
+<Input
+id="category"
+name="category"
+variant="standard"
+value={formData.category}
+onChange={handleInputChange}
+/>
+<br />
+</FormControl>
+*/
