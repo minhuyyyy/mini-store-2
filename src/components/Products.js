@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const ProductsPresentation = ({ filteredProducts }) => {
+const ProductsPresentation = ({ filteredProducts, category }) => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -41,7 +41,7 @@ const ProductsPresentation = ({ filteredProducts }) => {
           height: "60px",
           textDecoration: "none",
           width: "100%",
-          marginBottom: 20
+          marginBottom: 20,
         }}
         value={searchTerm}
         onKeyDown={(e) => {

@@ -15,7 +15,7 @@ export default function useSessionStorage() {
     if (value) {
       try {
         // Parse the value only if it is a valid JSON string
-        return JSON.parse(value);
+        return value;
       } catch (error) {
         // Handle parsing errors, if any
         console.error("Error parsing JSON:", error);

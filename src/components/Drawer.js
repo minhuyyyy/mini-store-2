@@ -1,60 +1,50 @@
-import axios from "axios";
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import env from "react-dotenv";
-import ProductsPresentation from "./Products";
 
-function Drawer() {
+function Drawer({ onCategorySelect }) {
   const [categories, setCategories] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
-    fetchCategoriesAndProducts();
+    fetchCategories();
   }, []);
 
-  const handleCategoryFilter = (category) => {
-    const filtered = filteredProducts.filter((product) => {
-      return product.category === category;
-    });
-    setFilteredProducts(filtered);
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${env.REACT_APP_PRODUCT_DB_URL}`);
+      const data = await response.json();
+      const allCategories = Array.from(
+        new Set(data.map((product) => product.category))
+      );
+      setCategories(allCategories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
   };
 
-  const fetchCategoriesAndProducts = async () => {
-    await axios
-      .get(`${env.REACT_APP_PRODUCT_DB_URL}`)
-      .then(function (response) {
-        setFilteredProducts(response.data);
-        setCategories([
-          ...new Set(response.data.map((product) => product.category)),
-        ]);
-        console.log(categories);
-      });
-  };
   return (
-    <div className="dropdown">
-      <button
-        className="btn btn-secondary dropdown-toggle"
-        type="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
+    <div className="list-group">
+      <div
+        style={{
+          width: "100%",
+          height: "5%",
+          backgroundColor: "green",
+          color: "white",
+          textAlign: "center",
+          lineHeight: "2rem",
+          fontWeight: "bold",
+        }}
       >
         Categories
-      </button>
-      <ul className="dropdown-menu">
-        {Array.from(categories).map((category) => (
-          <li key={category}>
-            <button
-              className="dropdown-item"
-              value={category}
-              onClick={() => handleCategoryFilter(category)}
-            >
-              {category}
-            </button>
-          </li>
-        ))}
-        <ProductsPresentation filteredProducts={filteredProducts} />
-      </ul>
+      </div>
+      {categories.map((category) => (
+        <li
+          className="list-group-item list-group-item-action"
+          key={category}
+          onClick={() => onCategorySelect(category)}
+        >
+          {category}
+        </li>
+      ))}
     </div>
   );
 }

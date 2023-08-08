@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import setItem from "../hooks/useSessionStorage";
 import useSessionStorage from "../hooks/useSessionStorage";
+import axios from "axios";
 export default function LoginPage() {
   const { user, setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
@@ -29,6 +30,10 @@ export default function LoginPage() {
       const data = snapshot.docs.find(
         (doc) => doc.data().password === password
       );
+      // const data = await axios.post("http://vps.akabom.me/api/account/login", {
+      //   username: email,
+      //   password: password,
+      // })
       if (data) {
         console.log(data.id, "=>", data.data());
         const userData = data.data();

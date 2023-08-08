@@ -15,9 +15,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import env from "react-dotenv";
 import { KeyboardArrowDownOutlined, Translate } from "@mui/icons-material";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 
 export default function ManageProductsPage() {
+  const { user } = useContext(AuthContext);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
@@ -47,14 +50,6 @@ export default function ManageProductsPage() {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    if (user && user.role === "Sales") {
-      setCurrentUser(user);
-    }
-  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -98,7 +93,7 @@ export default function ManageProductsPage() {
 
   return (
     <div style={{ color: "black", width: "100%" }}>
-      {currentUser ? (
+      {user ? (
         <>
           <div
             className="container-fluid"

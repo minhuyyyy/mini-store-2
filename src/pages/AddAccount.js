@@ -12,6 +12,9 @@ import { addUser } from "../db/service";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { theme } from "./ManageAccounts";
+import axios from "axios";
+import env from "react-dotenv";
+import { uid } from "uid";
 
 export default function AddAccount() {
   const [image, setImage] = useState(null);
@@ -34,7 +37,7 @@ export default function AddAccount() {
     name: "",
     password: "",
     role: "",
-    isActive: "",
+    // isActive: "",
   });
 
   const handleChange = (e) => {
@@ -60,28 +63,68 @@ export default function AddAccount() {
     }));
   };
 
+  // const postData = () => {
+  //   try {
+  //     axios(
+  //       {
+  //         method: 'post',
+  //         url: 'http://vps.akabom.me/api/account',
+  //         data: {
+  //           id: uid(8),
+  //           username: formData.email,
+  //           fullname: formData.name,
+  //           password: formData.password,
+  //           imgUrl: imageUrl,
+  //           role: role,
+  //         }
+  //       }
+  //     )
+  //   } catch (error) {
+  //     console.log("Error adding data to database:", error);
+  //   }
+  // };
+
   const postData = async () => {
     try {
-      await addUser(downloadURL, role, formData.password, formData.email);
-      console.log("URL", downloadURL);
-      setFormData({
-        img: "",
-        email: "",
-        name: "",
-        password: "",
-        role: "",
-        isActive: "",
+      const response = await axios({
+        method: "post",
+        url: "http://vps.akabom.me/api/account/",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        data: {
+          id: uid(8),
+          username: formData.email,
+          fullname: formData.name,
+          password: formData.password,
+          imgUrl: imageUrl,
+          role: role,
+        },
       });
-      setImage(null);
-      setImageUrl("");
-      setAdded(true);
-      toast.success("User added successfully");
-      navigate("/manageaccounts");
+
+      if (response.status === 200) {
+        console.log("URL", downloadURL);
+        setFormData({
+          img: "",
+          email: "",
+          name: "",
+          password: "",
+          role: "",
+        });
+        setImage(null);
+        setImageUrl("");
+        setAdded(true);
+        toast.success("User added successfully");
+        navigate("/manageaccounts");
+      } else {
+        console.log("Response not successful:", response);
+      }
     } catch (error) {
       console.log("Error adding data to database:", error);
-      console.error("Error adding data to database");
     }
   };
+
   return (
     <ThemeProvider theme={theme}>
       <div style={{ paddingLeft: "50px" }}>
@@ -93,7 +136,8 @@ export default function AddAccount() {
             onClick={() => {
               document.querySelector("#handleAddPhoto").click();
             }}
-            variant='contained' color='select'
+            variant="contained"
+            color="select"
           >
             Select Photo
           </Button>

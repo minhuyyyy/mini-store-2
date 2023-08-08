@@ -12,7 +12,7 @@ export default function useAuth() {
   useEffect(() => {
     const user = getItem("user");
     if (user) {
-      addUser(JSON.stringify(user));
+      addUser(JSON.parse(user));
     }
   }, []);
 
@@ -31,7 +31,7 @@ export default function useAuth() {
     if (data) {
       console.log(data.id, "=>", data.data());
       const userData = data.data();
-      setItem(user, userData);
+      setItem(user, JSON.stringify(userData));
       // console.log(user);
       // toast.success("Logged in successfully");
       navigate("/");

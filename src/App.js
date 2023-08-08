@@ -25,6 +25,7 @@ import { useMemo } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { useState } from "react";
 import ProductsPresentation from "./components/Home";
+import { memo } from "react";
 function App() {
   const [user, setUser] = useState(null);
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);

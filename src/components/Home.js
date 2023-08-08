@@ -1,22 +1,30 @@
+import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
-import env from "react-dotenv";
-import Drawer from "./Drawer";
-import ProductsPresentation from "./Products";
-import { useState } from "react";
-import { useEffect } from "react";
 import axios from "axios";
+import env from "react-dotenv";
+import ProductsPresentation from "./Products";
+import Drawer from "./Drawer";
 
-const Home = () => {
+function Home() {
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
-    // Get all the products from the database
-    axios
-      .get(`${env.REACT_APP_PRODUCT_DB_URL}`)
-      .then(function (response) {
-        setFilteredProducts(response.data);
-      });
-  }, []);
+    // Fetch all products initially or when category changes
+    axios.get(`${env.REACT_APP_PRODUCT_DB_URL}`).then((response) => {
+      const data = response.data;
+
+      // If a category is selected, filter products
+      if (selectedCategory) {
+        const filtered = data.filter(
+          (product) => product.category === selectedCategory
+        );
+        setFilteredProducts(filtered);
+      } else {
+        setFilteredProducts(data);
+      }
+    });
+  }, [selectedCategory]);
 
   return (
     <Grid
@@ -24,7 +32,7 @@ const Home = () => {
     >
       <Grid container spacing={2} sx={{ paddingBottom: "15px" }}>
         <Grid item xs={2} sm={6} md={6} lg={2}>
-          <Drawer />
+          <Drawer onCategorySelect={setSelectedCategory} />
         </Grid>
         <Grid item xs={12} sm={6} md={6} lg={8}>
           <ProductsPresentation filteredProducts={filteredProducts} />
@@ -32,6 +40,6 @@ const Home = () => {
       </Grid>
     </Grid>
   );
-};
+}
 
 export default Home;
