@@ -8,47 +8,51 @@ import { AuthContext } from "../context/AuthContext";
 import setItem from "../hooks/useSessionStorage";
 import useSessionStorage from "../hooks/useSessionStorage";
 import axios from "axios";
+import { toast } from "react-toastify";
 export default function LoginPage() {
   const { user, setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { setItem } = useSessionStorage();
-  const onLogin = async (e) => {
+  const onLogin = (e) => {
     e.preventDefault();
     try {
-      const q = query(
-        collection(
-          db,
-          "/users/DXgXU4IJtORzkw2E6jTp/specifications/7OM6ChlDeqoZaBMWFXTH/specimens"
-        ),
-        where("email", "==", email),
-        where("password", "==", password),
-        where("isActive", "==", true)
-      );
-      const snapshot = await getDocs(q);
-      const data = snapshot.docs.find(
-        (doc) => doc.data().password === password
-      );
-      // const data = await axios.post("http://vps.akabom.me/api/account/login", {
-      //   username: email,
-      //   password: password,
-      // })
-      if (data) {
-        console.log(data.id, "=>", data.data());
-        const userData = data.data();
-        setItem("user", userData);
-        setUser(userData);
-        console.log();
-        // toast.success("Logged in successfully");
-        navigate("/");
-      } else if (!data) {
-        alert("Invalid email or password");
-      }
+      fetch("http://vps.akabom.me/api/account/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "*/*",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Login failed");
+          }
+        })
+        .then((data) => {
+          setItem("user", data);
+          setUser(data);
+          navigate("/");
+          toast.success("Logged in successfully");
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+          if (error.message === "Login failed") {
+            alert("Invalid email or password");
+          } else {
+            alert("An error occurred during login.");
+          }
+        });
     } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log("error", errorCode, errorMessage);
+      console.log("Error:", error);
+      alert("An error occurred during login.");
     }
   };
 

@@ -5,7 +5,7 @@ window.env = {
   "APPDATA": "C:\\Users\\Minh Huy\\AppData\\Roaming",
   "ChocolateyInstall": "C:\\ProgramData\\chocolatey",
   "ChocolateyLastPathUpdate": "133178909588366654",
-  "CHROME_CRASHPAD_PIPE_NAME": "\\\\.\\pipe\\LOCAL\\crashpad_23280_RBBMGCREWQLETXQU",
+  "CHROME_CRASHPAD_PIPE_NAME": "\\\\.\\pipe\\LOCAL\\crashpad_19320_IOYCGEANMEJKWUEB",
   "COLOR": "1",
   "COLORTERM": "truecolor",
   "CommonProgramFiles": "C:\\Program Files\\Common Files",
@@ -70,7 +70,7 @@ window.env = {
   "PSModulePath": "D:\\Documents\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules;C:\\Program Files (x86)\\Microsoft SQL Server\\120\\Tools\\PowerShell\\Modules\\",
   "PUBLIC": "C:\\Users\\Public",
   "REACT_APP_PRODUCT_DB_URL": "https://649168742f2c7ee6c2c828cc.mockapi.io/api/v1/ProductList",
-  "REACT_APP_USER_DB_URL": "/users/DXgXU4IJtORzkw2E6jTp/specifications/7OM6ChlDeqoZaBMWFXTH/specimens",
+  "REACT_APP_USER_DB_URL": "http://vps.akabom.me/api/account",
   "RlsSvcPort": "22112",
   "SystemDrive": "C:",
   "SystemRoot": "C:\\Windows",
@@ -90,6 +90,6 @@ window.env = {
   "windir": "C:\\Windows",
   "WSLENV": "WT_SESSION::WT_PROFILE_ID",
   "WT_PROFILE_ID": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
-  "WT_SESSION": "2ff444c8-e367-4f31-9277-0ee7f0cb5f6e",
+  "WT_SESSION": "ac9c9178-dc38-4b6a-bbb2-3ad4982c7ea7",
   "ZES_ENABLE_SYSMAN": "1"
 };

@@ -40,9 +40,10 @@ const ProductsPresentation = ({ filteredProducts, category }) => {
           border: "1px solid black",
           height: "60px",
           textDecoration: "none",
-          width: "100%",
+          width: "60%",
           marginBottom: 20,
         }}
+        className="center"
         value={searchTerm}
         onKeyDown={(e) => {
           if (e.key === "Enter") handleSearch();

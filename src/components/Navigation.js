@@ -21,6 +21,7 @@ import {
 import "../App.css";
 import { AuthContext } from "../context/AuthContext";
 import useAuth from "../hooks/useAuth";
+import RegisterWorkShift from "../pages/RegisterWorkShift";
 export default function Navigation() {
   const location = useLocation();
   const { logout } = useAuth();
@@ -82,7 +83,12 @@ export default function Navigation() {
         style={{ backgroundColor: "white", color: "white" }}
       >
         <Toolbar
-          style={{ backgroundColor: "black", color: "white", paddingLeft: 0, height: "30px" }}
+          style={{
+            backgroundColor: "black",
+            color: "white",
+            paddingLeft: 0,
+            height: "30px",
+          }}
         >
           <Box
             className="hide-on-large-only"
@@ -233,11 +239,23 @@ export default function Navigation() {
                       <MenuItem>View Salary</MenuItem>
                     </Link>
                   )}
+                  {user.role !== "Manager" ? (
+                    <Link
+                      to="/workshift"
+                      style={{ textDecoration: "none", color: "#D4B887" }}
+                    >
+                      <MenuItem>
+                        Register Work Shift
+                      </MenuItem>
+                    </Link>
+                  ) : (
+                    <></>
+                  )}
                 </Menu>
               </Box>
               <Button
                 style={{
-                  width: "8%",
+                  width: "10%",
                   borderRadius: "30px",
                   backgroundColor: "black",
                   marginRight: "20px",
@@ -249,7 +267,7 @@ export default function Navigation() {
                   style={{
                     fontFamily: "Arial, sans-serif",
                     fontWeight: "bold",
-                    fontSize: "10px",
+                    fontSize: "20px",
                     color: "white",
                   }}
                 >

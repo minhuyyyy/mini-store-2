@@ -6,7 +6,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Table } from "@mui/material";
@@ -18,7 +18,6 @@ import { KeyboardArrowDownOutlined, Translate } from "@mui/icons-material";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-
 export default function ManageProductsPage() {
   const { user } = useContext(AuthContext);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -28,7 +27,7 @@ export default function ManageProductsPage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const tableContainerRef = useRef(null);
   useEffect(() => {
-    fetch(`${env.REACT_APP_PRODUCT_DB_URL}`)
+    fetch("http://vps.akabom.me/api/product")
       .then((response) => response.json())
       .then((data) => {
         setFilteredProducts(data);
@@ -66,16 +65,19 @@ export default function ManageProductsPage() {
   };
 
   const rows = filteredProducts
-    .filter((product) => selectedCategory === "" || product.category === selectedCategory)
+    .filter(
+      (product) =>
+        selectedCategory === "" || product.category === selectedCategory
+    )
     .map((product) => ({
       id: product.id,
       name: product.name,
-      image: product.img,
+      image: product.imageUrl,
       category: product.category,
       price: product.price,
       stock: product.stock,
       unit: product.unit,
-      info: product.info,
+      info: product.description,
     }));
 
   const handleDelete = async (id) => {
@@ -158,7 +160,9 @@ export default function ManageProductsPage() {
                               id="category-filter-button"
                               aria-controls={"category-filter-menu"}
                               aria-haspopup="true"
-                              aria-expanded={categoryMenuOpen ? "true" : undefined}
+                              aria-expanded={
+                                categoryMenuOpen ? "true" : undefined
+                              }
                               style={{
                                 height: 20,
                                 width: 20,
@@ -204,8 +208,6 @@ export default function ManageProductsPage() {
                                 </MenuItem>
                               ))}
                             </Menu>
-
-
                           </>
                         )}
                       </TableCell>

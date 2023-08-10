@@ -24,6 +24,7 @@ import {
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import env from "react-dotenv";
+import { getImageLink } from "../db/getImgLink";
 
 export default function UpdateProduct() {
   const [image, setImage] = useState(null);
@@ -90,11 +91,11 @@ export default function UpdateProduct() {
 
   const fetchProduct = () => {
     try {
-      fetch(`${env.REACT_APP_PRODUCT_DB_URL}/${id}`)
+      fetch(`http://vps.akabom.me/api/product/${id}`)
         .then((response) => response.json())
         .then((data) => {
           setFormData(data);
-          setImageUrl(data.img);
+          setImageUrl(data.imageUrl);
           setCategory(data.category);
           setUnit(data.unit);
         });
@@ -114,11 +115,11 @@ export default function UpdateProduct() {
     }
   };
 
-  const handleAddPhoto = (e) => {
+  const handleAddPhoto = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setImageUrl(URL.createObjectURL(file));
+      setImageUrl(await getImageLink(file));
     } else {
       setImage(null);
       setImageUrl("");
@@ -143,7 +144,7 @@ export default function UpdateProduct() {
     stock: "",
     unit: "",
     price: "",
-    info: "",
+    description: "",
   });
 
   const handleInputChange = (e) => {
@@ -157,78 +158,37 @@ export default function UpdateProduct() {
   const postData = async (e) => {
     e.preventDefault();
     try {
-      let updatedFormData = formData;
-
-      // Upload image and update form data if an image is selected
-      if (image) {
-        const file = image;
-        const storageRef = ref(storage, `product/images/${file.name}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        updatedFormData = { ...formData, img: downloadURL };
-      }
-
-      // Determine the selected category and units
-      const selectedCategory = newCategory || category;
-      const selectedUnit = newUnit || unit;
-      if (selectedCategory || selectedUnit) {
-        updatedFormData = {
-          ...updatedFormData,
-          category: selectedCategory,
-          unit: selectedUnit,
-        };
-      }
-
-      const url = `${env.REACT_APP_PRODUCT_DB_URL}/${id}`;
-      const response = await axios.put(url, updatedFormData);
-
-      if (response) {
-        const categoriesRef = doc(
-          db,
-          "users",
-          "DXgXU4IJtORzkw2E6jTp",
-          "specifications",
-          "7OM6ChlDeqoZaBMWFXTH",
-          "specimens",
-          "LeqwbEgBvTjm0RgW84YV"
-        );
-
-        // Update categories and units arrays using writeBatch
-        const batch = writeBatch(db);
-        if (selectedCategory) {
-          batch.update(categoriesRef, {
-            categories: arrayUnion(selectedCategory),
-          });
-        }
-        if (selectedUnit) {
-          batch.update(categoriesRef, {
-            units: arrayUnion(selectedUnit),
-          });
-        }
-        await batch.commit();
-
-        toast.success("Product has been updated successfully");
-
-        // Reset state variables to initial values
-        setFormData({
-          img: "",
-          name: "",
-          category: "",
-          info: "",
-          price: "",
-          unit: "",
-          stock: "",
+      axios
+        .put(`http://vps.akabom.me/api/product/${id}`, {
+          id: id,
+          name: formData.name,
+          description: formData.description,
+          price: formData.price,
+          imageUrl: imageUrl,
+          unit: unit,
+          category: category,
+          stock: formData.stock,
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            setFormData({
+              img: "",
+              name: "",
+              category: "",
+              stock: "",
+              unit: "",
+              price: "",
+              info: "",
+            });
+            toast.success("Account updated");
+            navigate("/manageproducts");
+          } else {
+            console.log();
+          }
         });
-        setCategory("");
-        setImage(null);
-        setImageUrl("");
-        setNewCategory("");
-        setNewUnit("");
-        navigate("/manageproducts");
-      }
     } catch (error) {
-      console.log(error.message);
-      toast.error("An error occurred. Please try again later.");
+      console.error(error);
+      toast.error("Something went wrong");
     }
   };
 
@@ -419,7 +379,7 @@ export default function UpdateProduct() {
                     id="description"
                     name="info"
                     variant="standard"
-                    value={formData.info}
+                    value={formData.description}
                     onChange={handleInputChange}
                   />
                   <br />

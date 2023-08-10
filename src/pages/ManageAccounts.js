@@ -9,8 +9,6 @@ import {
   TableRow,
   Paper,
   TablePagination,
-  Select,
-  IconButton,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
@@ -32,6 +30,8 @@ import env from "react-dotenv";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import axios from "axios";
+import useSessionStorage from "../hooks/useSessionStorage";
 export const theme = createTheme({
   palette: {
     background: {
@@ -102,8 +102,8 @@ const ManageAccounts = () => {
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [activeMenuOpen, setActiveMenuOpen] = useState(false);
   const [msg, setMsg] = useState(null);
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
+  let { user } = useContext(AuthContext);
+  const { getItem } = useSessionStorage();
   const handleScrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -130,13 +130,10 @@ const ManageAccounts = () => {
 
   const fetchData = async () => {
     try {
-      const q = query(
-        collection(db, `${env.REACT_APP_USER_DB_URL}`),
-        where("role", "!=", "Manager")
-      );
-      const querySnapshot = await getDocs(q);
-      const newData = querySnapshot.docs.map((doc) => doc.data());
-      setData(newData);
+      axios.get("http://vps.akabom.me/api/account").then((response) => {
+        setData(response.data);
+        return response.data;
+      });
     } catch (e) {
       toast.error("Something went wrong");
     }
@@ -144,54 +141,52 @@ const ManageAccounts = () => {
 
   useEffect(() => {
     checkUser();
-  }, [currentUser]);
+  }, []);
 
   const checkUser = async () => {
     try {
-      if (user.role === "Manager") {
+      const userData = getItem("user"); // Assuming "user" is the key you've used for the user data
+      console.log("userData => ", userData);
+
+      if (user.role === "Manager" || userData.role === "Manager") {
         setCurrentUser(user);
         await fetchData();
       } else if (user.role !== "Manager") {
         setMsg("Only Managers can view this page");
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
       setMsg("Something went wrong");
-      toast.error(msg);
+      toast.error("An error occurred");
     }
   };
 
   const queryTrue = async () => {
-    const q = query(
-      collection(db, `${env.REACT_APP_USER_DB_URL}`),
-      where("role", "!=", "Manager"),
-      where("isActive", "==", true),
-      orderBy("role", "desc")
-    );
-    const querySnapshot = await getDocs(q);
-    const newData = querySnapshot.docs.map((doc) => doc.data());
-    setData(newData);
+    try {
+      const filteredData = data.filter((account) => account.isActive === true);
+      setData(filteredData);
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
   };
 
   const queryFalse = async () => {
-    const q = query(
-      collection(db, `${env.REACT_APP_USER_DB_URL}`),
-      where("isActive", "==", false)
-    );
-    const querySnapshot = await getDocs(q);
-    const newData = querySnapshot.docs.map((doc) => doc.data());
-    setData(newData);
+    try {
+      const filteredData = data.filter((account) => account.isActive === false);
+      setData(filteredData);
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
   };
 
   const columns = [
-    { id: "ID", label: "ID", minWidth: 30 },
-    { id: "name", label: "name", minWidth: 30 },
-    { id: "img", label: "Image", minWidth: 90 },
+    { id: "id", label: "ID", minWidth: 30 },
+    { id: "fullName", label: "Name", minWidth: 80 },
+    { id: "imgUrl", label: "Image", minWidth: 90 },
     { id: "email", label: "Email", minWidth: 130 },
-    { id: "createAt", label: "Created on", minWidth: 130 },
+    { id: "createDate", label: "Created on", minWidth: 130 },
     { id: "isActive", label: "Active", minWidth: 130 },
     { id: "role", label: "Role", minWidth: 100 },
-    { id: "base", label: "Base Salary", minWidth: 100 },
     { id: "action", label: "Actions", minWidth: 100 },
   ];
 
@@ -215,14 +210,13 @@ const ManageAccounts = () => {
     );
 
   const rows = filteredAccounts.map((account) => ({
-    id: account.ID,
-    name: account.name,
-    img: account.img,
+    id: account.id,
+    fullName: account.fullName,
+    imgUrl: account.imgUrl,
     email: account.email,
-    createAt: account.createAt,
-    isActive: account.isActive,
+    createDate: account.createDate,
     role: account.role,
-    base: account.base,
+    isActive: account.isActive,
   }));
 
   return (
@@ -411,7 +405,7 @@ const ManageAccounts = () => {
                         >
                           {columns.map((column) => {
                             const value = row[column.id];
-                            if (column.id === "img") {
+                            if (column.id === "imgUrl") {
                               return (
                                 <TableCell key={column.id} align="left">
                                   <img

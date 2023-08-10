@@ -8,12 +8,10 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { getImageLink } from "../db/getImgLink";
-import { addUser } from "../db/service";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { theme } from "./ManageAccounts";
 import axios from "axios";
-import env from "react-dotenv";
 import { uid } from "uid";
 
 export default function AddAccount() {
@@ -37,7 +35,6 @@ export default function AddAccount() {
     name: "",
     password: "",
     role: "",
-    // isActive: "",
   });
 
   const handleChange = (e) => {
@@ -63,43 +60,22 @@ export default function AddAccount() {
     }));
   };
 
-  // const postData = () => {
-  //   try {
-  //     axios(
-  //       {
-  //         method: 'post',
-  //         url: 'http://vps.akabom.me/api/account',
-  //         data: {
-  //           id: uid(8),
-  //           username: formData.email,
-  //           fullname: formData.name,
-  //           password: formData.password,
-  //           imgUrl: imageUrl,
-  //           role: role,
-  //         }
-  //       }
-  //     )
-  //   } catch (error) {
-  //     console.log("Error adding data to database:", error);
-  //   }
-  // };
-
   const postData = async () => {
     try {
       const response = await axios({
         method: "post",
-        url: "http://vps.akabom.me/api/account/",
+        url: "http://vps.akabom.me/api/account/register",
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
         },
         data: {
           id: uid(8),
-          username: formData.email,
-          fullname: formData.name,
+          email: formData.email,
+          fullName: formData.name,
           password: formData.password,
-          imgUrl: imageUrl,
-          role: role,
+          imgUrl: downloadURL,
+          roleName: role,
         },
       });
 
@@ -211,7 +187,7 @@ export default function AddAccount() {
               label="Role"
               onChange={handleChange}
             >
-              <MenuItem value="Sales">Sales</MenuItem>
+              <MenuItem value="Saler">Sales</MenuItem>
               <MenuItem value={"Guard"}>Guard</MenuItem>
               <MenuItem value={"Manager"}>Manager</MenuItem>
             </Select>

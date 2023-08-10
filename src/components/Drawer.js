@@ -36,6 +36,12 @@ function Drawer({ onCategorySelect }) {
       >
         Categories
       </div>
+      <li
+        className="list-group-item list-group-item-action"
+        onClick={() => onCategorySelect("")}
+      >
+        All
+      </li>
       {categories.map((category) => (
         <li
           className="list-group-item list-group-item-action"

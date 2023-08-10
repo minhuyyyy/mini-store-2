@@ -10,29 +10,28 @@ import {
   RadioGroup,
   Radio,
   ThemeProvider,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { db } from "../db/dbConfig";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  writeBatch,
-} from "firebase/firestore";
 import { getImageLink } from "../db/getImgLink";
 import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
 import env from "react-dotenv";
+import axios from "axios";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 export default function UpdateAccount() {
   const [image, setImage] = useState(null);
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [downloadURL, setDownloadURL] = useState("");
   const [isActive, setIsActive] = useState("");
-  let docID = "";
+  const [password, setPassword] = useState("");
+  const [input, setInput] = useState({
+    password: "",
+    showPassword: false,
+  });
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -46,6 +45,7 @@ export default function UpdateAccount() {
 
   const [formData, setFormData] = useState({
     img: "",
+    fullName: "",
     email: "",
     role: "",
     password: "",
@@ -82,57 +82,80 @@ export default function UpdateAccount() {
       [name]: value,
     }));
   };
+  const handleClickShowPassword = () => {
+    setInput((prev) => ({
+      ...prev,
+      showPassword: !prev.showPassword,
+    }));
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const onInputChange = (e) => {
+    const { name, value } = e.target;
+    setInput((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  function makeid() {
+    let result = "";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+-=";
+    const charactersLength = 12;
+    let counter = 0;
+    while (counter < charactersLength) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    setPassword(result);
+    return result;
+  }
 
   const getData = async () => {
-    const q = query(
-      collection(db, `${env.REACT_APP_USER_DB_URL}/${docID}`),
-      where("ID", "==", id)
-    );
-    const snapshot = await getDocs(q);
-    snapshot.forEach((doc) => {
-      const newData = doc.data();
-      console.log(newData);
-      docID = doc.id;
-      setImageUrl(newData.img);
-      setRole(newData.role);
-      setFormData({
-        img: newData.img,
-        email: newData.email,
-        name: newData.name,
-        role: newData.role,
-        password: newData.password,
-      });
-      setIsActive(newData.isActive);
-      return docID;
+    axios.get(`http://vps.akabom.me/api/account/${id}`).then((response) => {
+      setFormData(response.data);
+      setImageUrl(response.data.imgUrl);
+      setRole(response.data.roleName);
+      setIsActive(response.data.isActive);
+      setPassword(response.data.password);
+      return response.data;
     });
   };
 
   const handleUpdate = async () => {
-    await getData();
-    const userDocRef = doc(db, `${env.REACT_APP_USER_DB_URL}/${docID}`);
     try {
-      const batch = writeBatch(db);
-      batch.update(userDocRef, {
-        img: imageUrl,
-        email: formData.email,
-        name: formData.name,
-        role: role,
-        password: formData.password,
-        isActive: isActive,
-      });
-      setFormData({
-        img: "",
-        email: "",
-        name: "",
-        role: "",
-        password: "",
-        isActive: "",
-      });
-      setRole("");
-      setIsActive("");
-      await batch.commit();
-      toast.success("Account updated");
-      navigate("/manageaccounts");
+      axios
+        .put(`http://vps.akabom.me/api/account/update/${id}`, {
+          id: id,
+          email: formData.email,
+          fullName: formData.fullName,
+          password: password,
+          imgUrl: imageUrl,
+          roleName: formData.role,
+          isActive: formData.isActive,
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            setFormData({
+              img: "",
+              email: "",
+              fullName: "",
+              role: "",
+              password: "",
+              isActive: "",
+            });
+            setRole("");
+            setIsActive("");
+            toast.success("Account updated");
+            navigate("/manageaccounts");
+          } else {
+            console.log();
+          }
+        });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
@@ -196,21 +219,31 @@ export default function UpdateAccount() {
               id="name"
               name="name"
               variant="standard"
-              value={formData.name}
+              value={formData.fullName}
               onChange={handleInputChange}
             />
             <br />
           </FormControl>
         </div>
         <div>
-          <FormControl sx={{ width: "80%" }}>
-            <label>Password</label>
+          <FormControl>
             <Input
-              id="password"
+              type={input.showPassword ? "text" : "password"}
               name="password"
-              variant="standard"
-              value={formData.password}
-              onChange={handleInputChange}
+              placeholder="Enter Password"
+              value={password}
+              onChange={onInputChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {input.showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                  <Button onClick={makeid}>Generate new password</Button>
+                </InputAdornment>
+              }
             />
             <br />
           </FormControl>

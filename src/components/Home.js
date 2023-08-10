@@ -31,10 +31,10 @@ function Home() {
       style={{ paddingTop: "25px", paddingBottom: "35px", margin: "0 50px" }}
     >
       <Grid container spacing={2} sx={{ paddingBottom: "15px" }}>
-        <Grid item xs={2} sm={6} md={6} lg={2}>
+        <Grid item sm={4} md={3} lg={2}>
           <Drawer onCategorySelect={setSelectedCategory} />
         </Grid>
-        <Grid item xs={12} sm={6} md={6} lg={8}>
+        <Grid item xs={12} sm={8} md={9} lg={10}>
           <ProductsPresentation filteredProducts={filteredProducts} />
         </Grid>
       </Grid>
