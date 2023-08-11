@@ -23,6 +23,7 @@ export default function ManageProductsPage() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
+  const [product, setProduct] = useState([]);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const tableContainerRef = useRef(null);
@@ -80,16 +81,36 @@ export default function ManageProductsPage() {
       info: product.description,
     }));
 
+  const getData = async (id) => {
+    await axios
+      .get(`http://vps.akabom.me/api/product/${id}`)
+      .then((response) => {
+        setProduct(response.data);
+      });
+  };
+
   const handleDelete = async (id) => {
+    await getData(id);
     try {
-      const url = `${env.REACT_APP_PRODUCT_DB_URL}/${id}`;
-      const response = await axios.delete(url);
-      if (response) {
-        toast.success("Product has been updated successfully");
-        window.location.reload();
-      }
-    } catch (error) {
-      console.log(error.message);
+      await axios
+        .put(`http://vps.akabom.me/api/product/${id}`, {
+          id: id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+          unit: product.unit,
+          category: product.category,
+          stock: product.stock,
+          isActive: false,
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            toast.success("Product deleted successfully");
+          }
+        });
+    } catch (e) {
+      console.log(e);
     }
   };
 

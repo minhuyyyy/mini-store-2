@@ -129,7 +129,7 @@ export default function UpdateAccount() {
   const handleUpdate = async () => {
     try {
       axios
-        .put(`http://vps.akabom.me/api/account/update/${id}`, {
+        .put(`http://vps.akabom.me/api/account/${id}`, {
           id: id,
           email: formData.email,
           fullName: formData.fullName,
