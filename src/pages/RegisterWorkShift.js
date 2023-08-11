@@ -26,6 +26,7 @@ import { db } from "../db/dbConfig";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import env from "react-dotenv";
+import Calendar from "../components/Calendar";
 function RegisterWorkShiftForm() {
   const { user } = useContext(AuthContext);
   const [selectedTime, setSelectedTime] = useState("");
@@ -194,7 +195,18 @@ function RegisterWorkShift() {
                 transform: "translate(20%, -50%)",
               }}
             >
-              <RegisterWorkShiftForm />
+              {/* <RegisterWorkShiftForm /> */}
+            </Card>
+          </Grid>
+          <Grid justify="center">
+            <Card
+              style={{
+                height: "50%",
+                width: "70%",
+                transform: "translate(20%, -50%)",
+              }}
+            >
+              <Calendar />  
             </Card>
           </Grid>
         </>

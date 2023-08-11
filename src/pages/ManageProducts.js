@@ -81,16 +81,7 @@ export default function ManageProductsPage() {
       info: product.description,
     }));
 
-  const getData = async (id) => {
-    await axios
-      .get(`http://vps.akabom.me/api/product/${id}`)
-      .then((response) => {
-        setProduct(response.data);
-      });
-  };
-
   const handleDelete = async (id) => {
-    await getData(id);
     try {
       await axios
         .put(`http://vps.akabom.me/api/product/${id}`, {

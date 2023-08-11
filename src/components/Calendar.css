@@ -1,0 +1,78 @@
+/* WeekCalendar.css */
+
+/* Basic styles for the calendar container */
+.calendar {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  
+  /* Styles for header with navigation icons and date */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 18px;
+  }
+  
+  /* Styles for navigation icons */
+  .icon {
+    cursor: pointer;
+  }
+  
+  /* Styles for weekdays row */
+  .weekdays {
+    display: flex;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  /* Styles for weekday columns */
+  .weekday {
+    flex: 1;
+    text-align: center;
+  }
+  
+  /* Styles for day cells */
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  
+  /* Basic styling for individual day cell */
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  /* Styling for today's cell */
+  .today {
+    background-color: #f2f2f2;
+  }
+  
+  /* Styling for selected cell */
+  .selected {
+    background-color: #6332c5;
+    color: #fff;
+  }
+  
+  /* Styling for day number inside cell */
+  .number {
+    font-weight: bold;
+  }
+  
+  /* Add more custom styling as needed */
+  
