@@ -149,7 +149,7 @@ export default function ManageProductsPage() {
               overflow: "hidden",
               height: "100%",
               paddingTop: 3,
-              width: window.innerWidth,
+              width: "70%",
             }}
           >
             <TableContainer
