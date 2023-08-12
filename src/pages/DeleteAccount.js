@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { db } from "../db/dbConfig";
+// import { db } from "../db/dbConfig";
 import {
   collection,
   query,
@@ -27,51 +27,51 @@ export default function DeleteAccount() {
   }, []);
 
   const fetchData = async () => {
-    const q = query(
-      collection(db, `${env.REACT_APP_USER_DB_URL}`),
-      where("ID", "==", id)
-    );
-    const snapshot = await getDocs(q);
-    snapshot.forEach((doc) => {
-      const newData = doc.data();
-      setData(newData);
-    });
+    // const q = query(
+    //   collection(db, `${env.REACT_APP_USER_DB_URL}`),
+    //   where("ID", "==", id)
+    // );
+    // const snapshot = await getDocs(q);
+    // snapshot.forEach((doc) => {
+    //   const newData = doc.data();
+    //   setData(newData);
+    // });
   };
 
   let docID = "";
 
   const getData = async () => {
-    const q = query(
-      collection(db, `${env.REACT_APP_USER_DB_URL}`),
-      where("ID", "==", id)
-    );
-    const snapshot = await getDocs(q);
-    snapshot.forEach((doc) => {
-      console.log(doc.id, "=>", doc.data());
-      const data = doc.data();
-      docID = doc.id;
-      return docID;
-    });
+    // const q = query(
+    //   collection(db, `${env.REACT_APP_USER_DB_URL}`),
+    //   where("ID", "==", id)
+    // );
+    // const snapshot = await getDocs(q);
+    // snapshot.forEach((doc) => {
+    //   console.log(doc.id, "=>", doc.data());
+    //   const data = doc.data();
+    //   docID = doc.id;
+    //   return docID;
+    // });
   };
 
   const handleDelete = async () => {
-    await getData();
-    const userDocRef = doc(db, `${env.REACT_APP_USER_DB_URL}/${docID}`);
-    console.log(docID);
-    try {
-      await runTransaction(db, async (transaction) => {
-        const userDoc = await transaction.get(userDocRef);
-        if (!userDoc.exists()) {
-          throw "Document does not exist!";
-        }
+    // await getData();
+    // const userDocRef = doc(db, `${env.REACT_APP_USER_DB_URL}/${docID}`);
+    // console.log(docID);
+    // try {
+    //   await runTransaction(db, async (transaction) => {
+    //     const userDoc = await transaction.get(userDocRef);
+    //     if (!userDoc.exists()) {
+    //       throw "Document does not exist!";
+    //     }
 
-        transaction.delete(userDocRef);
-      });
-      toast.success("Account deleted successfully");
-      navigate("/manageaccounts");
-    } catch (error) {
-      console.error(error);
-    }
+    //     transaction.delete(userDocRef);
+    //   });
+    //   toast.success("Account deleted successfully");
+    //   navigate("/manageaccounts");
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   const handleKeep = () => {

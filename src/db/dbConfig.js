@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "@firebase/firestore";
-import { getStorage } from "@firebase/storage";
+// import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD5CUM3ol047VxOFNzRjtYknWZ9DEmqXtI",
@@ -8,10 +8,10 @@ const firebaseConfig = {
   projectId: "lunar-parsec-392805",
   storageBucket: "lunar-parsec-392805.appspot.com",
   messagingSenderId: "913421392005",
-  appId: "1:913421392005:web:4e868b0a29000f0e6f71ec"
+  appId: "1:913421392005:web:4e868b0a29000f0e6f71ec",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
-export const db = getFirestore(app)
+// export const db = getFirestore(app);

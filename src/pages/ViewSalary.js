@@ -14,7 +14,7 @@ import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../db/dbConfig";
+// import { db } from "../db/dbConfig";
 import { CSVLink } from "react-csv";
 import { Button } from "@mui/material";
 import env from "react-dotenv";
@@ -115,46 +115,46 @@ export default function ViewSalary() {
   }, [uid]);
 
   const fetchData = async () => {
-    if (currentUser.role == "Manager") {
-      const q = query(collection(db, `${env.REACT_APP_USER_DB_URL}`),
-      where("ID", "!=", null)
-      );
-      const querySnapshot = await getDocs(q);
-      const newData = querySnapshot.docs.map((doc) => {
-        const docData = doc.data();
-        return {
-          ID: docData.ID,
-          name: docData.name,
-          base: docData.base,
-          role: docData.role,
-          workDays: Array(docData.workDays || []),
-          total: docData.total,
-          OT: docData.OT,
-          workHours: docData.workHours,
-        };
-      });
-      setData(newData);
-    } else {
-      const q = query(
-        collection(db, `${env.REACT_APP_USER_DB_URL}`),
-        where("ID", "==", uid)
-      );
-      const querySnapshot = await getDocs(q);
-      const newData = querySnapshot.docs.map((doc) => {
-        const docData = doc.data();
-        return {
-          ID: docData.ID,
-          name: docData.name,
-          base: docData.base,
-          role: docData.role,
-          workDays: Array(docData.workDays || []),
-          total: docData.total,
-          OT: docData.OT,
-          workHours: docData.workHours,
-        };
-      });
-      setData(newData);
-    }
+    // if (currentUser.role == "Manager") {
+    //   const q = query(collection(db, `${env.REACT_APP_USER_DB_URL}`),
+    //   where("ID", "!=", null)
+    //   );
+    //   const querySnapshot = await getDocs(q);
+    //   const newData = querySnapshot.docs.map((doc) => {
+    //     const docData = doc.data();
+    //     return {
+    //       ID: docData.ID,
+    //       name: docData.name,
+    //       base: docData.base,
+    //       role: docData.role,
+    //       workDays: Array(docData.workDays || []),
+    //       total: docData.total,
+    //       OT: docData.OT,
+    //       workHours: docData.workHours,
+    //     };
+    //   });
+    //   setData(newData);
+    // } else {
+    //   const q = query(
+    //     collection(db, `${env.REACT_APP_USER_DB_URL}`),
+    //     where("ID", "==", uid)
+    //   );
+    //   const querySnapshot = await getDocs(q);
+    //   const newData = querySnapshot.docs.map((doc) => {
+    //     const docData = doc.data();
+    //     return {
+    //       ID: docData.ID,
+    //       name: docData.name,
+    //       base: docData.base,
+    //       role: docData.role,
+    //       workDays: Array(docData.workDays || []),
+    //       total: docData.total,
+    //       OT: docData.OT,
+    //       workHours: docData.workHours,
+    //     };
+    //   });
+    //   setData(newData);
+    // }
   };
 
   const csvHeaders = [

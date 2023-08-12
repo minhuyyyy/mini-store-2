@@ -20,7 +20,7 @@ import {
   writeBatch,
   arrayUnion,
 } from "firebase/firestore";
-import { db } from "../db/dbConfig";
+// import { db } from "../db/dbConfig";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import env from "react-dotenv";
@@ -67,55 +67,55 @@ function CheckAttendanceForm() {
   });
 
   const getData = async () => {
-    const q = query(
-      collection(db, `${env.REACT_APP_USER_DB_URL}`),
-      where("ID", "==", ID)
-    );
-    const snapshot = await getDocs(q);
-    snapshot.forEach((doc) => {
-      setDocID(doc.id);
-      const newData = doc.data();
-      setOT(newData.OT);
-      setFormData({
-        workHours: newData.workHours,
-        OT: newData.OT,
-      });
-    });
+    // const q = query(
+    //   collection(db, `${env.REACT_APP_USER_DB_URL}`),
+    //   where("ID", "==", ID)
+    // );
+    // const snapshot = await getDocs(q);
+    // snapshot.forEach((doc) => {
+    //   setDocID(doc.id);
+    //   const newData = doc.data();
+    //   setOT(newData.OT);
+    //   setFormData({
+    //     workHours: newData.workHours,
+    //     OT: newData.OT,
+    //   });
+    // });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    await getData();
-    const userDocRef = doc(db, `${env.REACT_APP_USER_DB_URL}/${docID}`);
+    // e.preventDefault();
+    // await getData();
+    // const userDocRef = doc(db, `${env.REACT_APP_USER_DB_URL}/${docID}`);
 
-    if (formData.OT < 0) {
-      alert("Overtime hours must be non-negative");
-      return;
-    }
+    // if (formData.OT < 0) {
+    //   alert("Overtime hours must be non-negative");
+    //   return;
+    // }
 
-    const startTime = parseInt(selectedTime.split("-")[0]);
-    const endTime = parseInt(selectedTime.split("-")[1]);
+    // const startTime = parseInt(selectedTime.split("-")[0]);
+    // const endTime = parseInt(selectedTime.split("-")[1]);
 
-    const workHours = endTime - startTime;
+    // const workHours = endTime - startTime;
 
-    if (isNaN(workHours)) {
-      alert("Invalid time format");
-      return;
-    }
+    // if (isNaN(workHours)) {
+    //   alert("Invalid time format");
+    //   return;
+    // }
 
-    try {
-      const batch = writeBatch(db);
-      batch.update(userDocRef, {
-        workHours: workHours + formData.workHours,
-        OT: Number(formData.OT) + Number(OT),
-        workDays: arrayUnion(now.toDateString()),
-      });
-      await batch.commit();
-      toast.success("Attendance taken successfully");
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
+    // try {
+    //   const batch = writeBatch(db);
+    //   batch.update(userDocRef, {
+    //     workHours: workHours + formData.workHours,
+    //     OT: Number(formData.OT) + Number(OT),
+    //     workDays: arrayUnion(now.toDateString()),
+    //   });
+    //   await batch.commit();
+    //   toast.success("Attendance taken successfully");
+    //   navigate("/");
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   const handleInputChange = (e) => {

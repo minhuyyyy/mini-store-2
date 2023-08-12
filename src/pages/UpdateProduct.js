@@ -10,7 +10,7 @@ import {
   Icon,
 } from "@mui/material";
 import axios from "axios";
-import { db, storage } from "../db/dbConfig";
+import { storage } from "../db/dbConfig";
 import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -48,45 +48,45 @@ export default function UpdateProduct() {
   }, []);
 
   const fetchCategories = async () => {
-    try {
-      const categoriesRef = doc(
-        db,
-        "users",
-        "DXgXU4IJtORzkw2E6jTp",
-        "specifications",
-        "7OM6ChlDeqoZaBMWFXTH",
-        "specimens",
-        "LeqwbEgBvTjm0RgW84YV"
-      );
-      const docSnap = await getDoc(categoriesRef);
-      if (docSnap.exists()) {
-        const categoryData = docSnap.data().categories || [];
-        setCategories(categoryData);
-      }
-    } catch (error) {
-      console.log("Error fetching categories:", error);
-    }
+    // try {
+    //   const categoriesRef = doc(
+    //     db,
+    //     "users",
+    //     "DXgXU4IJtORzkw2E6jTp",
+    //     "specifications",
+    //     "7OM6ChlDeqoZaBMWFXTH",
+    //     "specimens",
+    //     "LeqwbEgBvTjm0RgW84YV"
+    //   );
+    //   const docSnap = await getDoc(categoriesRef);
+    //   if (docSnap.exists()) {
+    //     const categoryData = docSnap.data().categories || [];
+    //     setCategories(categoryData);
+    //   }
+    // } catch (error) {
+    //   console.log("Error fetching categories:", error);
+    // }
   };
 
   const fetchUnits = async () => {
-    try {
-      const unitsRef = doc(
-        db,
-        "users",
-        "DXgXU4IJtORzkw2E6jTp",
-        "specifications",
-        "7OM6ChlDeqoZaBMWFXTH",
-        "specimens",
-        "LeqwbEgBvTjm0RgW84YV"
-      );
-      const docSnap = await getDoc(unitsRef);
-      if (docSnap.exists()) {
-        const unitsData = docSnap.data().units || [];
-        setUnits(unitsData);
-      }
-    } catch (error) {
-      console.log("Error fetching units:", error);
-    }
+    // try {
+    //   const unitsRef = doc(
+    //     db,
+    //     "users",
+    //     "DXgXU4IJtORzkw2E6jTp",
+    //     "specifications",
+    //     "7OM6ChlDeqoZaBMWFXTH",
+    //     "specimens",
+    //     "LeqwbEgBvTjm0RgW84YV"
+    //   );
+    //   const docSnap = await getDoc(unitsRef);
+    //   if (docSnap.exists()) {
+    //     const unitsData = docSnap.data().units || [];
+    //     setUnits(unitsData);
+    //   }
+    // } catch (error) {
+    //   console.log("Error fetching units:", error);
+    // }
   };
 
   const fetchProduct = () => {

@@ -10,7 +10,7 @@ import {
   Icon,
 } from "@mui/material";
 import axios from "axios";
-import { db, storage } from "../db/dbConfig";
+import { storage } from "../db/dbConfig";
 import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -41,9 +41,9 @@ export default function UpdateProduct() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchUnitsAndCategories();
-  }, []);
+  // useEffect(() => {
+  //   fetchUnitsAndCategories();
+  // }, []);
 
   const fetchCategories = async () => {
     try {
@@ -57,28 +57,28 @@ export default function UpdateProduct() {
     }
   };
 
-  const fetchUnitsAndCategories = async () => {
-    try {
-      const unitsRef = doc(
-        db,
-        "users",
-        "DXgXU4IJtORzkw2E6jTp",
-        "specifications",
-        "7OM6ChlDeqoZaBMWFXTH",
-        "specimens",
-        "LeqwbEgBvTjm0RgW84YV"
-      );
-      const docSnap = await getDoc(unitsRef);
-      if (docSnap.exists()) {
-        const unitsData = docSnap.data().units || [];
-        const categoriesData = docSnap.data().categories || [];
-        setUnits(unitsData);
-        setCategories(categoriesData);
-      }
-    } catch (error) {
-      console.log("Error fetching units:", error);
-    }
-  };
+  // const fetchUnitsAndCategories = async () => {
+  //   try {
+  //     const unitsRef = doc(
+  //       db,
+  //       "users",
+  //       "DXgXU4IJtORzkw2E6jTp",
+  //       "specifications",
+  //       "7OM6ChlDeqoZaBMWFXTH",
+  //       "specimens",
+  //       "LeqwbEgBvTjm0RgW84YV"
+  //     );
+  //     const docSnap = await getDoc(unitsRef);
+  //     if (docSnap.exists()) {
+  //       const unitsData = docSnap.data().units || [];
+  //       const categoriesData = docSnap.data().categories || [];
+  //       setUnits(unitsData);
+  //       setCategories(categoriesData);
+  //     }
+  //   } catch (error) {
+  //     console.log("Error fetching units:", error);
+  //   }
+  // };
 
   const handleUnitChange = (event) => {
     const value = event.target.value;
@@ -122,73 +122,73 @@ export default function UpdateProduct() {
   };
 
   const postData = async (e) => {
-    e.preventDefault();
-    try {
-      let updatedFormData = formData;
-      const categoriesRef = doc(
-        db,
-        "users",
-        "DXgXU4IJtORzkw2E6jTp",
-        "specifications",
-        "7OM6ChlDeqoZaBMWFXTH",
-        "specimens",
-        "LeqwbEgBvTjm0RgW84YV"
-      );
+    // e.preventDefault();
+    // try {
+    //   let updatedFormData = formData;
+    //   const categoriesRef = doc(
+    //     db,
+    //     "users",
+    //     "DXgXU4IJtORzkw2E6jTp",
+    //     "specifications",
+    //     "7OM6ChlDeqoZaBMWFXTH",
+    //     "specimens",
+    //     "LeqwbEgBvTjm0RgW84YV"
+    //   );
 
-      // Upload image and update form data if an image is selected
-      if (image) {
-        const file = image;
-        const storageRef = ref(storage, `product/images/${file.name}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        updatedFormData = { ...formData, img: downloadURL };
-      }
+    //   // Upload image and update form data if an image is selected
+    //   if (image) {
+    //     const file = image;
+    //     const storageRef = ref(storage, `product/images/${file.name}`);
+    //     const snapshot = await uploadBytes(storageRef, file);
+    //     const downloadURL = await getDownloadURL(snapshot.ref);
+    //     updatedFormData = { ...formData, img: downloadURL };
+    //   }
 
-      // Determine the selected category and units
-      const selectedCategory = newCategory || category;
-      const selectedUnit = newUnit || unit;
-      if (selectedCategory || selectedUnit) {
-        updatedFormData = {
-          ...updatedFormData,
-          category: selectedCategory,
-          unit: selectedUnit,
-        };
-      }
+    //   // Determine the selected category and units
+    //   const selectedCategory = newCategory || category;
+    //   const selectedUnit = newUnit || unit;
+    //   if (selectedCategory || selectedUnit) {
+    //     updatedFormData = {
+    //       ...updatedFormData,
+    //       category: selectedCategory,
+    //       unit: selectedUnit,
+    //     };
+    //   }
 
-      // Update the product with the updated form data
-      const url = `${env.REACT_APP_PRODUCT_DB_URL}`;
-      const response = await axios.post(url, updatedFormData); // Use axios.put instead of axios.post
+    //   // Update the product with the updated form data
+    //   const url = `${env.REACT_APP_PRODUCT_DB_URL}`;
+    //   const response = await axios.post(url, updatedFormData); // Use axios.put instead of axios.post
 
-      if (response) {
-        const batch = writeBatch(db);
-        batch.update(categoriesRef, {
-          categories: arrayUnion(selectedCategory),
-          units: arrayUnion(selectedUnit),
-        });
-        await batch.commit();
-        toast.success("Product has been updated successfully");
+    //   if (response) {
+    //     const batch = writeBatch(db);
+    //     batch.update(categoriesRef, {
+    //       categories: arrayUnion(selectedCategory),
+    //       units: arrayUnion(selectedUnit),
+    //     });
+    //     await batch.commit();
+    //     toast.success("Product has been updated successfully");
 
-        // Reset state variables to initial values
-        setFormData({
-          img: "",
-          name: "",
-          category: "",
-          info: "",
-          price: "",
-          unit: "",
-          stock: "",
-        });
-        setCategory("");
-        setImage(null);
-        setImageUrl("");
-        setNewCategory("");
-        setNewUnit("");
-        navigate("/manageproducts");
-      }
-    } catch (error) {
-      console.log(error.message);
-      toast.error("An error occurred. Please try again later.");
-    }
+    //     // Reset state variables to initial values
+    //     setFormData({
+    //       img: "",
+    //       name: "",
+    //       category: "",
+    //       info: "",
+    //       price: "",
+    //       unit: "",
+    //       stock: "",
+    //     });
+    //     setCategory("");
+    //     setImage(null);
+    //     setImageUrl("");
+    //     setNewCategory("");
+    //     setNewUnit("");
+    //     navigate("/manageproducts");
+    //   }
+    // } catch (error) {
+    //   console.log(error.message);
+    //   toast.error("An error occurred. Please try again later.");
+    // }
   };
 
   const handleKeep = () => {
