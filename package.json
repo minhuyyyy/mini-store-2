@@ -54,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@mui/x-data-grid": "^6.11.0",
     "json-server": "^0.17.3"
   }
 }

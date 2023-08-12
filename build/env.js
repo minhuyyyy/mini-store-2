@@ -5,7 +5,7 @@ window.env = {
   "APPDATA": "C:\\Users\\Minh Huy\\AppData\\Roaming",
   "ChocolateyInstall": "C:\\ProgramData\\chocolatey",
   "ChocolateyLastPathUpdate": "133178909588366654",
-  "CHROME_CRASHPAD_PIPE_NAME": "\\\\.\\pipe\\LOCAL\\crashpad_19320_IOYCGEANMEJKWUEB",
+  "CHROME_CRASHPAD_PIPE_NAME": "\\\\.\\pipe\\LOCAL\\crashpad_8644_MXLUTZDNEOFKTVCA",
   "COLOR": "1",
   "COLORTERM": "truecolor",
   "CommonProgramFiles": "C:\\Program Files\\Common Files",
@@ -90,6 +90,6 @@ window.env = {
   "windir": "C:\\Windows",
   "WSLENV": "WT_SESSION::WT_PROFILE_ID",
   "WT_PROFILE_ID": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
-  "WT_SESSION": "ac9c9178-dc38-4b6a-bbb2-3ad4982c7ea7",
+  "WT_SESSION": "57aa1b49-b874-427c-83cc-db88b35db57f",
   "ZES_ENABLE_SYSMAN": "1"
 };
