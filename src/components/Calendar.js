@@ -10,6 +10,7 @@ import {
 import "./Calendar.css"; // Import the custom CSS file
 import { MenuItem, Select } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import { Button } from "bootstrap";
 const WeekCalendar = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date())
@@ -47,11 +48,15 @@ const WeekCalendar = () => {
     const handleSelectionModelChange = (selectionModel) => {
       // Handle the selected rows based on selectionModel
       const selectedRows = rows.filter((row, index) =>
-        selectionModel.includes(index+1)
+        selectionModel.includes(index + 1)
       );
       // Now you have an array of selected rows, you can process them as needed
       console.log(selectedRows);
     };
+
+    const handleSubmit = () => {
+      
+    }
 
     const handleTimeSelect = (time) => {};
 
@@ -70,6 +75,7 @@ const WeekCalendar = () => {
           onRowSelectionModelChange={handleSelectionModelChange}
           checkboxSelection
         />
+        <Button onClick={handleSubmit}>Submit</Button>
       </div>
     );
   };
