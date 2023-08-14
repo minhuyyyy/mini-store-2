@@ -185,6 +185,25 @@ export default function Navigation() {
             >
               <span>Check Attendance</span>
             </Button>
+            <Button
+              key={"Create order"}
+              onClick={() => {
+                navigate("createorder");
+                document.title = "Create order";
+              }}
+              style={
+                activeLink === "/createorder"
+                  ? { ...navLinkStyle, ...activeLinkStyle }
+                  : { ...navLinkStyle }
+              }
+              sx={{
+                color: "white",
+                padding: "0px 10px",
+                height: "30px",
+              }}
+            >
+              <span>Create order</span>
+            </Button>
           </Box>
           {user ? (
             <>
@@ -244,9 +263,7 @@ export default function Navigation() {
                       to="/workshift"
                       style={{ textDecoration: "none", color: "#D4B887" }}
                     >
-                      <MenuItem>
-                        Register Work Shift
-                      </MenuItem>
+                      <MenuItem>Register Work Shift</MenuItem>
                     </Link>
                   ) : (
                     <></>
@@ -402,6 +419,30 @@ export default function Navigation() {
               }}
             >
               Check Attendance
+            </Typography>
+          </ListItem>
+          <ListItem
+            key="Create Order"
+            component={Link}
+            to="createorder"
+            onClick={() => {
+              document.title = "Create Order";
+              setActiveLink("/createorder");
+            }}
+            style={
+              activeLink === "/createorder"
+                ? Object.assign({}, navLinkStyle, activeLinkStyle)
+                : navLinkStyle
+            }
+          >
+            <Typography
+              sx={{
+                fontFamily: "Arial, sans-serif",
+                fontWeight: "bold",
+                fontSize: "10px",
+              }}
+            >
+              Create Order
             </Typography>
           </ListItem>
         </List>

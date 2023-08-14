@@ -10,7 +10,7 @@ function Drawer({ onCategorySelect }) {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${env.REACT_APP_PRODUCT_DB_URL}`);
+      const response = await fetch(`http://vps.akabom.me/api/product`);
       const data = await response.json();
       const allCategories = Array.from(
         new Set(data.map((product) => product.category))

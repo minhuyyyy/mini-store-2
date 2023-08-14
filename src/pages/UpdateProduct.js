@@ -30,64 +30,12 @@ export default function UpdateProduct() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [product, setProduct] = useState([]);
-  const [category, setCategory] = useState(null);
-  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
-  const [showNewUnitInput, setShowNewUnitInput] = useState(false);
-  const [unit, setUnit] = useState(null);
-  const [units, setUnits] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState("");
-  const [newUnit, setNewUnit] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
     fetchProduct();
-    fetchCategories();
-    fetchUnits();
   }, []);
-
-  const fetchCategories = async () => {
-    // try {
-    //   const categoriesRef = doc(
-    //     db,
-    //     "users",
-    //     "DXgXU4IJtORzkw2E6jTp",
-    //     "specifications",
-    //     "7OM6ChlDeqoZaBMWFXTH",
-    //     "specimens",
-    //     "LeqwbEgBvTjm0RgW84YV"
-    //   );
-    //   const docSnap = await getDoc(categoriesRef);
-    //   if (docSnap.exists()) {
-    //     const categoryData = docSnap.data().categories || [];
-    //     setCategories(categoryData);
-    //   }
-    // } catch (error) {
-    //   console.log("Error fetching categories:", error);
-    // }
-  };
-
-  const fetchUnits = async () => {
-    // try {
-    //   const unitsRef = doc(
-    //     db,
-    //     "users",
-    //     "DXgXU4IJtORzkw2E6jTp",
-    //     "specifications",
-    //     "7OM6ChlDeqoZaBMWFXTH",
-    //     "specimens",
-    //     "LeqwbEgBvTjm0RgW84YV"
-    //   );
-    //   const docSnap = await getDoc(unitsRef);
-    //   if (docSnap.exists()) {
-    //     const unitsData = docSnap.data().units || [];
-    //     setUnits(unitsData);
-    //   }
-    // } catch (error) {
-    //   console.log("Error fetching units:", error);
-    // }
-  };
 
   const fetchProduct = () => {
     try {
@@ -96,22 +44,9 @@ export default function UpdateProduct() {
         .then((data) => {
           setFormData(data);
           setImageUrl(data.imageUrl);
-          setCategory(data.category);
-          setUnit(data.unit);
         });
     } catch (e) {
       console.log(e);
-    }
-  };
-
-  const handleUnitChange = (event) => {
-    const value = event.target.value;
-    if (value === "add_new_unit") {
-      setUnit("");
-      setShowNewUnitInput(true);
-    } else {
-      setUnit(value);
-      setShowNewUnitInput(false);
     }
   };
 
@@ -123,17 +58,6 @@ export default function UpdateProduct() {
     } else {
       setImage(null);
       setImageUrl("");
-    }
-  };
-
-  const handleChange = (event) => {
-    const value = event.target.value;
-    if (value === "add_new_category") {
-      setCategory("");
-      setShowNewCategoryInput(true);
-    } else {
-      setCategory(value);
-      setShowNewCategoryInput(false);
     }
   };
 
@@ -165,8 +89,8 @@ export default function UpdateProduct() {
           description: formData.description,
           price: formData.price,
           imageUrl: imageUrl,
-          unit: unit,
-          category: category,
+          unit: formData.unit,
+          category: formData.category,
           stock: formData.stock,
         })
         .then((response) => {
@@ -242,59 +166,16 @@ export default function UpdateProduct() {
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>
-                  <label>Category</label>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select selectCate"
-                    value={category}
-                    label="Category"
-                    onChange={handleChange}
-                  >
-                    {categories.map((cat) => (
-                      <MenuItem key={cat} value={cat}>
-                        {cat}
-                        {cat && (
-                          <IconButton
-                            sx={{}}
-                            onClick={() => {
-                              setCategories(
-                                categories.filter((c) => c !== cat)
-                              );
-                              if (category === cat) {
-                                setCategory("");
-                              }
-                            }}
-                          >
-                            <Icon>close</Icon>
-                          </IconButton>
-                        )}
-                      </MenuItem>
-                    ))}
-                    <MenuItem value="add_new_category">
-                      Add new category
-                    </MenuItem>
-                  </Select>
-                  {showNewCategoryInput && (
-                    <div>
-                      <FormControl sx={{ width: "80%" }}>
-                        <label>Product category:</label>
-                        <Input
-                          id="category"
-                          name="category"
-                          variant="standard"
-                          value={newCategory} // Use newCategory state to capture the inputted category
-                          onChange={(e) => {
-                            setNewCategory(e.target.value);
-                          }}
-                        />
-                        <br />
-                      </FormControl>
-                    </div>
-                  )}
-                  {category && <p>You selected {category}</p>}
+                  <label>Product category</label>
+                  <Input
+                    id="category"
+                    name="category"
+                    variant="standard"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                  />
                   <br />
                 </FormControl>
-                <br />
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>
@@ -323,52 +204,15 @@ export default function UpdateProduct() {
                 </FormControl>
               </div>
               <div>
-                <FormControl sx={{ width: "10%" }}>
-                  <label>Units</label>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select selectCate"
-                    value={unit}
-                    label="Unit"
-                    onChange={handleUnitChange}
-                  >
-                    {units.map((unitOptions) => (
-                      <MenuItem key={unitOptions} value={unitOptions}>
-                        {unitOptions}
-                        {unitOptions && (
-                          <IconButton
-                            sx={{}}
-                            onClick={() => {
-                              setUnits(units.filter((u) => u !== unitOptions));
-                              if (unit === unitOptions) {
-                                setUnit("");
-                              }
-                            }}
-                          >
-                            <Icon>close</Icon>
-                          </IconButton>
-                        )}
-                      </MenuItem>
-                    ))}
-                    <MenuItem value="add_new_unit">Add new unit</MenuItem>
-                  </Select>
-                  {showNewUnitInput && (
-                    <div>
-                      <FormControl sx={{ width: "80%" }}>
-                        <label>Product units:</label>
-                        <Input
-                          id="units"
-                          name="units"
-                          variant="standard"
-                          value={newUnit}
-                          onChange={(e) => {
-                            setNewUnit(e.target.value);
-                          }}
-                        />
-                        <br />
-                      </FormControl>
-                    </div>
-                  )}
+                <FormControl sx={{ width: "80%" }}>
+                  <label>Product unit</label>
+                  <Input
+                    id="unit"
+                    name="unit"
+                    variant="standard"
+                    value={formData.unit}
+                    onChange={handleInputChange}
+                  />
                   <br />
                 </FormControl>
               </div>

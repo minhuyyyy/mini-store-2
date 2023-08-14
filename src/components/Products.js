@@ -21,15 +21,18 @@ const ProductsPresentation = ({ filteredProducts, category }) => {
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
     setProducts(filtered);
-    setSearchTerm("");
   };
 
   useEffect(() => {
-    // Make sure filteredProducts is not undefined before setting the products state
     if (filteredProducts) {
-      setProducts(filteredProducts);
+      handleSearch();
     }
   }, [filteredProducts]);
+
+  const onInputChange = (event) => {
+    setSearchTerm(event.target.value);
+    handleSearch(); // Call handleSearch whenever input changes
+  };
 
   return (
     <>
@@ -45,10 +48,11 @@ const ProductsPresentation = ({ filteredProducts, category }) => {
         }}
         className="center"
         value={searchTerm}
+        disableUnderline={true}
         onKeyDown={(e) => {
           if (e.key === "Enter") handleSearch();
         }}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={onInputChange}
         endAdornment={
           <InputAdornment position="end">
             <IconButton onClick={handleSearch}>
@@ -72,7 +76,7 @@ const ProductsPresentation = ({ filteredProducts, category }) => {
             >
               <CardMedia
                 component="img"
-                image={product.img}
+                image={product.imageUrl}
                 style={{ flex: "1 0 auto", objectFit: "contain" }}
               />
               <Typography

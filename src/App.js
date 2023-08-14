@@ -27,6 +27,7 @@ import { useState } from "react";
 import ProductsPresentation from "./components/Home";
 import { memo } from "react";
 import RegisterWorkShift from "./pages/RegisterWorkShift";
+import CreateOrder from "./pages/CreateOrder";
 function App() {
   const [user, setUser] = useState(null);
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);
@@ -72,6 +73,7 @@ function App() {
           />
           <Route path="/viewsalary" element={<ViewSalary />} />
           <Route path="/workshift" element={<RegisterWorkShift />} />
+          <Route path="/createorder" element={<CreateOrder />} />
           <Route
             path="/changepassword/setnewpassword"
             element={<SetNewPassword />}

@@ -11,7 +11,7 @@ function Home() {
 
   useEffect(() => {
     // Fetch all products initially or when category changes
-    axios.get(`${env.REACT_APP_PRODUCT_DB_URL}`).then((response) => {
+    axios.get("http://vps.akabom.me/api/product").then((response) => {
       const data = response.data;
 
       // If a category is selected, filter products

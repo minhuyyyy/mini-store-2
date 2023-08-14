@@ -44,8 +44,8 @@ export default function ManageProductsPage() {
     { id: "price", label: "Price", maxWidth: 80 },
     { id: "stock", label: "Stock", maxWidth: 80 },
     { id: "unit", label: "Unit", maxWidth: 50 },
-    { id: "info", label: "Info", maxWidth: 130 },
-    { id: "action", label: "Actions", maxWidth: 100 },
+    { id: "info", label: "Info", maxWidth: 80 },
+    { id: "action", label: "Actions", maxWidth: 150 },
   ];
 
   const [page, setPage] = useState(0);
@@ -84,20 +84,11 @@ export default function ManageProductsPage() {
   const handleDelete = async (id) => {
     try {
       await axios
-        .put(`http://vps.akabom.me/api/product/${id}`, {
-          id: id,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          unit: product.unit,
-          category: product.category,
-          stock: product.stock,
-          isActive: false,
-        })
+        .delete(`http://vps.akabom.me/api/product/${id}`, {})
         .then((response) => {
           if (response.status == 200) {
             toast.success("Product deleted successfully");
+            window.location.reload();
           }
         });
     } catch (e) {
