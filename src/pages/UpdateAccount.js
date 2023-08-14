@@ -107,8 +107,10 @@ export default function UpdateAccount() {
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+-=";
     const charactersLength = 12;
     let counter = 0;
-    while (counter < charactersLength) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    while (counter <= charactersLength) {
+      result += characters.charAt(
+        Math.floor(Math.random() * 5 * charactersLength)
+      );
       counter += 1;
     }
     setPassword(result);

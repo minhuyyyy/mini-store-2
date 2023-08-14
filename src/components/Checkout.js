@@ -7,7 +7,7 @@ function Checkout({ cart }) {
 
   useEffect(() => {
     let totalAmount = 0;
-    selectedProducts.forEach((productId) => {
+    Object.keys(cart).forEach((productId) => {
       totalAmount += cart[productId].price * quantity[productId];
     });
     setAmount(totalAmount);
@@ -20,16 +20,12 @@ function Checkout({ cart }) {
     }));
   };
 
-  const selectedProducts = Object.keys(cart).filter((productId) =>
-    selectedProducts.includes(productId)
-  );
-
   return (
     <div>
       <p>
         <b>Receipt</b>
       </p>
-      {selectedProducts.map((productId) => (
+      {Object.keys(cart).map((productId) => (
         <div key={productId}>
           <p>
             <b>Description:</b>
