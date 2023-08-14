@@ -37,15 +37,15 @@ export default function ManageProductsPage() {
   }, []);
 
   const columns = [
-    { id: "id", label: "ID", minWidth: 30 },
-    { id: "name", label: "Name", minWidth: 130 },
-    { id: "image", label: "Image", minWidth: 130 },
-    { id: "category", label: "Category", minWidth: 160 },
-    { id: "price", label: "Price", minWidth: 100 },
-    { id: "stock", label: "Stock", minWidth: 100 },
-    { id: "unit", label: "Unit", minWidth: 50 },
-    { id: "info", label: "Info", minWidth: 130 },
-    { id: "action", label: "Actions", minWidth: 100 },
+    { id: "id", label: "ID", maxWidth: 30 },
+    { id: "name", label: "Name", maxWidth: 10 },
+    { id: "image", label: "Image", maxWidth: 10 },
+    { id: "category", label: "Category", maxWidth: 100 },
+    { id: "price", label: "Price", maxWidth: 80 },
+    { id: "stock", label: "Stock", maxWidth: 80 },
+    { id: "unit", label: "Unit", maxWidth: 50 },
+    { id: "info", label: "Info", maxWidth: 130 },
+    { id: "action", label: "Actions", maxWidth: 100 },
   ];
 
   const [page, setPage] = useState(0);
@@ -110,7 +110,7 @@ export default function ManageProductsPage() {
       {user ? (
         <>
           <div
-            className="container-fluid"
+            className="container"
             style={{
               backgroundColor: "#0A6EBD",
               color: "white",
@@ -144,17 +144,18 @@ export default function ManageProductsPage() {
               </Button>
             </Link>
           </div>
+
           <Paper
             sx={{
               overflow: "hidden",
               height: "100%",
               paddingTop: 3,
-              width: window.innerWidth,
             }}
           >
             <TableContainer
-              sx={{ height: window.innerHeight, width: window.innerWidth }}
+              sx={{ height: window.innerHeight }}
               ref={tableContainerRef}
+              className="container"
             >
               <Table>
                 <TableHead>
@@ -163,7 +164,7 @@ export default function ManageProductsPage() {
                       <TableCell
                         key={column.id}
                         align="left"
-                        style={{ minWidth: column.minWidth }}
+                        style={{ maxWidth: column.maxWidth }}
                       >
                         {column.label}
                         {column.id === "category" && (

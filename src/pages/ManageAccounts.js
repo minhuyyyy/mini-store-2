@@ -225,7 +225,7 @@ const ManageAccounts = () => {
         {currentUser.role === "Manager" ? (
           <>
             <div
-              className="container-fluid"
+              className="container"
               style={{
                 backgroundColor: "#0A6EBD",
                 color: "white",
