@@ -1,7 +1,4 @@
 node_modules
-npm-debug.log
 public
 build
-.git
 *.md
-.gitignore
