@@ -1,12 +1,10 @@
 import { Button, Grid } from "@mui/material";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Checkout from "../components/Checkout";
 
 function ShowSearchProducts({ filteredProducts }) {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({});
   const [selectedProducts, setSelectedProducts] = useState([]);
-
-  const addProductToCartRef = useRef({});
 
   const addToCart = (product) => {
     if (selectedProducts.includes(product.id)) {
@@ -14,11 +12,11 @@ function ShowSearchProducts({ filteredProducts }) {
     } else {
       setSelectedProducts([...selectedProducts, product.id]);
     }
-    setCart((prevCart) => [...prevCart, product]);
-    addProductToCartRef.current.disabled = true;
-    setTimeout(() => {
-      addProductToCartRef.current.disabled = false;
-    }, 1000);
+
+    setCart((prevCart) => ({
+      ...prevCart,
+      [product.id]: product,
+    }));
   };
 
   return (
@@ -74,14 +72,17 @@ function ShowSearchProducts({ filteredProducts }) {
                   >
                     Stock: {product.stock}
                   </p>
-                  <Button variant="contained" onClick={addToCart}>
+                  <Button
+                    variant="contained"
+                    onClick={() => addToCart(product)}
+                  >
                     Add to cart
                   </Button>
                 </div>
               </div>
             </Grid>
             <Grid item sm={6} md={6} lg={6}>
-              {cart.length > 0 && (
+              {selectedProducts.length > 0 && (
                 <Checkout cart={cart} selectedProducts={selectedProducts} />
               )}
             </Grid>

@@ -5,6 +5,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import ShowSearchProducts from "./ShowSearchProducts";
+import Checkout from "../components/Checkout";
 
 function CreateOrder() {
   const [products, setProducts] = useState([]);

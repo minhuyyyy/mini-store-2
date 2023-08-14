@@ -1,46 +1,54 @@
 import { Input } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-function Checkout({ cart, selectedProducts }) {
-  const products = cart.filter((product) =>
-    selectedProducts.includes(product.id)
-  );
-  const [quantity, setQuantity] = useState(1);
+function Checkout({ cart }) {
+  const [quantity, setQuantity] = useState({});
   const [amount, setAmount] = useState(0);
 
   useEffect(() => {
-    setAmount(products.reduce((acc, product) => acc + product.price * quantity, 0));
-  }, [products, quantity]);
+    let totalAmount = 0;
+    selectedProducts.forEach((productId) => {
+      totalAmount += cart[productId].price * quantity[productId];
+    });
+    setAmount(totalAmount);
+  }, [cart, quantity]);
 
-  const handleInputChange = (e) => {
-    setQuantity(e.target.value);
-    setAmount(products.reduce((acc, product) => acc + product.price * quantity, 0));
+  const handleInputChange = (e, productId) => {
+    setQuantity((prevQuantity) => ({
+      ...prevQuantity,
+      [productId]: e.target.value,
+    }));
   };
+
+  const selectedProducts = Object.keys(cart).filter((productId) =>
+    selectedProducts.includes(productId)
+  );
 
   return (
     <div>
       <p>
         <b>Receipt</b>
       </p>
-      {products.map((product) => (
-        <span key={product.id}>
-          Description:
+      {selectedProducts.map((productId) => (
+        <div key={productId}>
           <p>
-            {product.id}: {product.name}
+            <b>Description:</b>
           </p>
-          <span>{product.price}</span>
+          <p>
+            {productId}: {cart[productId].name}
+          </p>
+          <p>Price: {cart[productId].price}</p>
           <Input
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange(e, productId)}
             disableUnderline={true}
-            value={quantity}
+            value={quantity[productId] || ""}
           >
-            {quantity}
+            Quantity:
           </Input>
-        </span>
+        </div>
       ))}
-
       <p>Total amount: {amount}</p>
-      <p>Cash:</p>
+      <p>Cash: {amount}</p>
       <p>Change</p>
     </div>
   );

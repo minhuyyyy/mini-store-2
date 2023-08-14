@@ -185,6 +185,25 @@ export default function Navigation() {
             >
               <span>Check Attendance</span>
             </Button>
+            <Button
+              key={"Create Order"}
+              onClick={() => {
+                navigate("createorder");
+                document.title = "Create Order";
+              }}
+              style={
+                activeLink === "/createorder"
+                  ? { ...navLinkStyle, ...activeLinkStyle }
+                  : { ...navLinkStyle }
+              }
+              sx={{
+                color: "white",
+                padding: "0px 10px",
+                height: "30px",
+              }}
+            >
+              <span>Create Order</span>
+            </Button>
           </Box>
           {user ? (
             <>
@@ -244,9 +263,7 @@ export default function Navigation() {
                       to="/workshift"
                       style={{ textDecoration: "none", color: "#D4B887" }}
                     >
-                      <MenuItem>
-                        Register Work Shift
-                      </MenuItem>
+                      <MenuItem>Register Work Shift</MenuItem>
                     </Link>
                   ) : (
                     <></>
