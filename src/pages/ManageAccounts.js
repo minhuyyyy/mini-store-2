@@ -24,9 +24,7 @@ import {
   styled,
   alpha,
 } from "@mui/material/styles";
-import { Icon } from "react-materialize";
 import { KeyboardArrowDownOutlined, Translate } from "@mui/icons-material";
-import env from "react-dotenv";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
@@ -203,6 +201,20 @@ const ManageAccounts = () => {
     setPage(0);
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios
+        .delete(`http://vps.akabom.me/api/account/${id}`, {})
+        .then((response) => {
+          if (response.status == 200) {
+            toast.success("Account deleted successfully");
+          }
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const filteredAccounts = data
     .filter((account) => selectedRole === "" || account.role === selectedRole)
     .filter(
@@ -225,7 +237,7 @@ const ManageAccounts = () => {
         {currentUser.role === "Manager" ? (
           <>
             <div
-              className="container-fluid"
+              className="container"
               style={{
                 backgroundColor: "#0A6EBD",
                 color: "white",
@@ -437,17 +449,17 @@ const ManageAccounts = () => {
                                       Update
                                     </Button>
                                   </Link>
-                                  <Link to={`/manageaccounts/delete/${row.id}`}>
-                                    <Button
-                                      className="btn"
-                                      style={{
-                                        backgroundColor: "red",
-                                        color: "white",
-                                      }}
-                                    >
-                                      Delete
-                                    </Button>
-                                  </Link>
+                                  +{" "}
+                                  <Button
+                                    className="btn"
+                                    style={{
+                                      backgroundColor: "red",
+                                      color: "white",
+                                    }}
+                                    onClick={() => handleDelete(row.id)}
+                                  >
+                                    Delete
+                                  </Button>
                                 </TableCell>
                               );
                             }

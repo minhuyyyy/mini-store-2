@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const ProductsPresentation = ({ filteredProducts, category }) => {
+const ProductsPresentation = ({ filteredProducts }) => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 

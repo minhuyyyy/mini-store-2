@@ -22,7 +22,6 @@ import {
   writeBatch,
   arrayUnion,
 } from "firebase/firestore";
-import { db } from "../db/dbConfig";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import env from "react-dotenv";
@@ -70,59 +69,9 @@ function RegisterWorkShiftForm() {
     OT: 0,
   });
 
-  const getData = async () => {
-    const q = query(
-      collection(db, `${env.REACT_APP_USER_DB_URL}`),
-      where("ID", "==", ID)
-    );
-    const snapshot = await getDocs(q);
-    snapshot.forEach((doc) => {
-      setDocID(doc.id);
-      const newData = doc.data();
-      setOT(newData.OT);
-      setFormData({
-        workHours: newData.workHours,
-        OT: newData.OT,
-      });
-    });
-  };
+  const getData = async () => {};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await getData();
-    const userDocRef = doc(db, `${env.REACT_APP_USER_DB_URL}/${docID}`);
-
-    if (formData.OT < 0) {
-      alert("Overtime hours must be non-negative");
-      return;
-    }
-
-    const startTime = parseInt(selectedTime.split("-")[0]);
-    const endTime = parseInt(selectedTime.split("-")[1]);
-
-    const workHours = endTime - startTime;
-
-    if (isNaN(workHours)) {
-      alert("Invalid time format");
-      return;
-    }
-
-    try {
-      const batch = writeBatch(db);
-      batch.update(userDocRef, {
-        workHours: workHours + formData.workHours,
-        OT: Number(formData.OT) + Number(OT),
-        workDays: arrayUnion(now.toDateString()),
-      });
-      await batch.commit();
-      toast.success(
-        "Work shift regitered successfully. Wait for manager's confirmation"
-      );
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const handleSubmit = async (e) => {};
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -206,7 +155,7 @@ function RegisterWorkShift() {
                 transform: "translate(20%, -50%)",
               }}
             >
-              <Calendar />  
+              <Calendar />
             </Card>
           </Grid>
         </>

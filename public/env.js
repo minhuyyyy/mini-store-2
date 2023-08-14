@@ -5,7 +5,7 @@ window.env = {
   "APPDATA": "C:\\Users\\Minh Huy\\AppData\\Roaming",
   "ChocolateyInstall": "C:\\ProgramData\\chocolatey",
   "ChocolateyLastPathUpdate": "133178909588366654",
-  "CHROME_CRASHPAD_PIPE_NAME": "\\\\.\\pipe\\LOCAL\\crashpad_19320_IOYCGEANMEJKWUEB",
+  "CHROME_CRASHPAD_PIPE_NAME": "\\\\.\\pipe\\LOCAL\\crashpad_102748_WXTVMGBROPBDXACC",
   "COLOR": "1",
   "COLORTERM": "truecolor",
   "CommonProgramFiles": "C:\\Program Files\\Common Files",
@@ -15,6 +15,8 @@ window.env = {
   "ComSpec": "C:\\Windows\\system32\\cmd.exe",
   "DriverData": "C:\\Windows\\System32\\Drivers\\DriverData",
   "EDITOR": "notepad.exe",
+  "FPS_BROWSER_APP_PROFILE_STRING": "Internet Explorer",
+  "FPS_BROWSER_USER_PROFILE_STRING": "Default",
   "GIT_ASKPASS": "c:\\Program Files\\Microsoft VS Code\\resources\\app\\extensions\\git\\dist\\askpass.sh",
   "HOME": "C:\\Users\\Minh Huy",
   "HOMEDRIVE": "C:",
@@ -88,8 +90,5 @@ window.env = {
   "VSCODE_GIT_IPC_HANDLE": "\\\\.\\pipe\\vscode-git-bd192381fd-sock",
   "VSCODE_INJECTION": "1",
   "windir": "C:\\Windows",
-  "WSLENV": "WT_SESSION::WT_PROFILE_ID",
-  "WT_PROFILE_ID": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
-  "WT_SESSION": "ac9c9178-dc38-4b6a-bbb2-3ad4982c7ea7",
   "ZES_ENABLE_SYSMAN": "1"
 };

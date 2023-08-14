@@ -17,7 +17,6 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { db } from "../db/dbConfig";
 import env from "react-dotenv";
 export default function SetNewPassword() {
   const [input, setInput] = useState({
@@ -99,36 +98,9 @@ export default function SetNewPassword() {
     });
   };
 
-  const getData = async () => {
-    const q = query(
-      collection(db, `${env.REACT_APP_USER_DB_URL}`),
-      where("ID", "==", uid)
-    );
-    const snapshot = await getDocs(q);
-    snapshot.forEach((doc) => {
-      const newData = doc.data();
-      console.log(newData);
-      setDocID(doc.id);
-      console.log(docID);
-    });
-  };
+  const getData = async () => {};
 
-  const handleUpdate = async () => {
-    await getData();
-    const userDocRef = doc(db, `${env.REACT_APP_USER_DB_URL}/${docID}`);
-    try {
-      const batch = writeBatch(db);
-      batch.update(userDocRef, {
-        password: input.confirmPassword,
-      });
-      await batch.commit();
-      sessionStorage.clear();
-      toast.success("Password updated successfully");
-      navigate("/login");
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const handleUpdate = async () => {};
 
   return (
     <div

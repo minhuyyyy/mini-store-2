@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, FormControl, ThemeProvider } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { db } from "../db/dbConfig";
 import {
   collection,
   query,
@@ -66,47 +65,9 @@ export default function UpdateProfile() {
     }));
   };
 
-  const getData = async () => {
-    const q = query(
-      collection(db, `${env.REACT_APP_USER_DB_URL}`),
-      where("ID", "==", uid)
-    );
-    const snapshot = await getDocs(q);
-    snapshot.forEach((doc) => {
-      const newData = doc.data();
-      setImageUrl(newData.img);
-      setFormData({
-        img: newData.img,
-        email: newData.email,
-        name: newData.name,
-      });
-      setDocID(doc.id);
-    });
-  };
+  const getData = async () => {};
 
-  const handleUpdate = async () => {
-    await getData();
-    const userDocRef = doc(db, `${env.REACT_APP_USER_DB_URL}/${docID}`);
-    try {
-      const batch = writeBatch(db);
-      batch.update(userDocRef, {
-        img: imageUrl,
-        email: formData.email,
-        name: formData.name,
-      });
-      setFormData({
-        img: "",
-        email: "",
-        name: "",
-      });
-      setImageUrl("");
-      await batch.commit();
-      toast.success("Profile updated successfully");
-      navigate("/viewprofile");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const handleUpdate = async () => {};
 
   return (
     <ThemeProvider theme={theme}>
