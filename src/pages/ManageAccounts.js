@@ -448,8 +448,7 @@ const ManageAccounts = () => {
                                     >
                                       Update
                                     </Button>
-                                  </Link>
-                                  +{" "}
+                                  </Link>{" "}
                                   <Button
                                     className="btn"
                                     style={{

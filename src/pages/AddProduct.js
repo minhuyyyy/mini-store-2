@@ -29,7 +29,12 @@ export default function UpdateProduct() {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setImageUrl(await getImageLink(file));
+      // setImageUrl(await getImageLink(file));
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
     } else {
       setImage(null);
       setImageUrl("");
@@ -50,10 +55,10 @@ export default function UpdateProduct() {
       let updatedFormData = formData;
       // Upload image and update form data if an image is selected
       if (image) {
-        const file = image;
-        const storageRef = ref(storage, `product/images/${file.name}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
+        // const storageRef = ref(storage, `product/images/${file.name}`);
+        // const snapshot = await uploadBytes(storageRef, file);
+        // const downloadURL = await getDownloadURL(snapshot.ref);
+        const downloadURL = imageUrl;
         updatedFormData = { ...formData, imageUrl: downloadURL };
       }
       // Update the product with the updated form data

@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Box, Button, Card, TextField, Typography } from "@mui/material";
-import "../App.css";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../db/dbConfig";
+import "../App.css";import { db } from "../db/dbConfig";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import setItem from "../hooks/useSessionStorage";
 import useSessionStorage from "../hooks/useSessionStorage";
 import axios from "axios";
 import { toast } from "react-toastify";
+
 export default function LoginPage() {
   const { user, setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
