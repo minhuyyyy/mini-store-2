@@ -9,6 +9,7 @@ const firebaseConfig = {
   storageBucket: "lunar-parsec-392805.appspot.com",
   messagingSenderId: "913421392005",
   appId: "1:913421392005:web:4e868b0a29000f0e6f71ec",
+  region: "us-central1",
 };
 
 // Initialize Firebase
