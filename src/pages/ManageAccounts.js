@@ -231,283 +231,288 @@ const ManageAccounts = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ color: "black" }}>
-        {currentUser.role === "Manager" ? (
-          <>
-            <div
-              className="container"
-              style={{
-                backgroundColor: "#0A6EBD",
-                color: "white",
-                height: 70,
-                position: "relative",
-              }}
-            >
-              <h2
-                className="right content"
+      <div style={{ backgroundColor: "#d3d3d3" }}>
+        <div style={{ color: "black" }} className="container">
+          {currentUser.role === "Manager" ? (
+            <>
+              <div
                 style={{
-                  position: "absolute",
-                  margin: 0,
-                  top: "50%",
-                  transform: `translate(0%, -50%)`,
+                  backgroundColor: "#0A6EBD",
+                  color: "white",
+                  height: 70,
+                  position: "relative",
+                  width: "100%",
                 }}
               >
-                Manage Accounts
-              </h2>
-              <Link to={"add"}>
-                <Button
+                <h2
+                  className="right content"
                   style={{
                     position: "absolute",
                     margin: 0,
                     top: "50%",
-                    transform: `translate(300%, -50%)`,
-                    backgroundColor: "#fff",
+                    transform: `translate(0%, -50%)`,
                   }}
                 >
-                  Add account
-                </Button>
-              </Link>
-            </div>
-            <div className="container" style={{ width: "100%" }}>
-              <Paper
-                sx={{
-                  overflow: "hidden",
-                  height: "100%",
-                  paddingTop: 3,
-                }}
-              >
-                <TableContainer sx={{ height: "100%" }} ref={tableContainerRef}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        {columns.map((column) => (
-                          <TableCell key={column.id} align="left">
-                            {column.label}
-                            {column.id === "isActive" && (
-                              <>
-                                <Button
-                                  id="active-filter-button"
-                                  aria-controls={"active-filter-menu"}
-                                  aria-haspopup="true"
-                                  aria-expanded={
-                                    activeMenuOpen ? "true" : undefined
-                                  }
-                                  style={{
-                                    height: 20,
-                                    width: 20,
-                                    padding: 0,
-                                    marginLeft: 0,
-                                    borderRadius: "50%",
-                                  }}
-                                  className="right"
-                                  disableElevation
-                                  onClick={(event) => {
-                                    setAnchorEl(event.currentTarget);
-                                    setActiveMenuOpen(true);
-                                    setRoleMenuOpen(false); // Close the role menu if it's open
-                                  }}
-                                  endIcon={<KeyboardArrowDownOutlined />}
-                                />
-                                <StyledMenu
-                                  id="active-filter-menu"
-                                  MenuListProps={{
-                                    "aria-labelledby": "active-filter-button",
-                                  }}
-                                  anchorEl={anchorEl}
-                                  open={activeMenuOpen}
-                                  onClose={() => setActiveMenuOpen(false)} // Close the menu when clicking outside
-                                >
-                                  <MenuItem onClick={fetchData} disableRipple>
-                                    All
-                                  </MenuItem>
-                                  <MenuItem
-                                    value={"true"}
-                                    onClick={queryTrue}
-                                    disableRipple
-                                  >
-                                    Yes
-                                  </MenuItem>
-                                  <MenuItem onClick={queryFalse} disableRipple>
-                                    No
-                                  </MenuItem>
-                                </StyledMenu>
-                              </>
-                            )}
-
-                            {column.id === "role" && (
-                              <>
-                                <Button
-                                  id="role-filter-button"
-                                  aria-controls={"role-filter-menu"}
-                                  aria-haspopup="true"
-                                  aria-expanded={
-                                    roleMenuOpen ? "true" : undefined
-                                  }
-                                  style={{
-                                    height: 20,
-                                    width: 20,
-                                    padding: 0,
-                                    marginLeft: 0,
-                                    borderRadius: "50%",
-                                  }}
-                                  className="right"
-                                  disableElevation
-                                  onClick={(event) => {
-                                    setAnchorEl(event.currentTarget);
-                                    setRoleMenuOpen(true);
-                                    setActiveMenuOpen(false); // Close the active menu if it's open
-                                  }}
-                                  endIcon={<KeyboardArrowDownOutlined />}
-                                />
-                                <Menu
-                                  id="role-filter-menu"
-                                  anchorEl={anchorEl}
-                                  open={roleMenuOpen}
-                                  onClose={() => setRoleMenuOpen(false)}
-                                >
-                                  <MenuItem
-                                    key="all"
-                                    onClick={() => {
-                                      setSelectedRole("");
-                                      setRoleMenuOpen(false);
-                                      setAnchorEl(null);
+                  Manage Accounts
+                </h2>
+                <Link to={"add"}>
+                  <Button
+                    style={{
+                      position: "absolute",
+                      margin: 0,
+                      top: "50%",
+                      transform: `translate(300%, -50%)`,
+                      backgroundColor: "#fff",
+                    }}
+                  >
+                    Add account
+                  </Button>
+                </Link>
+              </div>
+              <div style={{ width: "100%" }}>
+                <Paper
+                  sx={{
+                    overflow: "hidden",
+                    height: "100%",
+                    paddingTop: 3,
+                  }}
+                >
+                  <TableContainer
+                    sx={{ height: "100%" }}
+                    ref={tableContainerRef}
+                  >
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          {columns.map((column) => (
+                            <TableCell key={column.id} align="left">
+                              {column.label}
+                              {column.id === "isActive" && (
+                                <>
+                                  <Button
+                                    id="active-filter-button"
+                                    aria-controls={"active-filter-menu"}
+                                    aria-haspopup="true"
+                                    aria-expanded={
+                                      activeMenuOpen ? "true" : undefined
+                                    }
+                                    style={{
+                                      height: 20,
+                                      width: 20,
+                                      padding: 0,
+                                      marginLeft: 0,
+                                      borderRadius: "50%",
                                     }}
+                                    className="right"
+                                    disableElevation
+                                    onClick={(event) => {
+                                      setAnchorEl(event.currentTarget);
+                                      setActiveMenuOpen(true);
+                                      setRoleMenuOpen(false); // Close the role menu if it's open
+                                    }}
+                                    endIcon={<KeyboardArrowDownOutlined />}
+                                  />
+                                  <StyledMenu
+                                    id="active-filter-menu"
+                                    MenuListProps={{
+                                      "aria-labelledby": "active-filter-button",
+                                    }}
+                                    anchorEl={anchorEl}
+                                    open={activeMenuOpen}
+                                    onClose={() => setActiveMenuOpen(false)} // Close the menu when clicking outside
                                   >
-                                    All
-                                  </MenuItem>
-                                  {roles.map((role) => (
+                                    <MenuItem onClick={fetchData} disableRipple>
+                                      All
+                                    </MenuItem>
                                     <MenuItem
-                                      key={role}
-                                      value={role}
+                                      value={"true"}
+                                      onClick={queryTrue}
+                                      disableRipple
+                                    >
+                                      Yes
+                                    </MenuItem>
+                                    <MenuItem
+                                      onClick={queryFalse}
+                                      disableRipple
+                                    >
+                                      No
+                                    </MenuItem>
+                                  </StyledMenu>
+                                </>
+                              )}
+
+                              {column.id === "role" && (
+                                <>
+                                  <Button
+                                    id="role-filter-button"
+                                    aria-controls={"role-filter-menu"}
+                                    aria-haspopup="true"
+                                    aria-expanded={
+                                      roleMenuOpen ? "true" : undefined
+                                    }
+                                    style={{
+                                      height: 20,
+                                      width: 20,
+                                      padding: 0,
+                                      marginLeft: 0,
+                                      borderRadius: "50%",
+                                    }}
+                                    className="right"
+                                    disableElevation
+                                    onClick={(event) => {
+                                      setAnchorEl(event.currentTarget);
+                                      setRoleMenuOpen(true);
+                                      setActiveMenuOpen(false); // Close the active menu if it's open
+                                    }}
+                                    endIcon={<KeyboardArrowDownOutlined />}
+                                  />
+                                  <Menu
+                                    id="role-filter-menu"
+                                    anchorEl={anchorEl}
+                                    open={roleMenuOpen}
+                                    onClose={() => setRoleMenuOpen(false)}
+                                  >
+                                    <MenuItem
+                                      key="all"
                                       onClick={() => {
-                                        handleRoleFilterChange(role);
+                                        setSelectedRole("");
                                         setRoleMenuOpen(false);
                                         setAnchorEl(null);
                                       }}
                                     >
-                                      {role}
+                                      All
                                     </MenuItem>
-                                  ))}
-                                </Menu>
-                              </>
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rows
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((row) => (
-                          <TableRow
-                            hover
-                            role="checkbox"
-                            tabIndex={-1}
-                            key={row.id}
-                            className="center"
-                          >
-                            {columns.map((column) => {
-                              const value = row[column.id];
-                              if (column.id === "imgUrl") {
-                                return (
-                                  <TableCell key={column.id} align="left">
-                                    <img
-                                      src={value}
-                                      alt={row.name}
-                                      style={{ width: "100px", height: "auto" }}
-                                    />
-                                  </TableCell>
-                                );
-                              }
-                              if (column.id === "isActive") {
-                                return (
-                                  <TableCell key={column.id} align="left">
-                                    {value ? "Yes" : "No"}
-                                  </TableCell>
-                                );
-                              }
-                              if (column.id === "action") {
-                                return (
-                                  <TableCell key={column.id} align="left">
-                                    <Link
-                                      to={`/manageaccounts/update/${row.id}`}
-                                    >
+                                    {roles.map((role) => (
+                                      <MenuItem
+                                        key={role}
+                                        value={role}
+                                        onClick={() => {
+                                          handleRoleFilterChange(role);
+                                          setRoleMenuOpen(false);
+                                          setAnchorEl(null);
+                                        }}
+                                      >
+                                        {role}
+                                      </MenuItem>
+                                    ))}
+                                  </Menu>
+                                </>
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                          .map((row) => (
+                            <TableRow
+                              hover
+                              role="checkbox"
+                              tabIndex={-1}
+                              key={row.id}
+                              className="center"
+                            >
+                              {columns.map((column) => {
+                                const value = row[column.id];
+                                if (column.id === "imgUrl") {
+                                  return (
+                                    <TableCell key={column.id} align="left">
+                                      <img
+                                        src={value}
+                                        alt={row.name}
+                                        style={{
+                                          width: "100px",
+                                          height: "auto",
+                                        }}
+                                      />
+                                    </TableCell>
+                                  );
+                                }
+                                if (column.id === "isActive") {
+                                  return (
+                                    <TableCell key={column.id} align="left">
+                                      {value ? "Yes" : "No"}
+                                    </TableCell>
+                                  );
+                                }
+                                if (column.id === "action") {
+                                  return (
+                                    <TableCell key={column.id} align="left">
+                                      <Link
+                                        to={`/manageaccounts/update/${row.id}`}
+                                      >
+                                        <Button
+                                          className="btn"
+                                          style={{
+                                            backgroundColor: "blue",
+                                            color: "white",
+                                          }}
+                                        >
+                                          Update
+                                        </Button>
+                                      </Link>{" "}
                                       <Button
                                         className="btn"
                                         style={{
-                                          backgroundColor: "blue",
+                                          backgroundColor: "red",
                                           color: "white",
-                                          marginRight: 10,
                                         }}
+                                        onClick={() => handleDelete(row.id)}
                                       >
-                                        Update
+                                        Delete
                                       </Button>
-                                    </Link>
-                                    <Button
-                                      className="btn"
-                                      style={{
-                                        backgroundColor: "red",
-                                        color: "white",
-                                      }}
-                                      onClick={() => handleDelete(row.id)}
-                                    >
-                                      Delete
-                                    </Button>
-                                  </Link>{" "}
-                                  <Button
-                                    className="btn"
-                                    style={{
-                                      backgroundColor: "red",
-                                      color: "white",
-                                    }}
-                                    onClick={() => handleDelete(row.id)}
-                                  >
-                                    Delete
-                                  </Button>
-                                </TableCell>
-                              );
-                            })}
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                  <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={filteredAccounts.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    style={{ paddingBottom: 50 }}
-                  />
-                </TableContainer>
-                {showTop && (
-                  <Button
-                    style={{
-                      position: "fixed",
-                      bottom: 40,
-                      right: 20,
-                      borderRadius: "50%",
-                      backgroundColor: "darkblue",
-                      color: "white",
-                      width: 50,
-                      height: 50,
-                    }}
-                    onClick={handleScrollToTop}
-                  >
-                    <KeyboardArrowUpIcon />
-                  </Button>
-                )}
-              </Paper>
-            </div>
-          </>
-        ) : (
-          <h2 style={{ transform: "translate(30%, 300%)" }}>{msg}</h2>
-        )}
+                                    </TableCell>
+                                  );
+                                }
+                                return (
+                                  <TableCell key={column.id} align="left">
+                                    {value}
+                                  </TableCell>
+                                );
+                              })}
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                    <TablePagination
+                      rowsPerPageOptions={[10, 25, 100]}
+                      component="div"
+                      count={filteredAccounts.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                      style={{ paddingBottom: 50 }}
+                    />
+                  </TableContainer>
+                  {showTop && (
+                    <Button
+                      style={{
+                        position: "fixed",
+                        bottom: 40,
+                        right: 20,
+                        borderRadius: "50%",
+                        backgroundColor: "darkblue",
+                        color: "white",
+                        width: 50,
+                        height: 50,
+                      }}
+                      onClick={handleScrollToTop}
+                    >
+                      <KeyboardArrowUpIcon />
+                    </Button>
+                  )}
+                </Paper>
+              </div>
+            </>
+          ) : (
+            <h2 style={{ transform: "translate(30%, 300%)" }}>{msg}</h2>
+          )}
+        </div>
       </div>
     </ThemeProvider>
   );

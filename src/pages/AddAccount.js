@@ -40,14 +40,16 @@ export default function AddAccount() {
   };
 
   const handleAddPhoto = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImageUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+    try {
+      const file = e.target.files[0];
+      if (file) {
+        setImage(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImageUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
     } catch (e) {
       console.log(e);
     }

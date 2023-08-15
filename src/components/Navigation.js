@@ -167,10 +167,10 @@ export default function Navigation() {
               <span>About Us</span>
             </Button>
             <Button
-              key={"Check Attendance"}
+              key={"Check In"}
               onClick={() => {
                 navigate("checkattendance");
-                document.title = "Check Attendance";
+                document.title = "Check In";
               }}
               style={
                 activeLink === "/checkattendance"
@@ -183,7 +183,7 @@ export default function Navigation() {
                 height: "30px",
               }}
             >
-              <span>Check Attendance</span>
+              <span>Check In</span>
             </Button>
             <Button
               key={"Create Order"}

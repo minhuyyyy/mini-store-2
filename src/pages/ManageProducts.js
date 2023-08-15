@@ -77,7 +77,7 @@ export default function ManageProductsPage() {
     { id: "category", label: "Category", minWidth: 160 },
     { id: "price", label: "Price", minWidth: 100 },
     { id: "stock", label: "Stock", minWidth: 100 },
-    { id: "unit", label: "Unit", minWidth: 50 },
+    { id: "unit", label: "Unit", minWidth: 80 },
     { id: "info", label: "Info", minWidth: 130 },
     { id: "action", label: "Actions", minWidth: 100 },
   ];
@@ -140,235 +140,241 @@ export default function ManageProductsPage() {
   };
 
   return (
-    <div style={{ color: "black", width: "100%" }}>
-      {user ? (
-        <>
-          <div
-            className="container"
-            style={{
-              backgroundColor: "#0A6EBD",
-              color: "white",
-              height: 70,
-              position: "relative",
-            }}
-          >
-            <h2
-              className="right content"
+    <div style={{ backgroundColor: "#d3d3d3" }}>
+      <div style={{ color: "black" }} className="container">
+        {user ? (
+          <>
+            <div
+              // className="container"
               style={{
-                position: "absolute",
-                margin: 0,
-                top: "50%",
-                transform: `translate(0%, -50%)`,
+                backgroundColor: "#0A6EBD",
+                color: "white",
+                height: 70,
+                position: "relative",
+                width: "100%",
               }}
             >
-              Manage Products
-            </h2>
-            <Link to={"add"}>
-              <Button
+              <h2
+                className="right content"
                 style={{
                   position: "absolute",
                   margin: 0,
                   top: "50%",
-                  transform: `translate(300%, -50%)`,
-                  backgroundColor: "#fff",
+                  transform: `translate(0%, -50%)`,
                 }}
               >
-                Add product
-              </Button>
-            </Link>
-            <div>
-              <Input
-                id="search"
-                placeholder="Search products: (Enter ID)"
-                sx={{
-                  transform: "translate(400%,15px)",
-                  backgroundColor: "whitesmoke",
-                  height: 30,
-                }}
-                value={searchTerm}
-                // disableUnderline={true}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSearch();
-                }}
-                onChange={onInputChange}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton onClick={handleSearch}>
-                      <SearchOutlined />
-                    </IconButton>
-                  </InputAdornment>
-                }
-              ></Input>
+                Manage Products
+              </h2>
+              <Link to={"add"}>
+                <Button
+                  style={{
+                    position: "absolute",
+                    margin: 0,
+                    top: "50%",
+                    transform: `translate(300%, -50%)`,
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  Add product
+                </Button>
+              </Link>
+              <div>
+                <Input
+                  id="search"
+                  placeholder="Search products: (Enter ID)"
+                  sx={{
+                    transform: "translate(400%,15px)",
+                    backgroundColor: "whitesmoke",
+                    height: 30,
+                  }}
+                  value={searchTerm}
+                  // disableUnderline={true}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSearch();
+                  }}
+                  onChange={onInputChange}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleSearch}>
+                        <SearchOutlined />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                ></Input>
+              </div>
             </div>
-          </div>
-          <div className="container" style={{ width: "100%" }}>
-            <Paper
-              sx={{
-                overflow: "hidden",
-                height: "100%",
-                paddingTop: 3,
-              }}
-            >
-              <TableContainer
-                sx={{ height: window.innerHeight }}
-                ref={tableContainerRef}
+            <div style={{ width: "100%" }}>
+              <Paper
+                sx={{
+                  overflow: "hidden",
+                  height: "100%",
+                  paddingTop: 3,
+                }}
               >
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      {columns.map((column) => (
-                        <TableCell
-                          key={column.id}
-                          align="left"
-                          style={{
-                            minWidth: column.minWidth,
-                          }}
-                        >
-                          {column.label}
-                          {column.id === "category" && (
-                            <>
-                              <Button
-                                id="category-filter-button"
-                                aria-controls={"category-filter-menu"}
-                                aria-haspopup="true"
-                                aria-expanded={
-                                  categoryMenuOpen ? "true" : undefined
-                                }
-                                style={{
-                                  height: 20,
-                                  width: 20,
-                                  padding: 0,
-                                  marginLeft: 0,
-                                  borderRadius: "50%",
-                                }}
-                                className="right"
-                                disableElevation
-                                onClick={(event) => {
-                                  setAnchorEl(event.currentTarget);
-                                  setCategoryMenuOpen(true);
-                                }}
-                                endIcon={<KeyboardArrowDownOutlined />}
-                              />
-                              <Menu
-                                id="category-filter-menu"
-                                anchorEl={anchorEl}
-                                open={categoryMenuOpen}
-                                onClose={() => setCategoryMenuOpen(false)}
-                              >
-                                <MenuItem
-                                  key="all"
-                                  onClick={() => {
-                                    setSelectedCategory("");
-                                    setCategoryMenuOpen(false);
-                                    setAnchorEl(null);
+                <TableContainer
+                  sx={{ height: window.innerHeight }}
+                  ref={tableContainerRef}
+                >
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        {columns.map((column) => (
+                          <TableCell
+                            key={column.id}
+                            align="left"
+                            style={{
+                              minWidth: column.minWidth,
+                            }}
+                          >
+                            {column.label}
+                            {column.id === "category" && (
+                              <>
+                                <Button
+                                  id="category-filter-button"
+                                  aria-controls={"category-filter-menu"}
+                                  aria-haspopup="true"
+                                  aria-expanded={
+                                    categoryMenuOpen ? "true" : undefined
+                                  }
+                                  style={{
+                                    height: 20,
+                                    width: 20,
+                                    padding: 0,
+                                    marginLeft: 0,
+                                    borderRadius: "50%",
                                   }}
+                                  className="right"
+                                  disableElevation
+                                  onClick={(event) => {
+                                    setAnchorEl(event.currentTarget);
+                                    setCategoryMenuOpen(true);
+                                  }}
+                                  endIcon={<KeyboardArrowDownOutlined />}
+                                />
+                                <Menu
+                                  id="category-filter-menu"
+                                  anchorEl={anchorEl}
+                                  open={categoryMenuOpen}
+                                  onClose={() => setCategoryMenuOpen(false)}
                                 >
-                                  All
-                                </MenuItem>
-                                {categories.map((category) => (
                                   <MenuItem
-                                    key={category}
-                                    value={category}
+                                    key="all"
                                     onClick={() => {
-                                      handleCategoryChange(category);
+                                      setSelectedCategory("");
                                       setCategoryMenuOpen(false);
                                       setAnchorEl(null);
                                     }}
                                   >
-                                    {category}
+                                    All
                                   </MenuItem>
-                                ))}
-                              </Menu>
-                            </>
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((row) => {
-                        return (
-                          <TableRow
-                            hover
-                            role="checkbox"
-                            tabIndex={-1}
-                            key={row.id}
-                          >
-                            {columns.map((column) => {
-                              const value = row[column.id];
-                              if (column.id === "image") {
-                                return (
-                                  <TableCell key={column.id} align="left">
-                                    <img
-                                      src={value}
-                                      alt={row.name}
-                                      style={{ width: "100px", height: "auto" }}
-                                    />
-                                  </TableCell>
-                                );
-                              }
-                              if (column.id === "action") {
-                                return (
-                                  <TableCell key={column.id} align="left">
-                                    <Link
-                                      to={`/manageproducts/update/${row.id}`}
+                                  {categories.map((category) => (
+                                    <MenuItem
+                                      key={category}
+                                      value={category}
+                                      onClick={() => {
+                                        handleCategoryChange(category);
+                                        setCategoryMenuOpen(false);
+                                        setAnchorEl(null);
+                                      }}
                                     >
+                                      {category}
+                                    </MenuItem>
+                                  ))}
+                                </Menu>
+                              </>
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {rows
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((row) => {
+                          return (
+                            <TableRow
+                              hover
+                              role="checkbox"
+                              tabIndex={-1}
+                              key={row.id}
+                            >
+                              {columns.map((column) => {
+                                const value = row[column.id];
+                                if (column.id === "image") {
+                                  return (
+                                    <TableCell key={column.id} align="left">
+                                      <img
+                                        src={value}
+                                        alt={row.name}
+                                        style={{
+                                          width: "100px",
+                                          height: "auto",
+                                        }}
+                                      />
+                                    </TableCell>
+                                  );
+                                }
+                                if (column.id === "action") {
+                                  return (
+                                    <TableCell key={column.id} align="left">
+                                      <Link
+                                        to={`/manageproducts/update/${row.id}`}
+                                      >
+                                        <Button
+                                          className="btn"
+                                          style={{
+                                            backgroundColor: "blue",
+                                            color: "white",
+                                          }}
+                                        >
+                                          Update
+                                        </Button>
+                                      </Link>
                                       <Button
                                         className="btn"
                                         style={{
-                                          backgroundColor: "blue",
+                                          backgroundColor: "red",
                                           color: "white",
                                         }}
+                                        onClick={() => handleDelete(row.id)}
                                       >
-                                        Update
+                                        Delete
                                       </Button>
-                                    </Link>
-                                    <Button
-                                      className="btn"
-                                      style={{
-                                        backgroundColor: "red",
-                                        color: "white",
-                                      }}
-                                      onClick={() => handleDelete(row.id)}
-                                    >
-                                      Delete
-                                    </Button>
+                                    </TableCell>
+                                  );
+                                }
+                                return (
+                                  <TableCell key={column.id} align="left">
+                                    {value}
                                   </TableCell>
                                 );
-                              }
-                              return (
-                                <TableCell key={column.id} align="left">
-                                  {value}
-                                </TableCell>
-                              );
-                            })}
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                </Table>
-                <TablePagination
-                  rowsPerPageOptions={[10, 25, 100]}
-                  component="div"
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  style={{ paddingBottom: 50 }}
-                />
-              </TableContainer>
-            </Paper>
-          </div>
-        </>
-      ) : (
-        <h2 className="center">Log in to view page</h2>
-      )}
+                              })}
+                            </TableRow>
+                          );
+                        })}
+                    </TableBody>
+                  </Table>
+                  <TablePagination
+                    rowsPerPageOptions={[10, 25, 100]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    style={{ paddingBottom: 50 }}
+                  />
+                </TableContainer>
+              </Paper>
+            </div>
+          </>
+        ) : (
+          <h2 className="center">Log in to view page</h2>
+        )}
+      </div>
     </div>
   );
 }

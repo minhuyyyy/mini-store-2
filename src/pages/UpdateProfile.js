@@ -1,16 +1,27 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Input, Button, FormControl, ThemeProvider } from "@mui/material";
+import {
+  Input,
+  Button,
+  FormControl,
+  ThemeProvider,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
 import env from "react-dotenv";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 export default function UpdateProfile() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
-  const [downloadURL, setDownloadURL] = useState("");
-  const [uid, setUid] = useState("");
+  const [password, setPassword] = useState("");
+  const [input, setInput] = useState({
+    password: "",
+    showPassword: false,
+  });
   const [formData, setFormData] = useState({
     img: "",
     fullName: "",
@@ -49,6 +60,25 @@ export default function UpdateProfile() {
     }
   };
 
+  const handleClickShowPassword = () => {
+    setInput((prev) => ({
+      ...prev,
+      showPassword: !prev.showPassword,
+    }));
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const onInputChange = (e) => {
+    const { name, value } = e.target;
+    setInput((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -64,6 +94,7 @@ export default function UpdateProfile() {
       );
       if (response.status == 200) {
         setFormData(response.data);
+        setPassword(response.data.password);
         setImageUrl(response.data.imgUrl);
       }
     } catch (e) {
@@ -71,17 +102,39 @@ export default function UpdateProfile() {
     }
   };
 
+  function makeid() {
+    let result = "";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+-=";
+    const charactersLength = 12;
+    let counter = 0;
+    while (counter <= charactersLength) {
+      result += characters.charAt(
+        Math.floor(Math.random() * 5 * charactersLength)
+      );
+      counter += 1;
+    }
+    setPassword(result);
+    return result;
+  }
+
   const handleUpdate = async () => {
     try {
-      axios.put(`http://vps.akabom.me/api/account/${user.id}`, {
-        id: user.id,
-        email: formData.email,
-        fullName: formData.fullName,
-        password: formData.password,
-        imgUrl: imageUrl,
-        roleName: formData.role,
-        isActive: formData.isActive,
-      });
+      const response = axios.put(
+        `http://vps.akabom.me/api/account/${user.id}`,
+        {
+          id: user.id,
+          email: formData.email,
+          fullName: formData.fullName,
+          password: password,
+          imgUrl: imageUrl,
+          roleName: formData.role,
+          isActive: formData.isActive,
+        }
+      );
+      if ((await response).status == 200) {
+        toast.success("Profile updated");
+      } else toast.error("Something went wrong");
     } catch (e) {
       console.log(e);
     }
@@ -148,6 +201,33 @@ export default function UpdateProfile() {
                   variant="standard"
                   value={formData.fullName}
                   onChange={handleInputChange}
+                />
+                <br />
+              </FormControl>
+            </div>
+            <div>
+              <FormControl>
+                <Input
+                  type={input.showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Enter Password"
+                  value={password}
+                  onChange={onInputChange}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {input.showPassword ? (
+                          <Visibility />
+                        ) : (
+                          <VisibilityOff />
+                        )}
+                      </IconButton>
+                      <Button onClick={makeid}>Generate new password</Button>
+                    </InputAdornment>
+                  }
                 />
                 <br />
               </FormControl>

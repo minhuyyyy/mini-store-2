@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Box, Button, Card, TextField, Typography } from "@mui/material";
-import "../App.css";import { db } from "../db/dbConfig";
+import "../App.css";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import setItem from "../hooks/useSessionStorage";

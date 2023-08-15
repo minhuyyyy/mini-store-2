@@ -88,7 +88,7 @@ function CheckAttendanceForm() {
         }}
         variant="h4"
       >
-        Check Attendance
+        Check In
       </Typography>
       <form onSubmit={handleSubmit}>
         <Typography variant="subtitle1">

@@ -9,7 +9,7 @@ import { AuthContext } from "../context/AuthContext";
 export default function ViewProfile() {
   const [profile, setProfile] = useState(null);
   const [loggedIn, setIsLoggedIn] = useState(false);
-
+  const { user } = useContext(AuthContext);
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (user != null) {
