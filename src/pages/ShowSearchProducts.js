@@ -82,9 +82,7 @@ function ShowSearchProducts({ filteredProducts }) {
               </div>
             </Grid>
             <Grid item sm={6} md={6} lg={6}>
-              {selectedProducts.length > 0 && (
-                <Checkout cart={cart} selectedProducts={selectedProducts} />
-              )}
+              {Object.keys(cart).length > 0 && <Checkout cart={cart} />}
             </Grid>
           </React.Fragment>
         ))}

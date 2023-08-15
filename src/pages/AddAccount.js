@@ -7,7 +7,6 @@ import {
   MenuItem,
   ThemeProvider,
 } from "@mui/material";
-import { getImageLink } from "../db/getImgLink";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { theme } from "./ManageAccounts";
@@ -41,11 +40,9 @@ export default function AddAccount() {
   };
 
   const handleAddPhoto = async (e) => {
-    try {
-      const file = e.target.files[0];
+    const file = e.target.files[0];
+    if (file) {
       setImage(file);
-      // setImageUrl(URL.createObjectURL(file));
-      // setDownloadURL(await getImageLink(file));
       const reader = new FileReader();
       reader.onload = () => {
         setImageUrl(reader.result);

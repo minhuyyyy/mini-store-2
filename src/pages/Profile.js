@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Button, ThemeProvider } from "@mui/material";
 import { Link } from "react-router-dom";
 import { theme } from "./ManageAccounts";
+import { AuthContext } from "../context/AuthContext";
 export default function ViewProfile() {
   const [profile, setProfile] = useState(null);
   const [loggedIn, setIsLoggedIn] = useState(false);
@@ -30,20 +31,18 @@ export default function ViewProfile() {
   return (
     <ThemeProvider theme={theme}>
       <div style={{ padding: "16px" }}>
-        {profile ? (
+        {user ? (
           <>
             <Grid container alignItems="center" spacing={2}>
               <Grid item>
                 <Avatar
                   style={{ width: "80px", height: "80px", marginRight: "16px" }}
-                  src={profile.img}
+                  src={user.imgUrl}
                 />
               </Grid>
               <Grid item>
-                <Typography variant="h5">{profile.email}</Typography>
-                <Typography variant="subtitle1">
-                  Role: {profile.role}
-                </Typography>
+                <Typography variant="h5">{user.email}</Typography>
+                <Typography variant="subtitle1">Role: {user.role}</Typography>
                 <Link to={"/viewprofile/updateprofile"}>
                   <Button
                     variant="contained"

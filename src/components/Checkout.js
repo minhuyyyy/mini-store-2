@@ -4,10 +4,12 @@ import React, { useEffect, useState } from "react";
 function Checkout({ cart }) {
   const [quantity, setQuantity] = useState({});
   const [amount, setAmount] = useState(0);
+  const [cash, setCash] = useState(0.0);
+  const [change, setChange] = useState(0.0);
 
   useEffect(() => {
     let totalAmount = 0;
-    selectedProducts.forEach((productId) => {
+    Object.keys(cart).forEach((productId) => {
       totalAmount += cart[productId].price * quantity[productId];
     });
     setAmount(totalAmount);
@@ -20,16 +22,17 @@ function Checkout({ cart }) {
     }));
   };
 
-  const selectedProducts = Object.keys(cart).filter((productId) =>
-    selectedProducts.includes(productId)
-  );
+  const handleCashChange = (e) => {
+    setCash(e.target.value);
+    setChange(Math.round(cash - amount), 1);
+  };
 
   return (
     <div>
       <p>
         <b>Receipt</b>
       </p>
-      {selectedProducts.map((productId) => (
+      {Object.keys(cart).map((productId) => (
         <div key={productId}>
           <p>
             <b>Description:</b>
@@ -47,9 +50,15 @@ function Checkout({ cart }) {
           </Input>
         </div>
       ))}
-      <p>Total amount: {amount}</p>
-      <p>Cash: {amount}</p>
-      <p>Change</p>
+      <p>Total amount: ${amount}</p>
+      <Input
+        onChange={(e) => handleCashChange(e)}
+        disableUnderline={true}
+        value={cash}
+      >
+        Cash:
+      </Input>
+      <p>Change: {change}</p>
     </div>
   );
 }

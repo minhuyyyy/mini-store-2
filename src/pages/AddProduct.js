@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { FormControl, Input, Button, ThemeProvider } from "@mui/material";
 import axios from "axios";
-import { storage } from "../db/dbConfig";
-import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { theme } from "./ManageAccounts";
 import { useNavigate, useParams } from "react-router-dom";
 import { uid } from "uid";
-import { getImageLink } from "../db/getImgLink";
 export default function UpdateProduct() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
+  const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     id: uid(8),
     imageUrl: "",
@@ -20,16 +18,30 @@ export default function UpdateProduct() {
     stock: "",
     unit: "",
     price: "",
-    info: "",
     description: "",
   });
   const navigate = useNavigate();
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`http://vps.akabom.me/api/product`);
+      const data = await response.json();
+      const allCategories = Array.from(
+        new Set(data.map((product) => product.category))
+      );
+      setCategories(allCategories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   const handleAddPhoto = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      // setImageUrl(await getImageLink(file));
       const reader = new FileReader();
       reader.onload = () => {
         setImageUrl(reader.result);
@@ -55,9 +67,6 @@ export default function UpdateProduct() {
       let updatedFormData = formData;
       // Upload image and update form data if an image is selected
       if (image) {
-        // const storageRef = ref(storage, `product/images/${file.name}`);
-        // const snapshot = await uploadBytes(storageRef, file);
-        // const downloadURL = await getDownloadURL(snapshot.ref);
         const downloadURL = imageUrl;
         updatedFormData = { ...formData, imageUrl: downloadURL };
       }
@@ -177,10 +186,12 @@ export default function UpdateProduct() {
           </div>
           <div>
             <FormControl sx={{ width: "80%" }}>
-              <label>Product description</label>
+              <label>Product description:</label>
               <Input
                 id="description"
+                name="description"
                 variant="standard"
+                value={formData.description}
                 onChange={handleInputChange}
               />
               <br />

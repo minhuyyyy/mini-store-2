@@ -10,7 +10,6 @@ import {
   Icon,
 } from "@mui/material";
 import axios from "axios";
-import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { theme } from "./ManageAccounts";
@@ -22,8 +21,6 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
-import env from "react-dotenv";
-import { getImageLink } from "../db/getImgLink";
 
 export default function UpdateProduct() {
   const [image, setImage] = useState(null);
@@ -80,7 +77,11 @@ export default function UpdateProduct() {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setImageUrl(await getImageLink(file));
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
     } else {
       setImage(null);
       setImageUrl("");
@@ -335,10 +336,10 @@ export default function UpdateProduct() {
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>
-                  <label>Product description</label>
+                  <label>Product description:</label>
                   <Input
                     id="description"
-                    name="info"
+                    name="description"
                     variant="standard"
                     value={formData.description}
                     onChange={handleInputChange}
