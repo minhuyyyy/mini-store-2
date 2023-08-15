@@ -67,7 +67,8 @@ export default function UpdateProduct() {
       let updatedFormData = formData;
       // Upload image and update form data if an image is selected
       if (image) {
-        updatedFormData = { ...formData, imageUrl: imageUrl };
+        const downloadURL = imageUrl;
+        updatedFormData = { ...formData, imageUrl: downloadURL };
       }
       // Update the product with the updated form data
       const url = "http://vps.akabom.me/api/product";

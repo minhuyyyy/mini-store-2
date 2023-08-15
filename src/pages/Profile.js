@@ -8,7 +8,25 @@ import { theme } from "./ManageAccounts";
 import { AuthContext } from "../context/AuthContext";
 export default function ViewProfile() {
   const [profile, setProfile] = useState(null);
-  const { user } = useContext(AuthContext);
+  const [loggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (user != null) {
+      setProfile(user);
+      setIsLoggedIn(true);
+    } else {
+      setProfile(null);
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Update session storage when the user profile changes
+    if (profile) {
+      sessionStorage.setItem("user", JSON.stringify(profile));
+    }
+  }, [profile]);
 
   return (
     <ThemeProvider theme={theme}>

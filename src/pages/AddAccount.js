@@ -18,7 +18,6 @@ export default function AddAccount() {
   const [role, setRole] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [added, setAdded] = useState(false);
-  const [downloadURL, setDownloadURL] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
     return () => {
@@ -49,9 +48,8 @@ export default function AddAccount() {
         setImageUrl(reader.result);
       };
       reader.readAsDataURL(file);
-    } else {
-      setImage(null);
-      setImageUrl("");
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -77,13 +75,12 @@ export default function AddAccount() {
           email: formData.email,
           fullName: formData.name,
           password: formData.password,
-          imgUrl: downloadURL,
+          imgUrl: imageUrl,
           roleName: role,
         },
       });
 
       if (response.status === 200) {
-        console.log("URL", downloadURL);
         setFormData({
           img: "",
           email: "",

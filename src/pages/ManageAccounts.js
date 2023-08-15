@@ -456,12 +456,17 @@ const ManageAccounts = () => {
                                     >
                                       Delete
                                     </Button>
-                                  </TableCell>
-                                );
-                              }
-                              return (
-                                <TableCell key={column.id} align="left">
-                                  {value}
+                                  </Link>{" "}
+                                  <Button
+                                    className="btn"
+                                    style={{
+                                      backgroundColor: "red",
+                                      color: "white",
+                                    }}
+                                    onClick={() => handleDelete(row.id)}
+                                  >
+                                    Delete
+                                  </Button>
                                 </TableCell>
                               );
                             })}
