@@ -1,36 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Input, Button, FormControl, ThemeProvider } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  writeBatch,
-} from "firebase/firestore";
-import { getImageLink } from "../db/getImgLink";
 import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
 import env from "react-dotenv";
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 export default function UpdateProfile() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [downloadURL, setDownloadURL] = useState("");
-  const [docID, setDocID] = useState("");
   const [uid, setUid] = useState("");
+  const [formData, setFormData] = useState({
+    img: "",
+    fullName: "",
+    email: "",
+    role: "",
+    password: "",
+    isActive: "",
+  });
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const user = JSON.parse(sessionStorage.getItem("user"));
-
-  useEffect(() => {
-    setUid(user.ID);
-  }, [user]);
-
+  const { user } = useContext(AuthContext);
   useEffect(() => {
     getData();
-  }, [uid]);
+  }, [user]);
 
   useEffect(() => {
     return () => {
@@ -40,20 +34,18 @@ export default function UpdateProfile() {
     };
   }, [image]);
 
-  const [formData, setFormData] = useState({
-    img: "",
-    email: "",
-    name: "",
-  });
-
   const handleAddPhoto = async (e) => {
-    try {
-      const file = e.target.files[0];
+    const file = e.target.files[0];
+    if (file) {
       setImage(file);
-      setImageUrl(URL.createObjectURL(file));
-      setDownloadURL(await getImageLink(file));
-    } catch (e) {
-      console.log(e);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImage(null);
+      setImageUrl("");
     }
   };
 
@@ -65,14 +57,40 @@ export default function UpdateProfile() {
     }));
   };
 
-  const getData = async () => {};
+  const getData = async () => {
+    try {
+      const response = await axios.get(
+        `http://vps.akabom.me/api/account/${user.id}`
+      );
+      if (response.status == 200) {
+        setFormData(response.data);
+        setImageUrl(response.data.imgUrl);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-  const handleUpdate = async () => {};
+  const handleUpdate = async () => {
+    try {
+      axios.put(`http://vps.akabom.me/api/account/${user.id}`, {
+        id: user.id,
+        email: formData.email,
+        fullName: formData.fullName,
+        password: formData.password,
+        imgUrl: imageUrl,
+        roleName: formData.role,
+        isActive: formData.isActive,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <div style={{ paddingLeft: "50px" }}>
-        {uid && (
+        {user && (
           <>
             <div>
               <Button
@@ -128,7 +146,7 @@ export default function UpdateProfile() {
                   id="name"
                   name="name"
                   variant="standard"
-                  value={formData.name}
+                  value={formData.fullName}
                   onChange={handleInputChange}
                 />
                 <br />

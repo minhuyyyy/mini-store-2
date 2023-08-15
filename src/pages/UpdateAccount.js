@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { getImageLink } from "../db/getImgLink";
 import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
 import env from "react-dotenv";
@@ -66,12 +65,17 @@ export default function UpdateAccount() {
   };
 
   const handleAddPhoto = async (e) => {
-    try {
-      const file = e.target.files[0];
+    const file = e.target.files[0];
+    if (file) {
       setImage(file);
-      setImageUrl(await getImageLink(file));
-    } catch (e) {
-      console.log(e);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImage(null);
+      setImageUrl("");
     }
   };
 

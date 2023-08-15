@@ -14,9 +14,6 @@ function CreateOrder() {
 
   const handleSearch = () => {
     const filtered = products.filter((product) => {
-      console.log(searchTerm.trim.length);
-      // if (searchTerm.trim.length <= 0) return;
-
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
     setFilteredProducts(filtered);

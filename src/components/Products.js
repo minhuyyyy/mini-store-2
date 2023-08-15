@@ -72,7 +72,7 @@ const ProductsPresentation = ({ filteredProducts }) => {
             >
               <CardMedia
                 component="img"
-                image={product.img}
+                image={product.imageUrl}
                 style={{ flex: "1 0 auto", objectFit: "contain" }}
               />
               <Typography

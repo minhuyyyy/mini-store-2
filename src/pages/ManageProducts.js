@@ -1,4 +1,12 @@
-import { alpha, Input, Menu, styled, TablePagination } from "@mui/material";
+import {
+  alpha,
+  IconButton,
+  Input,
+  InputAdornment,
+  Menu,
+  styled,
+  TablePagination,
+} from "@mui/material";
 import {
   Paper,
   TableBody,
@@ -14,7 +22,11 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import env from "react-dotenv";
-import { KeyboardArrowDownOutlined, Translate } from "@mui/icons-material";
+import {
+  KeyboardArrowDownOutlined,
+  SearchOutlined,
+  Translate,
+} from "@mui/icons-material";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
@@ -47,7 +59,9 @@ export default function ManageProductsPage() {
 
   const onInputChange = (event) => {
     setSearchTerm(event.target.value);
-    handleSearch(); // Call handleSearch whenever input changes
+    if (searchTerm !== event.target.value) {
+      handleSearch(); // Call handleSearch whenever input changes
+    }
   };
 
   useEffect(() => {
@@ -162,18 +176,30 @@ export default function ManageProductsPage() {
                 Add product
               </Button>
             </Link>
-            <Input
-              id="search"
-              value={searchTerm} // Use searchTerm as the value
-              onChange={onInputChange} // Use onInputChange for handling changes
-              sx={{
-                transform: "translate(400%,15px)",
-                backgroundColor: "whitesmoke",
-                height: 30,
-              }}
-              placeholder="Search products: (Enter id)"
-              disableUnderline={true}
-            />
+            <div>
+              <Input
+                id="search"
+                placeholder="Search products: (Enter ID)"
+                sx={{
+                  transform: "translate(400%,15px)",
+                  backgroundColor: "whitesmoke",
+                  height: 30,
+                }}
+                value={searchTerm}
+                // disableUnderline={true}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearch();
+                }}
+                onChange={onInputChange}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleSearch}>
+                      <SearchOutlined />
+                    </IconButton>
+                  </InputAdornment>
+                }
+              ></Input>
+            </div>
           </div>
           <div className="container" style={{ width: "100%" }}>
             <Paper

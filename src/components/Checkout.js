@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 function Checkout({ cart }) {
   const [quantity, setQuantity] = useState({});
   const [amount, setAmount] = useState(0);
+  const [cash, setCash] = useState(0.0);
+  const [change, setChange] = useState(0.0);
 
   useEffect(() => {
     let totalAmount = 0;
@@ -18,6 +20,11 @@ function Checkout({ cart }) {
       ...prevQuantity,
       [productId]: e.target.value,
     }));
+  };
+
+  const handleCashChange = (e) => {
+    setCash(e.target.value);
+    setChange(Math.round(cash - amount), 1);
   };
 
   return (
@@ -43,9 +50,15 @@ function Checkout({ cart }) {
           </Input>
         </div>
       ))}
-      <p>Total amount: {amount}</p>
-      <p>Cash: {amount}</p>
-      <p>Change</p>
+      <p>Total amount: ${amount}</p>
+      <Input
+        onChange={(e) => handleCashChange(e)}
+        disableUnderline={true}
+        value={cash}
+      >
+        Cash:
+      </Input>
+      <p>Change: {change}</p>
     </div>
   );
 }

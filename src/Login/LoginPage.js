@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import "../App.css";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../db/dbConfig";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import setItem from "../hooks/useSessionStorage";
