@@ -90,7 +90,7 @@ export default function UpdateProfile() {
   const getData = async () => {
     try {
       const response = await axios.get(
-        `http://vps.akabom.me/api/account/${user.id}`
+        `http://vps.akabom.me/api/Employee/${user.id}`
       );
       if (response.status == 200) {
         setFormData(response.data);
@@ -121,7 +121,7 @@ export default function UpdateProfile() {
   const handleUpdate = async () => {
     try {
       const response = axios.put(
-        `http://vps.akabom.me/api/account/${user.id}`,
+        `http://vps.akabom.me/api/Employee/${user.id}`,
         {
           id: user.id,
           email: formData.email,

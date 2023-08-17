@@ -67,7 +67,7 @@ export default function AddAccount() {
     try {
       const response = await axios({
         method: "post",
-        url: "http://vps.akabom.me/api/account/register",
+        url: "http://vps.akabom.me/api/Employee/register",
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",

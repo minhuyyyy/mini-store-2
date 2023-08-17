@@ -29,8 +29,19 @@ export default function Navigation() {
   const [activeLink, setActiveLink] = useState(location.pathname);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    checkUser();
+  }, [user]);
+
+  const checkUser = () => {
+    let CurrentUser = user ? setCurrentUser(user) : null;
+    return CurrentUser;
+  };
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -205,12 +216,15 @@ export default function Navigation() {
               <span>Create Order</span>
             </Button>
           </Box>
-          {user ? (
+          {currentUser ? (
             <>
               <Box sx={{ paddingRight: 2 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ padding: 0 }}>
-                    <Avatar alt={user.email} src={user.photoURL} />
+                    <Avatar
+                      alt={currentUser.email}
+                      src={currentUser.photoURL}
+                    />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -235,7 +249,7 @@ export default function Navigation() {
                   >
                     <MenuItem>User Profile</MenuItem>
                   </Link>
-                  {user.role === "Manager" ? (
+                  {currentUser.position === "Manager" ? (
                     <div>
                       <Link
                         to="/manageaccounts"
@@ -258,7 +272,7 @@ export default function Navigation() {
                       <MenuItem>View Salary</MenuItem>
                     </Link>
                   )}
-                  {user.role !== "Manager" ? (
+                  {currentUser.position !== "Manager" ? (
                     <Link
                       to="/workshift"
                       style={{ textDecoration: "none", color: "#D4B887" }}

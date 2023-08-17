@@ -8,13 +8,14 @@ import {
   isSameDay,
 } from "date-fns";
 import "./Calendar.css"; // Import the custom CSS file
+import { RegisterWorkShiftForm } from "../pages/RegisterWorkShift";
 
 const WeekCalendar = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date())
   );
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
+  const [selectedDate, setSelectedDate] = useState([new Date().toISOString()]);
+  const [openShiftMenu, setOpenShiftMenu] = useState(false);
   const changeWeekHandle = (btnType) => {
     if (btnType === "prev") {
       setCurrentWeekStart(subWeeks(currentWeekStart, 1));
@@ -26,6 +27,8 @@ const WeekCalendar = () => {
 
   const onDateClickHandle = (day) => {
     setSelectedDate(day);
+    console.log(selectedDate);
+    setOpenShiftMenu(!openShiftMenu);
   };
 
   const renderHeader = () => {
@@ -64,13 +67,14 @@ const WeekCalendar = () => {
 
   const renderCells = () => {
     const days = [];
+    const today = new Date();
     let startDate = currentWeekStart;
     for (let i = 0; i < 7; i++) {
       const day = addDays(startDate, i);
       days.push(
         <div
           className={`col cell ${
-            isSameDay(day, new Date())
+            isSameDay(day, today)
               ? "today"
               : isSameDay(day, selectedDate)
               ? "selected"
@@ -79,7 +83,9 @@ const WeekCalendar = () => {
           key={day}
           onClick={() => onDateClickHandle(day)}
         >
-          <span className="number">{format(day, "d")}</span>
+          <span className={`number ${day < today ? "past-day" : ""}`}>
+            {format(day, "d")}
+          </span>
         </div>
       );
     }
@@ -91,6 +97,9 @@ const WeekCalendar = () => {
       {renderHeader()}
       {renderWeekdays()}
       {renderCells()}
+      {openShiftMenu && (
+        <RegisterWorkShiftForm selectedDate={selectedDate} />
+      )}
     </div>
   );
 };

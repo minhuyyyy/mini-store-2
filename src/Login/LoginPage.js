@@ -17,7 +17,7 @@ export default function LoginPage() {
   const onLogin = (e) => {
     e.preventDefault();
     try {
-      fetch("http://vps.akabom.me/api/account/login", {
+      fetch("http://vps.akabom.me/api/Employee/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

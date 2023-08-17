@@ -1,54 +1,40 @@
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
   Button,
   Grid,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  writeBatch,
-  arrayUnion,
-} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import env from "react-dotenv";
 import Calendar from "../components/Calendar";
-function RegisterWorkShiftForm() {
+import axios from "axios";
+
+export function RegisterWorkShiftForm({ selectedDate }) {
   const { user } = useContext(AuthContext);
-  const [selectedTime, setSelectedTime] = useState("");
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(sessionStorage.getItem("user"))
-  );
+  const [currentUser, setCurrentUser] = useState([]);
   const [ID, setID] = useState(currentUser?.ID || "");
-  const [OT, setOT] = useState(0);
-  const [docID, setDocID] = useState("");
+  const [selectedTime, setSelectedTime] = useState([]);
+  const [shifts, setShifts] = useState([]);
+  const [date, setDate] = useState([]);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (ID) {
-      getData();
-    }
-  }, [ID]);
 
-  useEffect(() => {
-    setID(currentUser?.ID || "");
-  }, [currentUser]);
+  const SalerShifts = [
+    { id: 1, time: "6.00-12.00", type: "saler-shift-1" },
+    { id: 2, time: "12:00 - 18:00", type: "saler-shift-2" },
+    { id: 3, time: "18:00 - 6:00", type: "saler-shift-3" },
+  ];
 
-  const handleTimeChange = (event) => {
-    setSelectedTime(event.target.value);
-  };
+  const GuardShifts = [
+    { id: 1, time: "6.00-18.00", type: "guard-shift-1" },
+    { id: 2, time: "18:00 - 6:00", type: "guard-shift-2" },
+  ];
 
   const now = new Date();
 
@@ -58,27 +44,34 @@ function RegisterWorkShiftForm() {
   weekStart.setDate(now.getDate() - diff);
 
   const weekDays = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = -1; i < 7; i++) {
     const day = new Date(weekStart);
     day.setDate(weekStart.getDate() + i);
     weekDays.push(day.toLocaleDateString());
   }
 
-  const [formData, setFormData] = useState({
-    workHours: 0,
-    OT: 0,
-  });
+  useEffect(() => {
+    setDate(selectedDate);
+    console.log(selectedDate);
+  }, [selectedDate]);
 
-  const getData = async () => {};
+  useEffect(() => {
+    setID(user?.id || "");
+  }, [user]);
 
-  const handleSubmit = async (e) => {};
+  const handleTimeChange = (event) => {
+    setSelectedTime(event.target.value);
+  };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const handleSubmit = async () => {
+    const response = await axios.post("http://vps.akabom.me/api/work-shift", {
+      employeeId: ID,
+      workshifts: selectedTime.map((time) => ({
+        workshiftType: "guard-shift-1",
+        startDate: date,
+        endDate: date,
+      })),
+    });
   };
 
   return (
@@ -94,33 +87,34 @@ function RegisterWorkShiftForm() {
       >
         Register Work Shift
       </Typography>
-      <form onSubmit={handleSubmit}>
+      <form>
         <Typography variant="subtitle1">
           Week of {weekDays[0]} - {weekDays[6]}
         </Typography>
-        <FormControl fullWidth variant="outlined" margin="normal">
-          <InputLabel>Select Time</InputLabel>
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel>Select Shift</InputLabel>
           <Select
             value={selectedTime}
+            multiple
             onChange={handleTimeChange}
-            label="Select Time"
+            label="Select Shift"
           >
-            {user.role === "Saler" ? (
-              <>
-                <MenuItem value="6:00 - 12:00">6:00 - 12:00</MenuItem>
-                <MenuItem value="12:00 - 18:00">12:00 - 18:00</MenuItem>
-                <MenuItem value="18:00 - 6:00">18:00 - 6:00</MenuItem>
-              </>
-            ) : (
-              <>
-                <MenuItem value="6:00 - 18:00">6:00 - 18:00</MenuItem>
-                <MenuItem value="18:00 - 6:00">18:00 - 6:00</MenuItem>
-              </>
-            )}
+            {user.position === "Guard"
+              ? GuardShifts.map((shift) => (
+                  <MenuItem key={shift.id} value={shift.time}>
+                    {shift.time}
+                  </MenuItem>
+                ))
+              : SalerShifts.map((shift) => (
+                  <MenuItem key={shift.id} value={shift.time}>
+                    {shift.time}
+                  </MenuItem>
+                ))}
           </Select>
         </FormControl>
         <br />
-        <Button variant="contained" color="primary" type="submit">
+        <br />
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
           Submit
         </Button>
       </form>
@@ -128,31 +122,21 @@ function RegisterWorkShiftForm() {
   );
 }
 
-function RegisterWorkShift() {
+export function RegisterWorkShift() {
   const { user } = useContext(AuthContext);
-
   return (
     <>
       {user ? (
         <>
-          <Grid justify="center">
+          <Grid style={{ width: "70%" }}>
             <Card
-              style={{
-                marginTop: "180px",
-                height: "100%",
-                width: "70%",
-                transform: "translate(20%, -50%)",
-              }}
-            >
-              {/* <RegisterWorkShiftForm /> */}
-            </Card>
-          </Grid>
-          <Grid justify="center">
-            <Card
+              className="center container"
               style={{
                 height: "50%",
-                width: "70%",
-                transform: "translate(20%, -50%)",
+                width: "100%",
+                position: "relative",
+                left: "15%",
+                top: "30%",
               }}
             >
               <Calendar />
@@ -165,5 +149,3 @@ function RegisterWorkShift() {
     </>
   );
 }
-
-export default RegisterWorkShift;

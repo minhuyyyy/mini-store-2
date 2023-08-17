@@ -24,55 +24,57 @@ import { AuthContext } from "./context/AuthContext";
 import { useState } from "react";
 import ProductsPresentation from "./components/Home";
 import { memo } from "react";
-import RegisterWorkShift from "./pages/RegisterWorkShift";
 import CreateOrder from "./pages/CreateOrder";
+import Webcam from "react-webcam";
+import Capture from "./components/Webcam";
+import { RegisterWorkShift, RegisterWorkShiftForm } from "./pages/RegisterWorkShift";
 function App() {
   const [user, setUser] = useState(null);
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);
   return (
     // <React.StrictMode>
-      <div
-        className="App"
-        style={{ paddingTop: "65px", minWidth: "100vw", minHeight: "100vh" }}
-      >
-        <AuthContext.Provider value={value}>
-          <Navigation />
-          <Routes>
-            <Route path="/" element={<ProductsPresentation />} />
-            <Route path="/manageproducts" element={<ManageProducts />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/checkattendance" element={<CheckAttendance />} />
-            <Route path="/detail/:id" element={<Details />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/manageproducts/update/:id"
-              element={<UpdateProduct />}
-            />
+    <div
+      className="App"
+      style={{ paddingTop: "65px", minWidth: "100vw", minHeight: "100vh" }}
+    >
+      <AuthContext.Provider value={value}>
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<ProductsPresentation />} />
+          <Route path="/manageproducts" element={<ManageProducts />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/checkattendance" element={<Capture />} />
+          <Route path="/detail/:id" element={<Details />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/manageproducts/update/:id"
+            element={<UpdateProduct />}
+          />
 
-            <Route path="/manageproducts/add" element={<AddProduct />} />
-            <Route path="/manageaccounts" element={<ManageAccountsPage />} />
-            <Route path="/manageaccounts/add" element={<AddAccount />} />
-            <Route
-              path="/manageaccounts/update/:id"
-              element={<UpdateAccount />}
-            />
-            <Route path="/changepassword" element={<ChangePassword />} />
-            <Route path="/viewprofile" element={<ViewProfile />} />
-            <Route
-              path="/viewprofile/updateprofile"
-              element={<UpdateProfile />}
-            />
-            <Route path="/viewsalary" element={<ViewSalary />} />
-            <Route path="/workshift" element={<RegisterWorkShift />} />
-            <Route path="/createorder" element={<CreateOrder />} />
-            <Route
-              path="/changepassword/setnewpassword"
-              element={<SetNewPassword />}
-            />
-          </Routes>
-        </AuthContext.Provider>
-        <ToastContainer />
-      </div>
+          <Route path="/manageproducts/add" element={<AddProduct />} />
+          <Route path="/manageaccounts" element={<ManageAccountsPage />} />
+          <Route path="/manageaccounts/add" element={<AddAccount />} />
+          <Route
+            path="/manageaccounts/update/:id"
+            element={<UpdateAccount />}
+          />
+          <Route path="/changepassword" element={<ChangePassword />} />
+          <Route path="/viewprofile" element={<ViewProfile />} />
+          <Route
+            path="/viewprofile/updateprofile"
+            element={<UpdateProfile />}
+          />
+          <Route path="/viewsalary" element={<ViewSalary />} />
+          <Route path="/workshift" element={<RegisterWorkShift />} />
+          <Route path="/createorder" element={<CreateOrder />} />
+          <Route
+            path="/changepassword/setnewpassword"
+            element={<SetNewPassword />}
+          />
+        </Routes>
+      </AuthContext.Provider>
+      <ToastContainer />
+    </div>
     // </React.StrictMode>
   );
 }

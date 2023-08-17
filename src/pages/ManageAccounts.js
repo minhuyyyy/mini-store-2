@@ -127,7 +127,7 @@ const ManageAccounts = () => {
 
   const fetchData = async () => {
     try {
-      axios.get("http://vps.akabom.me/api/account").then((response) => {
+      axios.get("http://vps.akabom.me/api/employee").then((response) => {
         setData(response.data);
         return response.data;
       });
@@ -143,9 +143,7 @@ const ManageAccounts = () => {
   const checkUser = async () => {
     try {
       const userData = getItem("user"); // Assuming "user" is the key you've used for the user data
-      console.log("userData => ", userData);
-
-      if (user.role === "Manager" || userData.role === "Manager") {
+      if (user.position === "Manager" || userData.role === "Manager") {
         setCurrentUser(user);
         await fetchData();
       } else if (user.role !== "Manager") {
@@ -202,7 +200,7 @@ const ManageAccounts = () => {
   const handleDelete = async (id) => {
     try {
       await axios
-        .delete(`http://vps.akabom.me/api/account/${id}`, {})
+        .delete(`http://vps.akabom.me/api/employee/${id}`, {})
         .then((response) => {
           if (response.status == 200) {
             toast.success("Account deleted successfully");
@@ -225,7 +223,7 @@ const ManageAccounts = () => {
     imgUrl: account.imgUrl,
     email: account.email,
     createDate: account.createDate,
-    role: account.role,
+    role: account.position,
     isActive: account.isActive,
   }));
 
@@ -233,7 +231,7 @@ const ManageAccounts = () => {
     <ThemeProvider theme={theme}>
       <div style={{ backgroundColor: "#d3d3d3" }}>
         <div style={{ color: "black" }} className="container">
-          {currentUser.role === "Manager" ? (
+          {currentUser.position === "Manager" ? (
             <>
               <div
                 style={{

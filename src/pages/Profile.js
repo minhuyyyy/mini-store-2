@@ -42,7 +42,7 @@ export default function ViewProfile() {
               </Grid>
               <Grid item>
                 <Typography variant="h5">{user.email}</Typography>
-                <Typography variant="subtitle1">Role: {user.role}</Typography>
+                <Typography variant="subtitle1">Role: {user.position}</Typography>
                 <Link to={"/viewprofile/updateprofile"}>
                   <Button
                     variant="contained"
