@@ -21,8 +21,9 @@ export function RegisterWorkShiftForm({ selectedDate }) {
   const [currentUser, setCurrentUser] = useState([]);
   const [ID, setID] = useState(currentUser?.ID || "");
   const [selectedTime, setSelectedTime] = useState([]);
-  const [shifts, setShifts] = useState([]);
+  const [time, setTime] = useState([]);
   const [date, setDate] = useState([]);
+  const [shifts, setShifts] = useState([]);
   const navigate = useNavigate();
 
   const SalerShifts = [
@@ -51,7 +52,9 @@ export function RegisterWorkShiftForm({ selectedDate }) {
   }
 
   useEffect(() => {
-    setDate(selectedDate);
+    if (selectedDate) {
+      date.push(selectedDate);
+    }
     console.log(selectedDate);
   }, [selectedDate]);
 
@@ -61,16 +64,21 @@ export function RegisterWorkShiftForm({ selectedDate }) {
 
   const handleTimeChange = (event) => {
     setSelectedTime(event.target.value);
+    let shifts = selectedTime.map((shift) => {
+      time.push(shift);
+      console.log(time);
+    });
   };
 
   const handleSubmit = async () => {
+    console.log(date);
     const response = await axios.post("http://vps.akabom.me/api/work-shift", {
       employeeId: ID,
-      workshifts: selectedTime.map((time) => ({
+      workshifts: {
         workshiftType: "guard-shift-1",
-        startDate: date,
-        endDate: date,
-      })),
+        startDate: date + "," + time,
+        endDate: date + "," + time,
+      },
     });
   };
 

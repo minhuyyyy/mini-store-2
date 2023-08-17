@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   format,
   subWeeks,
@@ -14,8 +14,16 @@ const WeekCalendar = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date())
   );
-  const [selectedDate, setSelectedDate] = useState([new Date().toISOString()]);
+  const [selectedDate, setSelectedDate] = useState("");
   const [openShiftMenu, setOpenShiftMenu] = useState(false);
+
+  useEffect(() => {
+    if (selectedDate) {
+      onDateClickHandle(new Date(selectedDate).getTime());
+      console.log(selectedDate);
+    }
+  }, [selectedDate]);
+
   const changeWeekHandle = (btnType) => {
     if (btnType === "prev") {
       setCurrentWeekStart(subWeeks(currentWeekStart, 1));
@@ -27,8 +35,7 @@ const WeekCalendar = () => {
 
   const onDateClickHandle = (day) => {
     setSelectedDate(day);
-    console.log(selectedDate);
-    setOpenShiftMenu(!openShiftMenu);
+    setOpenShiftMenu(true);
   };
 
   const renderHeader = () => {
@@ -97,9 +104,7 @@ const WeekCalendar = () => {
       {renderHeader()}
       {renderWeekdays()}
       {renderCells()}
-      {openShiftMenu && (
-        <RegisterWorkShiftForm selectedDate={selectedDate} />
-      )}
+      {openShiftMenu && <RegisterWorkShiftForm selectedDate={selectedDate} />}
     </div>
   );
 };
