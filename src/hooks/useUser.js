@@ -18,11 +18,10 @@ export default function useUser() {
   };
 
   const removeUser = () => {
-    preventBack();
     setUser(null);
     removeItem("user");
-    window.location.reload();
     navigate("/");
+    window.location.reload();
   };
 
   return { user, addUser, removeUser };

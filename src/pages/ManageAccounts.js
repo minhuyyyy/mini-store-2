@@ -51,6 +51,10 @@ export const theme = createTheme({
       contrastText: "#f5f5f5",
       main: "#263238",
     },
+    reject: {
+      contrastText: "#f5f5f5",
+      main: "#eb5144",
+    },
     select: {
       contrastText: "#f5f5f5",
       main: "#78909c",

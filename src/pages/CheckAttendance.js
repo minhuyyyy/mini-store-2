@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 export function CheckAttendanceForm({ imgSrc }) {
   const [imageUrl, setImageUrl] = useState("");
   const [currentUser, setCurrentUser] = useState([]);
+  const [shift, setShift] = useState([]);
   const [data, setData] = useState({
     id: uid(10),
     empID: "",
@@ -16,13 +17,28 @@ export function CheckAttendanceForm({ imgSrc }) {
   });
   const { user } = useContext(AuthContext);
   const now = new Date();
-  const date = now.getTime();
+  const date = now.toISOString();
   useEffect(() => {
     checkUser();
+    fetchShift();
   }, [user]);
 
   const checkUser = () => {
     setCurrentUser(user ? user : []);
+  };
+
+  const fetchShift = async () => {
+    const response = await axios.get(
+      // `http://vps.akabom.me/api/work-shift/${user.id}?startDate=${new Date()
+      //   .toISOString()
+      //   .substring(0, 10)}&endDate=${new Date().toISOString().substring(0, 10)}`
+      `http://vps.akabom.me/api/work-shift/${user.id}?startDate=2023-08-20&endDate=2023-08-20`
+    );
+    if (response.status == 200) {
+      console.log(response.data[0]);
+      setShift([...shift, response.data[0].id]);
+
+    }
   };
 
   const onSubmit = () => {
@@ -34,13 +50,13 @@ export function CheckAttendanceForm({ imgSrc }) {
   };
 
   const handleSubmit = async () => {
-    const response = await axios.post("http://localhost:3000/check-in", {
-      id: data.id,
-      empID: user.id,
-      date: date,
-      imageUrl: imgSrc,
+    const response = await axios.post("http://vps.akabom.me/api/checkin", {
+      employeeId: user.id,
+      dateTime: "2023-08-20T17:00:00.0000000Z",
+      imageData: imgSrc,
+      workshiftId: shift.toString(),
     });
-    if (response.status == 201) toast.success("Attendance taken successfully");
+    if (response.status == 200) toast.success("Attendance taken successfully");
     else toast.error("Something went wrong");
   };
 

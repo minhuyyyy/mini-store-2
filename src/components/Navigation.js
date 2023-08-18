@@ -263,6 +263,12 @@ export default function Navigation() {
                       >
                         <MenuItem>View Salary</MenuItem>
                       </Link>
+                      <Link
+                        to="/view-shifts"
+                        style={{ textDecoration: "none", color: "#D4B887" }}
+                      >
+                        <MenuItem>View Shifts</MenuItem>
+                      </Link>
                     </div>
                   ) : (
                     <Link

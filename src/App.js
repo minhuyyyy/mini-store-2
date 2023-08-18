@@ -28,6 +28,7 @@ import CreateOrder from "./pages/CreateOrder";
 import Webcam from "react-webcam";
 import Capture from "./components/Webcam";
 import { RegisterWorkShift, RegisterWorkShiftForm } from "./pages/RegisterWorkShift";
+import ViewShifts from "./pages/ViewShifts";
 function App() {
   const [user, setUser] = useState(null);
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);
@@ -65,6 +66,7 @@ function App() {
             element={<UpdateProfile />}
           />
           <Route path="/viewsalary" element={<ViewSalary />} />
+          <Route path="/view-shifts" element={<ViewShifts />} />
           <Route path="/workshift" element={<RegisterWorkShift />} />
           <Route path="/createorder" element={<CreateOrder />} />
           <Route

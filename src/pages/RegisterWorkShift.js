@@ -12,29 +12,26 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import Calendar from "../components/Calendar";
 import axios from "axios";
+import { addDays } from "date-fns";
 
 export function RegisterWorkShiftForm({ selectedDate }) {
   const { user } = useContext(AuthContext);
-  const [currentUser, setCurrentUser] = useState([]);
-  const [ID, setID] = useState(currentUser?.ID || "");
-  const [selectedTime, setSelectedTime] = useState([]);
-  const [time, setTime] = useState([]);
-  const [date, setDate] = useState([]);
-  const [shifts, setShifts] = useState([]);
-  const navigate = useNavigate();
+  const [ID, setID] = useState(user?.id || "");
+  const [selectedShifts, setSelectedShifts] = useState([]);
+  const [workshiftType, setWorkshiftType] = useState([]);
+  const [dates, setDates] = useState([]); // Change 'date' to 'dates' here
 
   const SalerShifts = [
-    { id: 1, time: "6.00-12.00", type: "saler-shift-1" },
-    { id: 2, time: "12:00 - 18:00", type: "saler-shift-2" },
-    { id: 3, time: "18:00 - 6:00", type: "saler-shift-3" },
+    { id: 1, time: "6.00-12.00", type: "shift-1" },
+    { id: 2, time: "12:00 - 18:00", type: "shift-2" },
+    { id: 3, time: "18:00 - 6:00", type: "shift-3" },
   ];
 
   const GuardShifts = [
-    { id: 1, time: "6.00-18.00", type: "guard-shift-1" },
-    { id: 2, time: "18:00 - 6:00", type: "guard-shift-2" },
+    { id: 1, time: "6.00-18.00", type: "shift-1" },
+    { id: 2, time: "18:00 - 6:00", type: "shift-2" },
   ];
 
   const now = new Date();
@@ -52,10 +49,19 @@ export function RegisterWorkShiftForm({ selectedDate }) {
   }
 
   useEffect(() => {
+    setWorkshiftType(
+      selectedShifts.map((shift) => {
+        const shiftType = user.position === "Guard" ? "guard-" : "saler-";
+        return shiftType + shift;
+      })
+    );
+  }, [selectedShifts, user.position]);
+
+  useEffect(() => {
     if (selectedDate) {
-      date.push(selectedDate);
+      console.log(selectedDate);
+      setDates([...dates, selectedDate]);
     }
-    console.log(selectedDate);
   }, [selectedDate]);
 
   useEffect(() => {
@@ -63,23 +69,23 @@ export function RegisterWorkShiftForm({ selectedDate }) {
   }, [user]);
 
   const handleTimeChange = (event) => {
-    setSelectedTime(event.target.value);
-    let shifts = selectedTime.map((shift) => {
-      time.push(shift);
-      console.log(time);
-    });
+    setSelectedShifts(event.target.value);
   };
 
   const handleSubmit = async () => {
-    console.log(date);
+    const formattedSelectedDate = new Date(selectedDate);
+    const workshifts = workshiftType.map((type) => ({
+      startDate: addDays(formattedSelectedDate, 1),
+      endDate: addDays(formattedSelectedDate, 1),
+      workshiftType: type,
+    }));
+
     const response = await axios.post("http://vps.akabom.me/api/work-shift", {
       employeeId: ID,
-      workshifts: {
-        workshiftType: "guard-shift-1",
-        startDate: date + "," + time,
-        endDate: date + "," + time,
-      },
+      workshifts: workshifts,
     });
+
+    // Handle the response as needed
   };
 
   return (
@@ -102,19 +108,19 @@ export function RegisterWorkShiftForm({ selectedDate }) {
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Select Shift</InputLabel>
           <Select
-            value={selectedTime}
+            value={selectedShifts}
             multiple
             onChange={handleTimeChange}
             label="Select Shift"
           >
             {user.position === "Guard"
               ? GuardShifts.map((shift) => (
-                  <MenuItem key={shift.id} value={shift.time}>
+                  <MenuItem key={shift.type} value={shift.type}>
                     {shift.time}
                   </MenuItem>
                 ))
               : SalerShifts.map((shift) => (
-                  <MenuItem key={shift.id} value={shift.time}>
+                  <MenuItem key={shift.type} value={shift.type}>
                     {shift.time}
                   </MenuItem>
                 ))}

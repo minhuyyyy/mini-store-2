@@ -7,7 +7,7 @@ import {
   addDays,
   isSameDay,
 } from "date-fns";
-import "./Calendar.css"; // Import the custom CSS file
+import "./Calendar.css";
 import { RegisterWorkShiftForm } from "../pages/RegisterWorkShift";
 
 const WeekCalendar = () => {
@@ -19,8 +19,8 @@ const WeekCalendar = () => {
 
   useEffect(() => {
     if (selectedDate) {
-      onDateClickHandle(new Date(selectedDate).getTime());
-      console.log(selectedDate);
+      onDateClickHandle(selectedDate);
+      setOpenShiftMenu(!openShiftMenu); 
     }
   }, [selectedDate]);
 
@@ -35,7 +35,7 @@ const WeekCalendar = () => {
 
   const onDateClickHandle = (day) => {
     setSelectedDate(day);
-    setOpenShiftMenu(true);
+    console.log(selectedDate);
   };
 
   const renderHeader = () => {
