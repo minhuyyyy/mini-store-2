@@ -1,37 +1,41 @@
-import React, { useState, useEffect } from "react";
-import { Input, Button, FormControl, ThemeProvider } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
-// import { db } from "../db/dbConfig";
+import React, { useState, useEffect, useContext } from "react";
 import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  writeBatch,
-} from "firebase/firestore";
-import { getImageLink } from "../db/getImgLink";
+  Input,
+  Button,
+  FormControl,
+  ThemeProvider,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
 import env from "react-dotenv";
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 export default function UpdateProfile() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
-  const [downloadURL, setDownloadURL] = useState("");
-  const [docID, setDocID] = useState("");
-  const [uid, setUid] = useState("");
+  const [password, setPassword] = useState("");
+  const [input, setInput] = useState({
+    password: "",
+    showPassword: false,
+  });
+  const [formData, setFormData] = useState({
+    img: "",
+    fullName: "",
+    email: "",
+    role: "",
+    password: "",
+    isActive: "",
+  });
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const user = JSON.parse(sessionStorage.getItem("user"));
-
-  useEffect(() => {
-    setUid(user.ID);
-  }, [user]);
-
+  const { user } = useContext(AuthContext);
   useEffect(() => {
     getData();
-  }, [uid]);
+  }, [user]);
 
   useEffect(() => {
     return () => {
@@ -41,21 +45,38 @@ export default function UpdateProfile() {
     };
   }, [image]);
 
-  const [formData, setFormData] = useState({
-    img: "",
-    email: "",
-    name: "",
-  });
-
   const handleAddPhoto = async (e) => {
-    try {
-      const file = e.target.files[0];
+    const file = e.target.files[0];
+    if (file) {
       setImage(file);
-      setImageUrl(URL.createObjectURL(file));
-      setDownloadURL(await getImageLink(file));
-    } catch (e) {
-      console.log(e);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImage(null);
+      setImageUrl("");
     }
+  };
+
+  const handleClickShowPassword = () => {
+    setInput((prev) => ({
+      ...prev,
+      showPassword: !prev.showPassword,
+    }));
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const onInputChange = (e) => {
+    const { name, value } = e.target;
+    setInput((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleInputChange = (e) => {
@@ -67,51 +88,62 @@ export default function UpdateProfile() {
   };
 
   const getData = async () => {
-    // const q = query(
-    //   collection(db, `${env.REACT_APP_USER_DB_URL}`),
-    //   where("ID", "==", uid)
-    // );
-    // const snapshot = await getDocs(q);
-    // snapshot.forEach((doc) => {
-    //   const newData = doc.data();
-    //   setImageUrl(newData.img);
-    //   setFormData({
-    //     img: newData.img,
-    //     email: newData.email,
-    //     name: newData.name,
-    //   });
-    //   setDocID(doc.id);
-    // });
+    try {
+      const response = await axios.get(
+        `http://vps.akabom.me/api/Employee/${user.id}`
+      );
+      if (response.status == 200) {
+        setFormData(response.data);
+        setPassword(response.data.password);
+        setImageUrl(response.data.imgUrl);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
+  function makeid() {
+    let result = "";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+-=";
+    const charactersLength = 12;
+    let counter = 0;
+    while (counter <= charactersLength) {
+      result += characters.charAt(
+        Math.floor(Math.random() * 5 * charactersLength)
+      );
+      counter += 1;
+    }
+    setPassword(result);
+    return result;
+  }
+
   const handleUpdate = async () => {
-    // await getData();
-    // const userDocRef = doc(db, `${env.REACT_APP_USER_DB_URL}/${docID}`);
-    // try {
-    //   const batch = writeBatch(db);
-    //   batch.update(userDocRef, {
-    //     img: imageUrl,
-    //     email: formData.email,
-    //     name: formData.name,
-    //   });
-    //   setFormData({
-    //     img: "",
-    //     email: "",
-    //     name: "",
-    //   });
-    //   setImageUrl("");
-    //   await batch.commit();
-    //   toast.success("Profile updated successfully");
-    //   navigate("/viewprofile");
-    // } catch (error) {
-    //   console.error(error);
-    // }
+    try {
+      const response = axios.put(
+        `http://vps.akabom.me/api/Employee/${user.id}`,
+        {
+          id: user.id,
+          email: formData.email,
+          fullName: formData.fullName,
+          password: password,
+          imgUrl: imageUrl,
+          roleName: formData.role,
+          isActive: formData.isActive,
+        }
+      );
+      if ((await response).status == 200) {
+        toast.success("Profile updated");
+      } else toast.error("Something went wrong");
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
     <ThemeProvider theme={theme}>
       <div style={{ paddingLeft: "50px" }}>
-        {uid && (
+        {user && (
           <>
             <div>
               <Button
@@ -167,8 +199,35 @@ export default function UpdateProfile() {
                   id="name"
                   name="name"
                   variant="standard"
-                  value={formData.name}
+                  value={formData.fullName}
                   onChange={handleInputChange}
+                />
+                <br />
+              </FormControl>
+            </div>
+            <div>
+              <FormControl>
+                <Input
+                  type={input.showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Enter Password"
+                  value={password}
+                  onChange={onInputChange}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {input.showPassword ? (
+                          <Visibility />
+                        ) : (
+                          <VisibilityOff />
+                        )}
+                      </IconButton>
+                      <Button onClick={makeid}>Generate new password</Button>
+                    </InputAdornment>
+                  }
                 />
                 <br />
               </FormControl>

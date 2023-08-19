@@ -7,7 +7,6 @@ import {
   MenuItem,
   ThemeProvider,
 } from "@mui/material";
-import { getImageLink } from "../db/getImgLink";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { theme } from "./ManageAccounts";
@@ -19,7 +18,6 @@ export default function AddAccount() {
   const [role, setRole] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [added, setAdded] = useState(false);
-  const [downloadURL, setDownloadURL] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
     return () => {
@@ -44,9 +42,14 @@ export default function AddAccount() {
   const handleAddPhoto = async (e) => {
     try {
       const file = e.target.files[0];
-      setImage(file);
-      setImageUrl(URL.createObjectURL(file));
-      setDownloadURL(await getImageLink(file));
+      if (file) {
+        setImage(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImageUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -64,7 +67,7 @@ export default function AddAccount() {
     try {
       const response = await axios({
         method: "post",
-        url: "http://vps.akabom.me/api/account/register",
+        url: "http://vps.akabom.me/api/Employee/register",
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
@@ -74,13 +77,12 @@ export default function AddAccount() {
           email: formData.email,
           fullName: formData.name,
           password: formData.password,
-          imgUrl: downloadURL,
+          imgUrl: imageUrl,
           roleName: role,
         },
       });
 
       if (response.status === 200) {
-        console.log("URL", downloadURL);
         setFormData({
           img: "",
           email: "",

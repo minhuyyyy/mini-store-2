@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const ProductsPresentation = ({ filteredProducts, category }) => {
+const ProductsPresentation = ({ filteredProducts }) => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -72,7 +72,7 @@ const ProductsPresentation = ({ filteredProducts, category }) => {
             >
               <CardMedia
                 component="img"
-                image={product.img}
+                image={product.imageUrl}
                 style={{ flex: "1 0 auto", objectFit: "contain" }}
               />
               <Typography

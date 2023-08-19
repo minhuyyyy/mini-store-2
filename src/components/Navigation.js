@@ -22,6 +22,9 @@ import "../App.css";
 import { AuthContext } from "../context/AuthContext";
 import useAuth from "../hooks/useAuth";
 import RegisterWorkShift from "../pages/RegisterWorkShift";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { toast } from "react-toastify";
 export default function Navigation() {
   const location = useLocation();
   const { logout } = useAuth();
@@ -29,8 +32,23 @@ export default function Navigation() {
   const [activeLink, setActiveLink] = useState(location.pathname);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [checkIn, setCheckIn] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    checkUser();
+  }, [user, checkIn]);
+
+  const checkUser = () => {
+    let CurrentUser = user ? setCurrentUser(user) : null;
+    let getCookie = Cookies.get("check-in");
+    console.log(getCookie);
+    let checkedIn = getCookie != null ? setCheckIn(getCookie) : null;
+    return CurrentUser;
+  };
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -74,6 +92,32 @@ export default function Navigation() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleCheckOut = () => {
+    const workShift = Cookies.get("check-in");
+    if (workShift) {
+      try {
+        axios
+          .post(`http://vps.akabom.me/api/checkout`, {
+            employeeId: user.id,
+            dateTime: new Date(),
+            imageData: "",
+            workshiftId: workShift,
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              toast.success("Checked Out");
+            }
+          });
+      } catch (e) {
+        console.log(e);
+      }
+    } // Add a closing bracket here
+  };
+
+  const onCheckOut = () => {
+    handleCheckOut();
   };
 
   return (
@@ -166,14 +210,53 @@ export default function Navigation() {
             >
               <span>About Us</span>
             </Button>
+            {checkIn == null ? (
+              <Button
+                key={"Check In"}
+                onClick={() => {
+                  navigate("checkattendance");
+                  document.title = "Check In";
+                }}
+                style={
+                  activeLink === "/checkattendance"
+                    ? { ...navLinkStyle, ...activeLinkStyle }
+                    : { ...navLinkStyle }
+                }
+                sx={{
+                  color: "white",
+                  padding: "0px 10px",
+                  height: "30px",
+                }}
+              >
+                <span>Check In</span>
+              </Button>
+            ) : (
+              <Button
+                key={"Check Out"}
+                onClick={onCheckOut}
+                style={
+                  activeLink === ""
+                    ? { ...navLinkStyle, ...activeLinkStyle }
+                    : { ...navLinkStyle }
+                }
+                sx={{
+                  color: "white",
+                  padding: "0px 10px",
+                  height: "30px",
+                }}
+              >
+                <span>Check Out</span>
+              </Button>
+            )}
+
             <Button
-              key={"Check Attendance"}
+              key={"Create Order"}
               onClick={() => {
-                navigate("checkattendance");
-                document.title = "Check Attendance";
+                navigate("createorder");
+                document.title = "Create Order";
               }}
               style={
-                activeLink === "/checkattendance"
+                activeLink === "/createorder"
                   ? { ...navLinkStyle, ...activeLinkStyle }
                   : { ...navLinkStyle }
               }
@@ -183,15 +266,18 @@ export default function Navigation() {
                 height: "30px",
               }}
             >
-              <span>Check Attendance</span>
+              <span>Create Order</span>
             </Button>
           </Box>
-          {user ? (
+          {currentUser ? (
             <>
               <Box sx={{ paddingRight: 2 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ padding: 0 }}>
-                    <Avatar alt={user.email} src={user.photoURL} />
+                    <Avatar
+                      alt={currentUser.email}
+                      src={currentUser.photoURL}
+                    />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -216,7 +302,7 @@ export default function Navigation() {
                   >
                     <MenuItem>User Profile</MenuItem>
                   </Link>
-                  {user.role === "Manager" ? (
+                  {currentUser.position === "Manager" ? (
                     <div>
                       <Link
                         to="/manageaccounts"
@@ -230,6 +316,12 @@ export default function Navigation() {
                       >
                         <MenuItem>View Salary</MenuItem>
                       </Link>
+                      <Link
+                        to="/view-shifts"
+                        style={{ textDecoration: "none", color: "#D4B887" }}
+                      >
+                        <MenuItem>View Shifts</MenuItem>
+                      </Link>
                     </div>
                   ) : (
                     <Link
@@ -239,14 +331,12 @@ export default function Navigation() {
                       <MenuItem>View Salary</MenuItem>
                     </Link>
                   )}
-                  {user.role !== "Manager" ? (
+                  {currentUser.position !== "Manager" ? (
                     <Link
                       to="/workshift"
                       style={{ textDecoration: "none", color: "#D4B887" }}
                     >
-                      <MenuItem>
-                        Register Work Shift
-                      </MenuItem>
+                      <MenuItem>Register Work Shift</MenuItem>
                     </Link>
                   ) : (
                     <></>

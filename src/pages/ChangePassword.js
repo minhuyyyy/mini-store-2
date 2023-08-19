@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Button } from "@mui/material";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../db/dbConfig";
 import { useNavigate } from "react-router";
 
 export default function ChangePassword() {

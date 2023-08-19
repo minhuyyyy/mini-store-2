@@ -10,8 +10,6 @@ import {
   Icon,
 } from "@mui/material";
 import axios from "axios";
-import { storage } from "../db/dbConfig";
-import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { theme } from "./ManageAccounts";
@@ -23,8 +21,6 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
-import env from "react-dotenv";
-import { getImageLink } from "../db/getImgLink";
 
 export default function UpdateProduct() {
   const [image, setImage] = useState(null);
@@ -47,47 +43,9 @@ export default function UpdateProduct() {
     fetchUnits();
   }, []);
 
-  const fetchCategories = async () => {
-    // try {
-    //   const categoriesRef = doc(
-    //     db,
-    //     "users",
-    //     "DXgXU4IJtORzkw2E6jTp",
-    //     "specifications",
-    //     "7OM6ChlDeqoZaBMWFXTH",
-    //     "specimens",
-    //     "LeqwbEgBvTjm0RgW84YV"
-    //   );
-    //   const docSnap = await getDoc(categoriesRef);
-    //   if (docSnap.exists()) {
-    //     const categoryData = docSnap.data().categories || [];
-    //     setCategories(categoryData);
-    //   }
-    // } catch (error) {
-    //   console.log("Error fetching categories:", error);
-    // }
-  };
+  const fetchCategories = async () => {};
 
-  const fetchUnits = async () => {
-    // try {
-    //   const unitsRef = doc(
-    //     db,
-    //     "users",
-    //     "DXgXU4IJtORzkw2E6jTp",
-    //     "specifications",
-    //     "7OM6ChlDeqoZaBMWFXTH",
-    //     "specimens",
-    //     "LeqwbEgBvTjm0RgW84YV"
-    //   );
-    //   const docSnap = await getDoc(unitsRef);
-    //   if (docSnap.exists()) {
-    //     const unitsData = docSnap.data().units || [];
-    //     setUnits(unitsData);
-    //   }
-    // } catch (error) {
-    //   console.log("Error fetching units:", error);
-    // }
-  };
+  const fetchUnits = async () => {};
 
   const fetchProduct = () => {
     try {
@@ -119,7 +77,11 @@ export default function UpdateProduct() {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setImageUrl(await getImageLink(file));
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
     } else {
       setImage(null);
       setImageUrl("");
@@ -165,8 +127,8 @@ export default function UpdateProduct() {
           description: formData.description,
           price: formData.price,
           imageUrl: imageUrl,
-          unit: unit,
-          category: category,
+          unit: formData.unit,
+          category: formData.category,
           stock: formData.stock,
         })
         .then((response) => {
@@ -242,59 +204,16 @@ export default function UpdateProduct() {
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>
-                  <label>Category</label>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select selectCate"
-                    value={category}
-                    label="Category"
-                    onChange={handleChange}
-                  >
-                    {categories.map((cat) => (
-                      <MenuItem key={cat} value={cat}>
-                        {cat}
-                        {cat && (
-                          <IconButton
-                            sx={{}}
-                            onClick={() => {
-                              setCategories(
-                                categories.filter((c) => c !== cat)
-                              );
-                              if (category === cat) {
-                                setCategory("");
-                              }
-                            }}
-                          >
-                            <Icon>close</Icon>
-                          </IconButton>
-                        )}
-                      </MenuItem>
-                    ))}
-                    <MenuItem value="add_new_category">
-                      Add new category
-                    </MenuItem>
-                  </Select>
-                  {showNewCategoryInput && (
-                    <div>
-                      <FormControl sx={{ width: "80%" }}>
-                        <label>Product category:</label>
-                        <Input
-                          id="category"
-                          name="category"
-                          variant="standard"
-                          value={newCategory} // Use newCategory state to capture the inputted category
-                          onChange={(e) => {
-                            setNewCategory(e.target.value);
-                          }}
-                        />
-                        <br />
-                      </FormControl>
-                    </div>
-                  )}
-                  {category && <p>You selected {category}</p>}
+                  <label>Product category</label>
+                  <Input
+                    id="category"
+                    name="category"
+                    variant="standard"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                  />
                   <br />
                 </FormControl>
-                <br />
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>
@@ -323,61 +242,24 @@ export default function UpdateProduct() {
                 </FormControl>
               </div>
               <div>
-                <FormControl sx={{ width: "10%" }}>
-                  <label>Units</label>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select selectCate"
-                    value={unit}
-                    label="Unit"
-                    onChange={handleUnitChange}
-                  >
-                    {units.map((unitOptions) => (
-                      <MenuItem key={unitOptions} value={unitOptions}>
-                        {unitOptions}
-                        {unitOptions && (
-                          <IconButton
-                            sx={{}}
-                            onClick={() => {
-                              setUnits(units.filter((u) => u !== unitOptions));
-                              if (unit === unitOptions) {
-                                setUnit("");
-                              }
-                            }}
-                          >
-                            <Icon>close</Icon>
-                          </IconButton>
-                        )}
-                      </MenuItem>
-                    ))}
-                    <MenuItem value="add_new_unit">Add new unit</MenuItem>
-                  </Select>
-                  {showNewUnitInput && (
-                    <div>
-                      <FormControl sx={{ width: "80%" }}>
-                        <label>Product units:</label>
-                        <Input
-                          id="units"
-                          name="units"
-                          variant="standard"
-                          value={newUnit}
-                          onChange={(e) => {
-                            setNewUnit(e.target.value);
-                          }}
-                        />
-                        <br />
-                      </FormControl>
-                    </div>
-                  )}
+                <FormControl sx={{ width: "80%" }}>
+                  <label>Product unit</label>
+                  <Input
+                    id="unit"
+                    name="unit"
+                    variant="standard"
+                    value={formData.unit}
+                    onChange={handleInputChange}
+                  />
                   <br />
                 </FormControl>
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>
-                  <label>Product description</label>
+                  <label>Product description:</label>
                   <Input
                     id="description"
-                    name="info"
+                    name="description"
                     variant="standard"
                     value={formData.description}
                     onChange={handleInputChange}

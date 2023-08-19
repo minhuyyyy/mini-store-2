@@ -2,10 +2,11 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import useSessionStorage from "./useSessionStorage";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 export default function useUser() {
   const { user, setUser } = useContext(AuthContext);
-  const { setItem } = useSessionStorage();
+  const { setItem, removeItem } = useSessionStorage();
   const navigate = useNavigate();
 
   function preventBack() {
@@ -18,10 +19,11 @@ export default function useUser() {
   };
 
   const removeUser = () => {
-    preventBack();
     setUser(null);
-    setItem("user", null);
+    removeItem("user");
+    Cookies.remove("check-in");
     navigate("/");
+    window.location.reload();
   };
 
   return { user, addUser, removeUser };

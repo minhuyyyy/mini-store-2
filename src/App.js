@@ -9,12 +9,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import LoginPage from "./Login/LoginPage";
 import UpdateProduct from "./pages/UpdateProduct";
 import ManageProducts from "./pages/ManageProducts";
-import DeleteProduct from "./pages/DeleteProduct";
 import AddProduct from "./pages/AddProduct";
 import ManageAccountsPage from "./pages/ManageAccounts";
 import ViewSalary from "./pages/ViewSalary";
 import UpdateAccount from "./pages/UpdateAccount";
-import DeleteAccount from "./pages/DeleteAccount";
 import ChangePassword from "./pages/ChangePassword";
 import ViewProfile from "./pages/Profile";
 import AddAccount from "./pages/AddAccount";
@@ -26,7 +24,11 @@ import { AuthContext } from "./context/AuthContext";
 import { useState } from "react";
 import ProductsPresentation from "./components/Home";
 import { memo } from "react";
-import RegisterWorkShift from "./pages/RegisterWorkShift";
+import CreateOrder from "./pages/CreateOrder";
+import Webcam from "react-webcam";
+import Capture from "./components/Webcam";
+import { RegisterWorkShift, RegisterWorkShiftForm } from "./pages/RegisterWorkShift";
+import ViewShifts from "./pages/ViewShifts";
 function App() {
   const [user, setUser] = useState(null);
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);
@@ -42,27 +44,20 @@ function App() {
           <Route path="/" element={<ProductsPresentation />} />
           <Route path="/manageproducts" element={<ManageProducts />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/checkattendance" element={<CheckAttendance />} />
+          <Route path="/checkattendance" element={<Capture />} />
           <Route path="/detail/:id" element={<Details />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/manageproducts/update/:id"
             element={<UpdateProduct />}
           />
-          <Route
-            path="/manageproducts/delete/:id"
-            element={<DeleteProduct />}
-          />
+
           <Route path="/manageproducts/add" element={<AddProduct />} />
           <Route path="/manageaccounts" element={<ManageAccountsPage />} />
           <Route path="/manageaccounts/add" element={<AddAccount />} />
           <Route
             path="/manageaccounts/update/:id"
             element={<UpdateAccount />}
-          />
-          <Route
-            path="/manageaccounts/delete/:id"
-            element={<DeleteAccount />}
           />
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/viewprofile" element={<ViewProfile />} />
@@ -71,7 +66,9 @@ function App() {
             element={<UpdateProfile />}
           />
           <Route path="/viewsalary" element={<ViewSalary />} />
+          <Route path="/view-shifts" element={<ViewShifts />} />
           <Route path="/workshift" element={<RegisterWorkShift />} />
+          <Route path="/createorder" element={<CreateOrder />} />
           <Route
             path="/changepassword/setnewpassword"
             element={<SetNewPassword />}
@@ -80,7 +77,7 @@ function App() {
       </AuthContext.Provider>
       <ToastContainer />
     </div>
-    // {/* </React.StrictMode> */}
+    // </React.StrictMode>
   );
 }
 export default App;
