@@ -1,64 +1,56 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Card, Grid } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Card, Grid, Button } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
-import { uid } from "uid";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
-export function CheckAttendanceForm({ imgSrc }) {
-  const [imageUrl, setImageUrl] = useState("");
-  const [currentUser, setCurrentUser] = useState([]);
-  const [shift, setShift] = useState([]);
-  const [data, setData] = useState({
-    id: uid(10),
-    empID: "",
-    imageUrl: "",
-    dateTime: "",
-  });
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const now = new Date();
-  const date = now.toISOString();
-  useEffect(() => {
-    checkUser();
-    fetchShift();
-  }, [user]);
+import { useNavigate } from "react-router-dom";
 
-  const checkUser = () => {
-    setCurrentUser(user ? user : []);
-  };
+export function CheckAttendanceForm({ imgSrc }) {
+  const { user } = useContext(AuthContext);
+  const [currentUser, setCurrentUser] = useState(user);
+  const [shifts, setShifts] = useState([]);
+  const [selectedShift, setSelectedShift] = useState(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    fetchShift();
+  }, []);
 
   const fetchShift = async () => {
-    const response = await axios.get(
-      // `http://vps.akabom.me/api/work-shift/${user.id}?startDate=${new Date()
-      //   .toISOString()
-      //   .substring(0, 10)}&endDate=${new Date().toISOString().substring(0, 10)}`
-      `http://vps.akabom.me/api/work-shift/${user.id}?startDate=2023-08-20&endDate=2023-08-20`
-    );
-    if (response.status == 200) {
-      console.log(response.data[0]);
-      setShift([...shift, response.data[0].id]);
+    try {
+      const response = await axios.get(
+        `http://vps.akabom.me/api/work-shift/${user.id}?startDate=${new Date()
+          .toISOString()
+          .substring(0, 10)}&endDate=${new Date()
+          .toISOString()
+          .substring(0, 10)}`
+      );
+      if (response.status === 200) {
+        console.log(response.data);
+        setShifts(response.data); // Wrap the response data in an array
+      }
+    } catch (error) {
+      console.error("Error fetching shift data:", error);
     }
   };
 
-  const onSubmit = () => {
+  const onCheckIn = () => {
     if (imgSrc) {
-      handleSubmit();
+      handleCheckIn();
     } else {
       toast.error("Take a picture first");
     }
   };
 
-  const handleSubmit = async () => {
+  const handleCheckIn = async () => {
     const response = await axios.post("http://vps.akabom.me/api/checkin", {
       employeeId: user.id,
       dateTime: "2023-08-20T17:00:00.0000000Z",
       imageData: imgSrc,
-      workshiftId: shift.toString(),
+      workshiftId: selectedShift,
     });
     if (response.status == 200) {
-      Cookies.set("check-in", `${shift.toString()}`);
+      Cookies.set("check-in", `${selectedShift}`);
       navigate("/");
       window.location.reload();
       toast.success("Attendance taken successfully");
@@ -66,49 +58,44 @@ export function CheckAttendanceForm({ imgSrc }) {
   };
 
   return (
-    <>
-      {currentUser ? (
-        <>
-          <h2>Check In</h2>
-          <span>
+    <div>
+      {currentUser && shifts != null ? (
+        shifts.map((shift) => (
+          <div key={shift.id}>
+            <h2>Check In</h2>
+            <p>Select a shift to check in</p>
+            <Button onClick={() => setSelectedShift(shift.id)}>
+              {shift.id}
+            </Button>
             <p>Take a picture of you at the store</p>
-            <button onClick={onSubmit}>Check in</button>
-          </span>
-        </>
+            {selectedShift && (
+              <Button onClick={onCheckIn} variant="contained" color="primary">
+                Check In
+              </Button>
+            )}
+          </div>
+        ))
       ) : (
         <h2>Login to check in</h2>
       )}
-    </>
+    </div>
   );
 }
 
 function CheckAttendance({ imgSrc }) {
-  const [currentUser, setCurrentUser] = useState();
-  const { user } = useContext(AuthContext);
-  useEffect(() => {
-    setCurrentUser(user);
-  }, [user]);
   return (
-    <>
-      {currentUser ? (
-        <>
-          <Grid justify="center">
-            <Card
-              style={{
-                marginTop: "180px",
-                height: "100%",
-                width: "70%",
-                transform: "translate(20%, -50%)",
-              }}
-            >
-              <CheckAttendanceForm imgSrc={imgSrc} />
-            </Card>
-          </Grid>
-        </>
-      ) : (
-        <h2 className="center">Log in to view page</h2>
-      )}
-    </>
+    <Grid container justifyContent="center">
+      <Card
+        style={{
+          marginTop: "180px",
+          height: "100%",
+          width: "70%",
+          transform: "translate(20%, -50%)",
+        }}
+      >
+        <CheckAttendanceForm imgSrc={imgSrc} />
+      </Card>
+    </Grid>
   );
 }
 

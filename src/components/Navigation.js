@@ -23,6 +23,8 @@ import { AuthContext } from "../context/AuthContext";
 import useAuth from "../hooks/useAuth";
 import RegisterWorkShift from "../pages/RegisterWorkShift";
 import Cookies from "js-cookie";
+import axios from "axios";
+import { toast } from "react-toastify";
 export default function Navigation() {
   const location = useLocation();
   const { logout } = useAuth();
@@ -90,6 +92,32 @@ export default function Navigation() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleCheckOut = () => {
+    const workShift = Cookies.get("check-in");
+    if (workShift) {
+      try {
+        axios
+          .post(`http://vps.akabom.me/api/checkout`, {
+            employeeId: user.id,
+            dateTime: new Date(),
+            imageData: "",
+            workshiftId: workShift,
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              toast.success("Checked Out");
+            }
+          });
+      } catch (e) {
+        console.log(e);
+      }
+    } // Add a closing bracket here
+  };
+
+  const onCheckOut = () => {
+    handleCheckOut();
   };
 
   return (
@@ -182,7 +210,7 @@ export default function Navigation() {
             >
               <span>About Us</span>
             </Button>
-            {checkIn==null ? (
+            {checkIn == null ? (
               <Button
                 key={"Check In"}
                 onClick={() => {
@@ -205,12 +233,9 @@ export default function Navigation() {
             ) : (
               <Button
                 key={"Check Out"}
-                onClick={() => {
-                  navigate("check-out");
-                  document.title = "Check Out";
-                }}
+                onClick={onCheckOut}
                 style={
-                  activeLink === "/check-out"
+                  activeLink === ""
                     ? { ...navLinkStyle, ...activeLinkStyle }
                     : { ...navLinkStyle }
                 }
