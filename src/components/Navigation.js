@@ -22,6 +22,7 @@ import "../App.css";
 import { AuthContext } from "../context/AuthContext";
 import useAuth from "../hooks/useAuth";
 import RegisterWorkShift from "../pages/RegisterWorkShift";
+import Cookies from "js-cookie";
 export default function Navigation() {
   const location = useLocation();
   const { logout } = useAuth();
@@ -30,15 +31,19 @@ export default function Navigation() {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [checkIn, setCheckIn] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
   useEffect(() => {
     checkUser();
-  }, [user]);
+  }, [user, checkIn]);
 
   const checkUser = () => {
     let CurrentUser = user ? setCurrentUser(user) : null;
+    let getCookie = Cookies.get("check-in");
+    console.log(getCookie);
+    let checkedIn = getCookie != null ? setCheckIn(getCookie) : null;
     return CurrentUser;
   };
 
@@ -177,25 +182,48 @@ export default function Navigation() {
             >
               <span>About Us</span>
             </Button>
-            <Button
-              key={"Check In"}
-              onClick={() => {
-                navigate("checkattendance");
-                document.title = "Check In";
-              }}
-              style={
-                activeLink === "/checkattendance"
-                  ? { ...navLinkStyle, ...activeLinkStyle }
-                  : { ...navLinkStyle }
-              }
-              sx={{
-                color: "white",
-                padding: "0px 10px",
-                height: "30px",
-              }}
-            >
-              <span>Check In</span>
-            </Button>
+            {checkIn==null ? (
+              <Button
+                key={"Check In"}
+                onClick={() => {
+                  navigate("checkattendance");
+                  document.title = "Check In";
+                }}
+                style={
+                  activeLink === "/checkattendance"
+                    ? { ...navLinkStyle, ...activeLinkStyle }
+                    : { ...navLinkStyle }
+                }
+                sx={{
+                  color: "white",
+                  padding: "0px 10px",
+                  height: "30px",
+                }}
+              >
+                <span>Check In</span>
+              </Button>
+            ) : (
+              <Button
+                key={"Check Out"}
+                onClick={() => {
+                  navigate("check-out");
+                  document.title = "Check Out";
+                }}
+                style={
+                  activeLink === "/check-out"
+                    ? { ...navLinkStyle, ...activeLinkStyle }
+                    : { ...navLinkStyle }
+                }
+                sx={{
+                  color: "white",
+                  padding: "0px 10px",
+                  height: "30px",
+                }}
+              >
+                <span>Check Out</span>
+              </Button>
+            )}
+
             <Button
               key={"Create Order"}
               onClick={() => {

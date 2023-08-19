@@ -5,6 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { uid } from "uid";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 export function CheckAttendanceForm({ imgSrc }) {
   const [imageUrl, setImageUrl] = useState("");
   const [currentUser, setCurrentUser] = useState([]);
@@ -16,6 +17,7 @@ export function CheckAttendanceForm({ imgSrc }) {
     dateTime: "",
   });
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const now = new Date();
   const date = now.toISOString();
   useEffect(() => {
@@ -37,7 +39,6 @@ export function CheckAttendanceForm({ imgSrc }) {
     if (response.status == 200) {
       console.log(response.data[0]);
       setShift([...shift, response.data[0].id]);
-
     }
   };
 
@@ -56,8 +57,12 @@ export function CheckAttendanceForm({ imgSrc }) {
       imageData: imgSrc,
       workshiftId: shift.toString(),
     });
-    if (response.status == 200) toast.success("Attendance taken successfully");
-    else toast.error("Something went wrong");
+    if (response.status == 200) {
+      Cookies.set("check-in", `${shift.toString()}`);
+      navigate("/");
+      window.location.reload();
+      toast.success("Attendance taken successfully");
+    } else toast.error("Something went wrong");
   };
 
   return (

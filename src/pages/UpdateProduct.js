@@ -127,8 +127,8 @@ export default function UpdateProduct() {
           description: formData.description,
           price: formData.price,
           imageUrl: imageUrl,
-          unit: unit,
-          category: category,
+          unit: formData.unit,
+          category: formData.category,
           stock: formData.stock,
         })
         .then((response) => {
@@ -204,59 +204,16 @@ export default function UpdateProduct() {
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>
-                  <label>Category</label>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select selectCate"
-                    value={category}
-                    label="Category"
-                    onChange={handleChange}
-                  >
-                    {categories.map((cat) => (
-                      <MenuItem key={cat} value={cat}>
-                        {cat}
-                        {cat && (
-                          <IconButton
-                            sx={{}}
-                            onClick={() => {
-                              setCategories(
-                                categories.filter((c) => c !== cat)
-                              );
-                              if (category === cat) {
-                                setCategory("");
-                              }
-                            }}
-                          >
-                            <Icon>close</Icon>
-                          </IconButton>
-                        )}
-                      </MenuItem>
-                    ))}
-                    <MenuItem value="add_new_category">
-                      Add new category
-                    </MenuItem>
-                  </Select>
-                  {showNewCategoryInput && (
-                    <div>
-                      <FormControl sx={{ width: "80%" }}>
-                        <label>Product category:</label>
-                        <Input
-                          id="category"
-                          name="category"
-                          variant="standard"
-                          value={newCategory} // Use newCategory state to capture the inputted category
-                          onChange={(e) => {
-                            setNewCategory(e.target.value);
-                          }}
-                        />
-                        <br />
-                      </FormControl>
-                    </div>
-                  )}
-                  {category && <p>You selected {category}</p>}
+                  <label>Product category</label>
+                  <Input
+                    id="category"
+                    name="category"
+                    variant="standard"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                  />
                   <br />
                 </FormControl>
-                <br />
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>
@@ -285,52 +242,15 @@ export default function UpdateProduct() {
                 </FormControl>
               </div>
               <div>
-                <FormControl sx={{ width: "10%" }}>
-                  <label>Units</label>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select selectCate"
-                    value={unit}
-                    label="Unit"
-                    onChange={handleUnitChange}
-                  >
-                    {units.map((unitOptions) => (
-                      <MenuItem key={unitOptions} value={unitOptions}>
-                        {unitOptions}
-                        {unitOptions && (
-                          <IconButton
-                            sx={{}}
-                            onClick={() => {
-                              setUnits(units.filter((u) => u !== unitOptions));
-                              if (unit === unitOptions) {
-                                setUnit("");
-                              }
-                            }}
-                          >
-                            <Icon>close</Icon>
-                          </IconButton>
-                        )}
-                      </MenuItem>
-                    ))}
-                    <MenuItem value="add_new_unit">Add new unit</MenuItem>
-                  </Select>
-                  {showNewUnitInput && (
-                    <div>
-                      <FormControl sx={{ width: "80%" }}>
-                        <label>Product units:</label>
-                        <Input
-                          id="units"
-                          name="units"
-                          variant="standard"
-                          value={newUnit}
-                          onChange={(e) => {
-                            setNewUnit(e.target.value);
-                          }}
-                        />
-                        <br />
-                      </FormControl>
-                    </div>
-                  )}
+                <FormControl sx={{ width: "80%" }}>
+                  <label>Product unit</label>
+                  <Input
+                    id="unit"
+                    name="unit"
+                    variant="standard"
+                    value={formData.unit}
+                    onChange={handleInputChange}
+                  />
                   <br />
                 </FormControl>
               </div>
