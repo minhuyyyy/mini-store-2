@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - 'publish-docker'
+  pull_request:
+    branches:
+    - 'publish-docker'
 
 jobs:
   docker:
