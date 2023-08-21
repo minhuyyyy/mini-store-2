@@ -1,6 +1,7 @@
 const now = new Date();
-// const day = today.substring(0, 16);
-const datetime = now.getTime();
-const time = now.toLocaleTimeString();
-console.log("Date:", datetime);
-console.log("Time:", time);
+const gmtOffset = 7; // GMT+7
+const date = now.toISOString().substring(0, 10)
+// time.setUTCHours(time.getUTCHours() + gmtOffset);
+const time = now.toISOString().substring(11, 21)
+console.log("Time in GMT+7:", date);
+console.log("Time in GMT+7:", time);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Button,
   Paper,
@@ -13,28 +13,52 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
+import { AuthContext } from "../context/AuthContext";
 
-export default function ViewSalary() {
+export default function ViewShifts({ startDate, endDate }) {
   const [data, setData] = useState([]);
-  const [currentUser, setCurrentUser] = useState([]);
-  const [uid, setUid] = useState("");
-
-  useEffect(() => {
-    setUid(currentUser.ID);
-  }, [currentUser]);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     fetchData();
-  }, [uid]);
+  }, [user]);
 
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://vps.akabom.me/api/work-shift?startDate=2023-08-20&endDate=2023-08-27"
+        `http://vps.akabom.me/api/work-shift?startDate=${startDate}&endDate=${endDate}`
       );
       setData(response.data);
     } catch (error) {
       toast.error("Something went wrong");
+    }
+  };
+
+  const handleApprove = async (id, employeeId) => {
+    const response = await axios.put(
+      "http://vps.akabom.me/api/work-shift/confirm",
+      {
+        employeeId: employeeId,
+        workshiftId: id,
+        isConfirm: true,
+      }
+    );
+    if (response.status == 200) {
+      fetchData();
+    }
+  };
+
+  const handleDeny = async (id, employeeId) => {
+    const response = await axios.put(
+      "http://vps.akabom.me/api/work-shift/confirm",
+      {
+        employeeId: employeeId,
+        workshiftId: id,
+        isConfirm: false,
+      }
+    );
+    if (response.status == 200) {
+      fetchData();
     }
   };
 
@@ -44,7 +68,8 @@ export default function ViewSalary() {
         <TableContainer component={Paper}>
           <Table aria-label="salary table">
             <TableHead>
-              <TableRow>                <TableCell>Employee ID</TableCell>
+              <TableRow>
+                <TableCell>Employee ID</TableCell>
                 <TableCell>Start Time</TableCell>
                 <TableCell>Coefficient</TableCell>
                 <TableCell>Work Shift</TableCell>
@@ -55,23 +80,32 @@ export default function ViewSalary() {
             <TableBody>
               {data.map((row) => (
                 <TableRow key={row.id}>
-                  <TableCell>{row.employeeId}</TableCell>
-                  <TableCell>{row.startDate}</TableCell>
-                  <TableCell>{row.coefficientsSalary}</TableCell>
-                  <TableCell>{row.workshiftTypeId}</TableCell>
-                  <TableCell>{row.approvalStatusId}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      color="update"
-                      sx={{ marginRight: "10px" }}
-                    >
-                      Approved
-                    </Button>
-                    <Button variant="contained" color="reject">
-                      Deny
-                    </Button>
-                  </TableCell>
+                  {row.approvalStatusId == "1" && (
+                    <>
+                      <TableCell>{row.employeeId}</TableCell>
+                      <TableCell>{row.startDate}</TableCell>
+                      <TableCell>{row.coefficientsSalary}</TableCell>
+                      <TableCell>{row.workshiftTypeId}</TableCell>
+                      <TableCell>{row.approvalStatusId}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          color="update"
+                          sx={{ marginRight: "10px" }}
+                          onClick={() => handleApprove(row.id, row.employeeId)}
+                        >
+                          Approved
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="reject"
+                          onClick={() => handleDeny(row.id, row.employeeId)}
+                        >
+                          Deny
+                        </Button>
+                      </TableCell>
+                    </>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

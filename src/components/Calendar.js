@@ -100,7 +100,7 @@ const WeekCalendar = () => {
   };
 
   return (
-    <div className="calendar" style={{ width: "100%" }}>
+    <div className="calendar container" style={{ width: "100%" }}>
       {renderHeader()}
       {renderWeekdays()}
       {renderCells()}

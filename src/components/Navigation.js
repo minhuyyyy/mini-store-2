@@ -332,12 +332,20 @@ export default function Navigation() {
                     </Link>
                   )}
                   {currentUser.position !== "Manager" ? (
-                    <Link
-                      to="/workshift"
-                      style={{ textDecoration: "none", color: "#D4B887" }}
-                    >
-                      <MenuItem>Register Work Shift</MenuItem>
-                    </Link>
+                    <>
+                      <Link
+                        to="/workshift"
+                        style={{ textDecoration: "none", color: "#D4B887" }}
+                      >
+                        <MenuItem>Register Work Shift</MenuItem>
+                      </Link>
+                      <Link
+                        to="/view-workshift"
+                        style={{ textDecoration: "none", color: "#D4B887" }}
+                      >
+                        <MenuItem>View Work Shift</MenuItem>
+                      </Link>
+                    </>
                   ) : (
                     <></>
                   )}
