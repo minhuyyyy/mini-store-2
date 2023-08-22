@@ -10,6 +10,7 @@ import {
   isSameDay,
 } from "date-fns";
 import "../components/Calendar.css";
+
 function ViewWorkShift() {
   const { user } = useContext(AuthContext);
   const [data, setData] = useState([]);
@@ -18,12 +19,9 @@ function ViewWorkShift() {
     startOfWeek(new Date())
   );
   const [selectedDate, setSelectedDate] = useState("");
-  const [openShiftMenu, setOpenShiftMenu] = useState(false);
-
   useEffect(() => {
     if (selectedDate) {
       onDateClickHandle(selectedDate);
-      setOpenShiftMenu(!openShiftMenu);
     }
   }, [selectedDate]);
 
@@ -48,7 +46,7 @@ function ViewWorkShift() {
 
   useEffect(() => {
     fetchShifts();
-  }, [user]);
+  }, [user, currentWeekStart]); // Also trigger on currentWeekStart change
 
   useEffect(() => {
     if (user) {
@@ -58,7 +56,9 @@ function ViewWorkShift() {
 
   const fetchShifts = async () => {
     const response = await axios.get(
-      `http://vps.akabom.me/api/work-shift/${user.id}?startDate=${currentDate
+      `http://vps.akabom.me/api/work-shift/${
+        user.id
+      }?startDate=${currentWeekStart
         .toISOString()
         .slice(0, 10)}&endDate=${nextSevenDays.toISOString().slice(0, 10)}`
     );
@@ -67,6 +67,7 @@ function ViewWorkShift() {
       console.log(response.data);
     }
   };
+
   const renderHeader = () => {
     const dateFormat = "MMM d, yyyy";
     return (
@@ -107,6 +108,13 @@ function ViewWorkShift() {
     let startDate = currentWeekStart;
     for (let i = 0; i < 7; i++) {
       const day = addDays(startDate, i);
+      const hasShift = data.some((shift) =>
+        isSameDay(new Date(shift.startDate), day)
+      );
+      const shiftsForDay = data
+        .filter((shift) => isSameDay(new Date(shift.startDate), day))
+        .map((shift) => shift.startDate);
+
       days.push(
         <div
           className={`col cell ${
@@ -119,11 +127,34 @@ function ViewWorkShift() {
           key={day}
           onClick={() => onDateClickHandle(day)}
         >
-          <span className={`number ${day < today ? "past-day" : ""}`}>
+          <span
+            className={`number ${day < today ? "past-day" : ""}`}
+            style={{ marginRight: 5 }}
+          >
             {format(day, "d")}
           </span>
+
+          {hasShift && (
+            <div className="shifts-container">
+              {shiftsForDay.map((shift, index) => (
+                <span key={index} className="shift-type">
+                  {data.find(
+                    (shiftData) =>
+                      shiftData.startDate === shift &&
+                      shiftData.approvalStatusId === 2
+                  ) && (
+                    <span
+                      className="approved-shift"
+                      style={{ display: "block" }}
+                    >
+                      {shift.split("T")[1]}
+                    </span>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        
       );
     }
     return <div className="days row">{days}</div>;

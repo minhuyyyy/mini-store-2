@@ -1,10 +1,11 @@
-import { Button } from "@mui/material";
 import React, { useState } from "react";
 import Checkout from "../components/Checkout";
+import { Button } from "@mui/material";
 
 function ShowSearchProducts({ filteredProducts }) {
   const [cart, setCart] = useState({});
   const [selectedProducts, setSelectedProducts] = useState([]);
+
   const addToCart = (product) => {
     if (!cart[product.id]) {
       setCart((prevCart) => ({

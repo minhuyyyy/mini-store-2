@@ -10,6 +10,7 @@ function Checkout({ cart }) {
   const [change, setChange] = useState(0.0);
   const { user } = useContext(AuthContext);
   const [order, setOrder] = useState([]);
+  const [removedProducts, setRemovedProducts] = useState([]);
   useEffect(() => {
     let totalAmount = 0;
     Object.keys(cart).forEach((productId) => {
@@ -39,9 +40,13 @@ function Checkout({ cart }) {
     setChange(Math.round(cashValue - amount));
   };
 
-  const deleteProductInCart = (e) => {
-    let x = e.target.getAttribute("removeProduct");
-    setOrder(order.filter((ord) => ord.productName !== x));
+  const deleteProductInCart = (productId) => {
+    if (removedProducts.includes(productId)) {
+      setRemovedProducts(removedProducts.filter((id) => id !== productId));
+      setOrder(order.filter((item) => item.productId !== productId)); // Uncomment this line
+    } else {
+      setRemovedProducts([...removedProducts, productId]);
+    }
   };
 
   const submitOrder = async () => {
@@ -57,6 +62,7 @@ function Checkout({ cart }) {
         newOrder
       );
       console.log("Order submitted successfully", response.data);
+      setRemovedProducts([]);
     } catch (error) {
       console.error("Error submitting order", error);
     }
@@ -83,8 +89,8 @@ function Checkout({ cart }) {
             placeholder="Enter quantity:"
           ></Input>
           <Button
-            removeProduct={orderItem.productName}
-            onClick={deleteProductInCart}
+            removeProduct={orderItem.productId}
+            onClick={() => deleteProductInCart(orderItem.productId)}
           >
             Delete product
           </Button>
