@@ -77,7 +77,7 @@ function ShowSearchProducts({ filteredProducts }) {
           ))}
         </div>
         <div className="col-sm-6 col-md-7 col-lg-7" style={{ marginTop: 50 }}>
-          <Checkout cart={cart} />
+          {Object.keys(cart) && <Checkout cart={cart} setCart={setCart} />}
         </div>
       </div>
     </div>

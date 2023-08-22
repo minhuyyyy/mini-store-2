@@ -3,7 +3,7 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-function Checkout({ cart }) {
+function Checkout({ cart, setCart }) {
   const [quantity, setQuantity] = useState({});
   const [amount, setAmount] = useState(0);
   const [cash, setCash] = useState(0.0);
@@ -44,6 +44,7 @@ function Checkout({ cart }) {
     if (removedProducts.includes(productId)) {
       setRemovedProducts(removedProducts.filter((id) => id !== productId));
       setOrder(order.filter((item) => item.productId !== productId)); // Uncomment this line
+      setCart(order.filter((item) => item.productId !== productId));
     } else {
       setRemovedProducts([...removedProducts, productId]);
     }
@@ -62,6 +63,7 @@ function Checkout({ cart }) {
         newOrder
       );
       console.log("Order submitted successfully", response.data);
+      // Reset removed products after submitting the order
       setRemovedProducts([]);
     } catch (error) {
       console.error("Error submitting order", error);
