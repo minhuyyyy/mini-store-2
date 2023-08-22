@@ -65,6 +65,8 @@ function Checkout({ cart, setCart }) {
       console.log("Order submitted successfully", response.data);
       // Reset removed products after submitting the order
       setRemovedProducts([]);
+      setCart({});
+      setOrder([]);
     } catch (error) {
       console.error("Error submitting order", error);
     }
