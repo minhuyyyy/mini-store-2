@@ -51,7 +51,6 @@ export function CheckAttendanceForm({ imgSrc }) {
     });
     if (response.status == 200) {
       Cookies.set("check-in", `${selectedShift}`);
-      navigate("/");
       window.location.reload();
       toast.success("Attendance taken successfully");
     } else toast.error("Something went wrong");
@@ -65,7 +64,7 @@ export function CheckAttendanceForm({ imgSrc }) {
             <h2>Check In</h2>
             <p>Select a shift to check in</p>
             <Button onClick={() => setSelectedShift(shift.id)}>
-              {shift.id}
+              {shift.startDate}
             </Button>
             <p>Take a picture of you at the store</p>
             {selectedShift && (

@@ -18,14 +18,15 @@ function ShowSearchProducts({ filteredProducts }) {
 
   return (
     <div className="container">
-      <div className="row">
+      <div className="row" style={{ transform: "translate(0, -5%" }}>
         <div className="col-sm-6 col-md-5 col-lg-5" style={{ marginTop: 50 }}>
           {filteredProducts.map((product) => (
             <div
               key={product.id}
               style={{
-                transform: "translate(3%, -150%)",
+                transform: "translate(-12%, 0%)",
                 marginTop: 0,
+                marginBottom: 20,
               }}
             >
               <div style={{ width: "20%", display: "inline" }}>
@@ -58,7 +59,7 @@ function ShowSearchProducts({ filteredProducts }) {
                     display: "inline",
                   }}
                 >
-                  Price: ${product.price}
+                  Price: {product.price} VND
                 </span>
                 <p
                   style={{

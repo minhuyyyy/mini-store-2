@@ -2,6 +2,7 @@ import { Button, Input } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function Checkout({ cart, setCart }) {
   const [quantity, setQuantity] = useState({});
@@ -58,15 +59,18 @@ function Checkout({ cart, setCart }) {
     };
 
     try {
-      const response = await axios.post(
-        "http://vps.akabom.me/api/order",
-        newOrder
-      );
-      console.log("Order submitted successfully", response.data);
-      // Reset removed products after submitting the order
-      setRemovedProducts([]);
-      setCart({});
-      setOrder([]);
+      if (order.length > 0) {
+        const response = await axios.post(
+          "http://vps.akabom.me/api/order",
+          newOrder
+        );
+        console.log("Order submitted successfully", response.data);
+        setRemovedProducts([]);
+        setCart({});
+        setOrder([]);
+      } else {
+        toast.error("Empty cart");
+      }
     } catch (error) {
       console.error("Error submitting order", error);
     }
@@ -74,12 +78,12 @@ function Checkout({ cart, setCart }) {
 
   return (
     <div>
-      <p>
+      <h1>
         <b>Receipt</b>
-      </p>
-      <p>
+      </h1>
+      <h3>
         <b>Description:</b>
-      </p>
+      </h3>
       {order.map((orderItem) => (
         <div key={orderItem.productId}>
           <p>
@@ -92,15 +96,12 @@ function Checkout({ cart, setCart }) {
             disableUnderline={true}
             placeholder="Enter quantity:"
           ></Input>
-          <Button
-            removeProduct={orderItem.productId}
-            onClick={() => deleteProductInCart(orderItem.productId)}
-          >
+          <Button onClick={() => deleteProductInCart(orderItem.productId)}>
             Delete product
           </Button>
         </div>
       ))}
-      <p>Total amount: ${amount}</p>
+      <p>Total amount: {amount} VND</p>
       <Input
         onChange={(e) => handleCashChange(e)}
         placeholder="Enter customer's cash:"

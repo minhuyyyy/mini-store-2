@@ -147,7 +147,7 @@ const ManageAccounts = () => {
   const checkUser = async () => {
     try {
       const userData = getItem("user"); // Assuming "user" is the key you've used for the user data
-      if (user.position === "Manager" || userData.role === "Manager") {
+      if (user.position === "Manager" || userData.position === "Manager") {
         setCurrentUser(user);
         await fetchData();
       } else if (user.role !== "Manager") {
