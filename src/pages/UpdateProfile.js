@@ -10,7 +10,6 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
-import env from "react-dotenv";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { Visibility, VisibilityOff } from "@mui/icons-material";

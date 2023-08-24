@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import axios from "axios";
-import env from "react-dotenv";
 import ProductsPresentation from "./Products";
 import Drawer from "./Drawer";
 

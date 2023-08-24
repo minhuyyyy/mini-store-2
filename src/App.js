@@ -23,9 +23,7 @@ import { useState } from "react";
 import ProductsPresentation from "./components/Home";
 import CreateOrder from "./pages/CreateOrder";
 import Capture from "./components/Webcam";
-import {
-  RegisterWorkShift,
-} from "./pages/RegisterWorkShift";
+import { RegisterWorkShift } from "./pages/RegisterWorkShift";
 import ViewShifts from "./pages/ViewShifts";
 import WeekCalendar from "./components/ShiftCalendar";
 import ViewWorkShift from "./pages/ViewWorkShift";

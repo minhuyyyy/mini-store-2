@@ -71,7 +71,7 @@ function ViewWorkShift() {
     const dateFormat = "MMM d, yyyy";
     return (
       <div className="header row flex-middle">
-        <div className="col col-start">
+        <div className="col col-start center">
           <div className="icon" onClick={() => changeWeekHandle("prev")}>
             &lt;
           </div>

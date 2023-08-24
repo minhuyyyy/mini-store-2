@@ -78,7 +78,7 @@ export default function AddAccount() {
 
       const response = await axios({
         method: "post",
-        url: "http://vps.akabom.me/api/Employee/register",
+        url: "http://vps.akabom.me/api/employee/register",
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
@@ -203,7 +203,6 @@ export default function AddAccount() {
             >
               <MenuItem value="Saler">Sales</MenuItem>
               <MenuItem value={"Guard"}>Guard</MenuItem>
-              <MenuItem value={"Manager"}>Manager</MenuItem>
             </Select>
             {role && <p>You selected {role}</p>}
 

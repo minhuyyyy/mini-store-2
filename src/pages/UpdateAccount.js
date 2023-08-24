@@ -17,7 +17,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
-import env from "react-dotenv";
 import axios from "axios";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 export default function UpdateAccount() {
@@ -122,10 +121,10 @@ export default function UpdateAccount() {
   }
 
   const getData = async () => {
-    axios.get(`http://vps.akabom.me/api/account/${id}`).then((response) => {
+    axios.get(`http://vps.akabom.me/api/employee/${id}`).then((response) => {
       setFormData(response.data);
       setImageUrl(response.data.imgUrl);
-      setRole(response.data.roleName);
+      setRole(response.data.position);
       setIsActive(response.data.isActive);
       setPassword(response.data.password);
       return response.data;
@@ -135,13 +134,13 @@ export default function UpdateAccount() {
   const handleUpdate = async () => {
     try {
       axios
-        .put(`http://vps.akabom.me/api/account/${id}`, {
+        .put(`http://vps.akabom.me/api/employee/${id}`, {
           id: id,
           email: formData.email,
           fullName: formData.fullName,
           password: password,
           imgUrl: imageUrl,
-          roleName: formData.role,
+          roleName: role,
           isActive: formData.isActive,
         })
         .then((response) => {
@@ -264,9 +263,8 @@ export default function UpdateAccount() {
               label="Role"
               onChange={handleRoleChange}
             >
-              <MenuItem value="Sales">Sales</MenuItem>
+              <MenuItem value="Saler">Sales</MenuItem>
               <MenuItem value="Guard">Guard</MenuItem>
-              <MenuItem value="Manager">Manager</MenuItem>
             </Select>
             {role && <p>You selected {role}</p>}
             <br />
