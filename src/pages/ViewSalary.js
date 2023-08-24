@@ -3,9 +3,12 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PropTypes from "prop-types";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {
   Box,
+  Button,
   Collapse,
   IconButton,
   Input,
@@ -18,10 +21,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 function Row(props) {
   const { row, onBonusChange, onDeductionChange } = props;
   const [open, setOpen] = useState(false);
-
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
@@ -100,13 +104,15 @@ function ViewSalary() {
   const [data, setData] = useState([]);
   const { user } = useContext(AuthContext);
   const [currentUser, setCurrentUser] = useState([]);
+
   const fetchAll = async () => {
     const response = await axios.get("http://vps.akabom.me/api/salary");
     if (response.status === 200) setData(response.data);
   };
+
   const fetchWithID = async () => {
     const response = await axios.get(
-      `http://vps.akabom.me/api/salary/${user.id}`
+      `http://vps.akabom.me/api/salary/employee/${currentUser.id}`
     );
     if (response.status === 200) setData(response.data);
   };
@@ -120,33 +126,66 @@ function ViewSalary() {
   useEffect(() => {
     currentUser.position === "Manager" ? fetchAll() : fetchWithID();
   }, [currentUser]);
+
   return (
     <div style={{ marginBottom: 200 }}>
-      <TableContainer component={Paper}>
-        <Table aria-label="collapsible table">
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell>Payslip ID</TableCell>
-              <TableCell align="right">Employee ID</TableCell>
-              <TableCell align="right">Base Salary</TableCell>
-              <TableCell align="center">Total Work Hours</TableCell>
-              <TableCell align="center">Bonuses</TableCell>
-              <TableCell align="center">Deductions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map((row) => (
-              <Row key={row.payslipId} row={row} />
-            ))}
-            {data.length === 0 && (
+      {currentUser.position === "Manager" ? (
+        <TableContainer component={Paper}>
+          <Table aria-label="collapsible table">
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={7}>No data available</TableCell>
+                <TableCell />
+                <TableCell>Payslip ID</TableCell>
+                <TableCell align="right">Employee ID</TableCell>
+                <TableCell align="right">Base Salary</TableCell>
+                <TableCell align="center">Total Work Hours</TableCell>
+                <TableCell align="center">Bonuses</TableCell>
+                <TableCell align="center">Deductions</TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {data.map((row) => (
+                <Row key={row.payslipId} row={row} />
+              ))}
+              {data.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7}>No data available</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <>
+          {data && (
+            <TableContainer component={Paper}>
+              <Table aria-label="collapsible table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell />
+                    <TableCell>Payslip ID</TableCell>
+                    <TableCell align="right">Employee ID</TableCell>
+                    <TableCell align="right">Base Salary</TableCell>
+                    <TableCell align="center">Total Work Hours</TableCell>
+                    <TableCell align="center">Bonuses</TableCell>
+                    <TableCell align="center">Deductions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.map((row) => (
+                    <Row key={row.payslipId} row={row} />
+                  ))}
+                  {data.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={7}>No data available</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </>
+      )}
     </div>
   );
 }
