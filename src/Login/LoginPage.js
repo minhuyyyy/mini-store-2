@@ -14,10 +14,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { setItem } = useSessionStorage();
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const onLogin = (e) => {
     e.preventDefault();
     try {
-      fetch("http://vps.akabom.me/api/Employee/login", {
+      fetch(`${API_URL}/Employee/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

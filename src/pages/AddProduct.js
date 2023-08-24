@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { theme } from "./ManageAccounts";
 import { useNavigate, useParams } from "react-router-dom";
 import { uid } from "uid";
+
 export default function UpdateProduct() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
@@ -20,6 +21,8 @@ export default function UpdateProduct() {
     price: "",
     description: "",
   });
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const navigate = useNavigate();
   useEffect(() => {
     fetchCategories();
@@ -27,7 +30,7 @@ export default function UpdateProduct() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`http://vps.akabom.me/api/product`);
+      const response = await fetch(`${API_URL}/api/product`);
       const data = await response.json();
       const allCategories = Array.from(
         new Set(data.map((product) => product.category))

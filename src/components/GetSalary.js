@@ -18,6 +18,8 @@ function GetSalary() {
   const [data, setData] = useState(null);
   const [sent, isSent] = useState(false);
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -27,7 +29,7 @@ function GetSalary() {
   };
 
   const fetchData = async () => {
-    const response = await axios.post("http://vps.akabom.me/api/salary", {
+    const response = await axios.post(`${API_URL}/api/salary`, {
       employeeId: formData.employeeId,
       baseSalaryPerHour: formData.base,
       month: formData.month,

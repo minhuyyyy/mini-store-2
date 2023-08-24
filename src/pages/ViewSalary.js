@@ -26,6 +26,7 @@ import dayjs from "dayjs";
 function Row(props) {
   const { row, onBonusChange, onDeductionChange } = props;
   const [open, setOpen] = useState(false);
+
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
@@ -104,15 +105,16 @@ function ViewSalary() {
   const [data, setData] = useState([]);
   const { user } = useContext(AuthContext);
   const [currentUser, setCurrentUser] = useState([]);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const fetchAll = async () => {
-    const response = await axios.get("http://vps.akabom.me/api/salary");
+    const response = await axios.get(`${API_URL}/salary`);
     if (response.status === 200) setData(response.data);
   };
 
   const fetchWithID = async () => {
     const response = await axios.get(
-      `http://vps.akabom.me/api/salary/employee/${currentUser.id}`
+      `${API_URL}/salary/employee/${currentUser.id}`
     );
     if (response.status === 200) setData(response.data);
   };

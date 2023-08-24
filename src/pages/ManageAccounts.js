@@ -105,6 +105,9 @@ const ManageAccounts = () => {
   const [msg, setMsg] = useState(null);
   let { user } = useContext(AuthContext);
   const { getItem } = useSessionStorage();
+
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const handleScrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -132,7 +135,7 @@ const ManageAccounts = () => {
   const fetchData = async () => {
     try {
       if (currentUser.position === "Manager") {
-        axios.get("http://vps.akabom.me/api/employee").then((response) => {
+        axios.get(`${API_URL}/employee`).then((response) => {
           setData(response.data);
           return response.data;
         });
@@ -204,13 +207,11 @@ const ManageAccounts = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios
-        .delete(`http://vps.akabom.me/api/employee/${id}`, {})
-        .then((response) => {
-          if (response.status == 200) {
-            toast.success("Account deleted successfully");
-          }
-        });
+      await axios.delete(`${API_URL}/employee/${id}`, {}).then((response) => {
+        if (response.status == 200) {
+          toast.success("Account deleted successfully");
+        }
+      });
     } catch (e) {
       console.log(e);
     }

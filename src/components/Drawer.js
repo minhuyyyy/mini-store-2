@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 function Drawer({ onCategorySelect }) {
   const [categories, setCategories] = useState([]);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchCategories();
@@ -9,7 +10,7 @@ function Drawer({ onCategorySelect }) {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`http://vps.akabom.me/api/product`);
+      const response = await fetch(`${API_URL}/api/product`);
       const data = await response.json();
       const allCategories = Array.from(
         new Set(data.map((product) => product.category))

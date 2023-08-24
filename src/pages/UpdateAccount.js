@@ -32,6 +32,7 @@ export default function UpdateAccount() {
   });
   const navigate = useNavigate();
   const { id } = useParams();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     return () => {
@@ -121,7 +122,7 @@ export default function UpdateAccount() {
   }
 
   const getData = async () => {
-    axios.get(`http://vps.akabom.me/api/employee/${id}`).then((response) => {
+    axios.get(`${API_URL}/employee/${id}`).then((response) => {
       setFormData(response.data);
       setImageUrl(response.data.imgUrl);
       setRole(response.data.position);
@@ -134,7 +135,7 @@ export default function UpdateAccount() {
   const handleUpdate = async () => {
     try {
       axios
-        .put(`http://vps.akabom.me/api/employee/${id}`, {
+        .put(`${API_URL}/employee/${id}`, {
           id: id,
           email: formData.email,
           fullName: formData.fullName,

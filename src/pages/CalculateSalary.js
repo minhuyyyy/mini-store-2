@@ -111,6 +111,7 @@ Row.propTypes = {
 
 function CalculateSalary({ setData, data }) {
   const [updatedData, setUpdatedData] = useState([data]);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleBonusChange = (payslipId, value) => {
     const updated = updatedData.map((row) =>
@@ -140,7 +141,7 @@ function CalculateSalary({ setData, data }) {
       updatedRow.baseSalary + updatedRow.bonuses - updatedRow.deductions;
 
     axios
-      .put(`http://vps.akabom.me/api/salary/${payslipId}`, {
+      .put(`${API_URL}/salary/${payslipId}`, {
         salaryId: payslipId,
         baseSalary: updatedRow.baseSalary,
         deductions: updatedRow.deductions,

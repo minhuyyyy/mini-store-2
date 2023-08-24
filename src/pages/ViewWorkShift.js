@@ -53,11 +53,11 @@ function ViewWorkShift() {
     fetchShifts();
   }, [currentUser, currentWeekStart]); // Also trigger on currentWeekStart change
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const fetchShifts = async () => {
     const response = await axios.get(
-      `http://vps.akabom.me/api/work-shift/${
-        currentUser.id
-      }?startDate=${currentWeekStart
+      `${API_URL}/work-shift/${currentUser.id}?startDate=${currentWeekStart
         .toISOString()
         .slice(0, 10)}&endDate=${nextSevenDays.toISOString().slice(0, 10)}`
     );

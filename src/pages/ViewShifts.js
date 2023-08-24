@@ -18,6 +18,7 @@ import { AuthContext } from "../context/AuthContext";
 export default function ViewShifts({ startDate, endDate }) {
   const [data, setData] = useState([]);
   const { user } = useContext(AuthContext);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchData();
@@ -26,7 +27,7 @@ export default function ViewShifts({ startDate, endDate }) {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `http://vps.akabom.me/api/work-shift?startDate=${startDate}&endDate=${endDate}`
+        `${API_URL}/work-shift?startDate=${startDate}&endDate=${endDate}`
       );
       setData(response.data);
     } catch (error) {
@@ -35,28 +36,22 @@ export default function ViewShifts({ startDate, endDate }) {
   };
 
   const handleApprove = async (id, employeeId) => {
-    const response = await axios.put(
-      "http://vps.akabom.me/api/work-shift/confirm",
-      {
-        employeeId: employeeId,
-        workshiftId: id,
-        isConfirm: true,
-      }
-    );
+    const response = await axios.put(`${API_URL}/work-shift/confirm`, {
+      employeeId: employeeId,
+      workshiftId: id,
+      isConfirm: true,
+    });
     if (response.status == 200) {
       fetchData();
     }
   };
 
   const handleDeny = async (id, employeeId) => {
-    const response = await axios.put(
-      "http://vps.akabom.me/api/work-shift/confirm",
-      {
-        employeeId: employeeId,
-        workshiftId: id,
-        isConfirm: false,
-      }
-    );
+    const response = await axios.put(`${API_URL}/work-shift/confirm`, {
+      employeeId: employeeId,
+      workshiftId: id,
+      isConfirm: false,
+    });
     if (response.status == 200) {
       fetchData();
     }

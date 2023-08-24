@@ -34,8 +34,10 @@ export default function ManageProductsPage() {
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const tableContainerRef = useRef(null);
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    fetch("http://vps.akabom.me/api/product")
+    fetch(`${API_URL}/product`)
       .then((response) => response.json())
       .then((data) => {
         setFilteredProducts(data);
@@ -96,13 +98,11 @@ export default function ManageProductsPage() {
 
   const handleDelete = async (id) => {
     try {
-      await axios
-        .delete(`http://vps.akabom.me/api/product/${id}`)
-        .then((response) => {
-          if (response.status == 200) {
-            toast.success("Product deleted successfully");
-          }
-        });
+      await axios.delete(`${API_URL}/product/${id}`).then((response) => {
+        if (response.status == 200) {
+          toast.success("Product deleted successfully");
+        }
+      });
     } catch (e) {
       console.log(e);
     }

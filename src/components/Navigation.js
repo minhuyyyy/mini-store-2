@@ -36,6 +36,7 @@ export default function Navigation() {
   const [checkIn, setCheckIn] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     checkUser();
@@ -99,7 +100,7 @@ export default function Navigation() {
     if (workShift) {
       try {
         axios
-          .post(`http://vps.akabom.me/api/checkout`, {
+          .post(`${API_URL}/checkout`, {
             employeeId: user.id,
             dateTime: new Date(),
             imageData: "",

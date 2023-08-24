@@ -12,6 +12,7 @@ function Checkout({ cart, setCart }) {
   const { user } = useContext(AuthContext);
   const [order, setOrder] = useState([]);
   const [removedProducts, setRemovedProducts] = useState([]);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     let totalAmount = 0;
@@ -66,15 +67,12 @@ function Checkout({ cart, setCart }) {
 
     try {
       if (order.length > 0) {
-        const response = await axios.post(
-          "http://vps.akabom.me/api/order",
-          newOrder
-        );
+        const response = await axios.post(`${API_URL}/api/order`, newOrder);
         toast.success("Order submitted successfully");
         setRemovedProducts([]);
         setCart({});
         setOrder([]);
-        setCash(0); 
+        setCash(0);
       } else {
         toast.error("Empty cart");
       }

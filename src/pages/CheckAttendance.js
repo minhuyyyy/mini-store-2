@@ -11,6 +11,8 @@ export function CheckAttendanceForm({ imgSrc }) {
   const [currentUser, setCurrentUser] = useState(user);
   const [shifts, setShifts] = useState([]);
   const [selectedShift, setSelectedShift] = useState(null);
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const navigate = useNavigate();
   useEffect(() => {
     fetchShift();
@@ -26,7 +28,7 @@ export function CheckAttendanceForm({ imgSrc }) {
       //     .substring(0, 10)}`
       // );
       const response = await axios.get(
-        `http://vps.akabom.me/api/work-shift/${user.id}?startDate=2023-08-25&endDate=2023-08-25`
+        `${API_URL}/work-shift/${user.id}?startDate=2023-08-25&endDate=2023-08-25`
       );
       if (response.status === 200) {
         console.log(response.data);
@@ -46,7 +48,7 @@ export function CheckAttendanceForm({ imgSrc }) {
   };
 
   const handleCheckIn = async () => {
-    const response = await axios.post("http://vps.akabom.me/api/checkin", {
+    const response = await axios.post(`${API_URL}/checkin`, {
       employeeId: user.id,
       dateTime: new Date(),
       imageData: imgSrc,

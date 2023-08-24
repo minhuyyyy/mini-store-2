@@ -19,6 +19,8 @@ export default function AddAccount() {
   const [imageUrl, setImageUrl] = useState("");
   const [added, setAdded] = useState(false);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     return () => {
       if (image) {
@@ -78,7 +80,7 @@ export default function AddAccount() {
 
       const response = await axios({
         method: "post",
-        url: "http://vps.akabom.me/api/employee/register",
+        url: `${API_URL}/employee/register`,
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
