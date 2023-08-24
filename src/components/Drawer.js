@@ -10,7 +10,7 @@ function Drawer({ onCategorySelect }) {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/product`);
+      const response = await fetch(`${API_URL}/product`);
       const data = await response.json();
       const allCategories = Array.from(
         new Set(data.map((product) => product.category))

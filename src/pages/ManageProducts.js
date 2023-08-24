@@ -30,7 +30,6 @@ export default function ManageProductsPage() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
-  const [product, setProduct] = useState([]);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const tableContainerRef = useRef(null);
@@ -43,7 +42,7 @@ export default function ManageProductsPage() {
         setFilteredProducts(data);
         setCategories([...new Set(data.map((product) => product.category))]);
       });
-  }, [filteredProducts]);
+  }, []);
 
   useEffect(() => {
     if (filteredProducts) {
@@ -110,11 +109,10 @@ export default function ManageProductsPage() {
 
   return (
     <div style={{ backgroundColor: "#d3d3d3" }}>
-      <div style={{ color: "black" }} className="container">
+      <div style={{ color: "black", width: '90%' }} className="container">
         {user ? (
           <>
             <div
-              // className="container"
               style={{
                 backgroundColor: "#0A6EBD",
                 color: "white",
@@ -140,7 +138,7 @@ export default function ManageProductsPage() {
                     position: "absolute",
                     margin: 0,
                     top: "50%",
-                    transform: `translate(300%, -50%)`,
+                    transform: `translate(430%, -50%)`,
                     backgroundColor: "#fff",
                   }}
                 >
