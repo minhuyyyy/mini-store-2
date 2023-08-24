@@ -1,17 +1,20 @@
 import { SearchOutlined } from "@mui/icons-material";
 import { IconButton, Input, InputAdornment } from "@mui/material";
 import axios from "axios";
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import ShowSearchProducts from "./ShowSearchProducts";
 import Checkout from "../components/Checkout";
+import { AuthContext } from "../context/AuthContext";
+import useSessionStorage from "../hooks/useSessionStorage";
 
 function CreateOrder() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const { user } = useContext(AuthContext);
+  const {getItem} = useSessionStorage()
   const handleSearch = () => {
     const filtered = products.filter((product) => {
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -39,6 +42,8 @@ function CreateOrder() {
 
   return (
     <>
+    {user? (
+<>
       <h2 className="center" style={{ marginTop: "20px" }}>
         Create Order
       </h2>
@@ -78,6 +83,11 @@ function CreateOrder() {
           <ShowSearchProducts filteredProducts={filteredProducts} />
         )}
       </div>
+      </>
+    ):(
+      <h2>Login to view page</h2>
+    )}
+
     </>
   );
 }

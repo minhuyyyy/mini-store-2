@@ -22,11 +22,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import env from "react-dotenv";
-import {
-  KeyboardArrowDownOutlined,
-  SearchOutlined,
-  Translate,
-} from "@mui/icons-material";
+import { KeyboardArrowDownOutlined } from "@mui/icons-material";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
@@ -38,7 +34,6 @@ export default function ManageProductsPage() {
   const [product, setProduct] = useState([]);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const tableContainerRef = useRef(null);
   useEffect(() => {
     fetch("http://vps.akabom.me/api/product")
@@ -47,22 +42,7 @@ export default function ManageProductsPage() {
         setFilteredProducts(data);
         setCategories([...new Set(data.map((product) => product.category))]);
       });
-  }, []);
-
-  const handleSearch = () => {
-    const filtered = filteredProducts.filter((product) => {
-      return product.id.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-    setFilteredProducts(filtered);
-    setSearchTerm("");
-  };
-
-  const onInputChange = (event) => {
-    setSearchTerm(event.target.value);
-    if (searchTerm !== event.target.value) {
-      handleSearch(); // Call handleSearch whenever input changes
-    }
-  };
+  }, [filteredProducts]);
 
   useEffect(() => {
     if (filteredProducts) {
@@ -118,17 +98,7 @@ export default function ManageProductsPage() {
   const handleDelete = async (id) => {
     try {
       await axios
-        .put(`http://vps.akabom.me/api/product/${id}`, {
-          id: id,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          unit: product.unit,
-          category: product.category,
-          stock: product.stock,
-          isActive: false,
-        })
+        .delete(`http://vps.akabom.me/api/product/${id}`)
         .then((response) => {
           if (response.status == 200) {
             toast.success("Product deleted successfully");
@@ -178,30 +148,6 @@ export default function ManageProductsPage() {
                   Add product
                 </Button>
               </Link>
-              <div>
-                <Input
-                  id="search"
-                  placeholder="Search products: (Enter ID)"
-                  sx={{
-                    transform: "translate(400%,15px)",
-                    backgroundColor: "whitesmoke",
-                    height: 30,
-                  }}
-                  value={searchTerm}
-                  // disableUnderline={true}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSearch();
-                  }}
-                  onChange={onInputChange}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleSearch}>
-                        <SearchOutlined />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                ></Input>
-              </div>
             </div>
             <div style={{ width: "100%" }}>
               <Paper

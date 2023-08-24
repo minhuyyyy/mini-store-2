@@ -14,7 +14,6 @@ import "../components/Calendar.css";
 function ViewWorkShift() {
   const { user } = useContext(AuthContext);
   const [data, setData] = useState([]);
-  const [ID, setID] = useState(user?.id || "");
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date())
   );
@@ -47,12 +46,6 @@ function ViewWorkShift() {
   useEffect(() => {
     fetchShifts();
   }, [user, currentWeekStart]); // Also trigger on currentWeekStart change
-
-  useEffect(() => {
-    if (user) {
-      setID(user?.id || "");
-    }
-  }, [user]);
 
   const fetchShifts = async () => {
     const response = await axios.get(
@@ -102,73 +95,10 @@ function ViewWorkShift() {
     return <div className="days row weekdays">{days}</div>;
   };
 
-  // const renderCells = () => {
-  //   const daysWithShifts = [];
-  //   const today = new Date();
-  //   let startDate = currentWeekStart;
-
-  //   for (let i = 0; i < 7; i++) {
-  //     const day = addDays(startDate, i);
-  //     const hasShift = data.some((shift) =>
-  //       isSameDay(new Date(shift.startDate), day)
-  //     );
-  //     const shiftsForDay = data
-  //       .filter((shift) => isSameDay(new Date(shift.startDate), day))
-  //       .map((shift) => shift.startDate);
-
-  //     daysWithShifts.push(
-  //       <div key={day} className="day-with-shifts">
-  //         <div
-  //           className={`col cell ${
-  //             isSameDay(day, today)
-  //               ? "today"
-  //               : isSameDay(day, selectedDate)
-  //               ? "selected"
-  //               : ""
-  //           }`}
-  //           key={day}
-  //           onClick={() => onDateClickHandle(day)}
-  //         >
-  //           <span
-  //             className={`number ${day < today ? "past-day" : ""}`}
-  //             style={{ marginRight: 5 }}
-  //           >
-  //             {format(day, "d")}
-  //           </span>
-  //           {hasShift && (
-  //             <div className="shifts-container">
-  //               {shiftsForDay.map((shift, index) => (
-  //                 <span key={index} className="shift-type">
-  //                   {data.find(
-  //                     (shiftData) =>
-  //                       shiftData.startDate === shift &&
-  //                       shiftData.approvalStatusId === 2
-  //                   ) && (
-  //                     <span
-  //                       className="approved-shift"
-  //                       style={{ display: "block", marginTop: 5 }}
-  //                     >
-  //                       {shift.split("T")[1]}
-  //                     </span>
-  //                   )}
-  //                 </span>
-  //               ))}
-  //             </div>
-  //           )}
-  //         </div>
-  //       </div>
-  //     );
-  //   }
-
-  //   return <div className="days-with-shifts-container">{daysWithShifts}</div>;
-  // };
-
   const renderCells = () => {
     const days = [];
-    const shiftsRows = [];
     const today = new Date();
     let startDate = currentWeekStart;
-
     for (let i = 0; i < 7; i++) {
       const day = addDays(startDate, i);
       const hasShift = data.some((shift) =>
@@ -190,53 +120,46 @@ function ViewWorkShift() {
           key={day}
           onClick={() => onDateClickHandle(day)}
         >
-          <span
-            className={`number ${day < today ? "past-day" : ""}`}
-            style={{ marginRight: 5 }}
-          >
+          <span className={`number ${day < today ? "past-day" : ""}`}>
             {format(day, "d")}
           </span>
+          {hasShift && (
+            <div className="shifts-container">
+              {shiftsForDay.map((shift, index) => (
+                <span key={index} className="shift-type">
+                  {data.find(
+                    (shiftData) =>
+                      shiftData.startDate === shift &&
+                      shiftData.approvalStatusId === 2
+                  ) && (
+                    <span
+                      className="approved-shift"
+                      style={{ display: "block" }}
+                    >
+                      {shift.split("T")[1]}
+                    </span>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       );
-
-      if (hasShift) {
-        shiftsRows.push(
-          <div
-            className="shifts-row"
-            key={`${day}-shifts`}
-            style={{ marginTop: 10 }}
-          >
-            {shiftsForDay.map((shift, index) => (
-              <span key={index} className="shift-type">
-                {data.find(
-                  (shiftData) =>
-                    shiftData.startDate === shift &&
-                    shiftData.approvalStatusId === 2
-                ) && (
-                  <span className="approved-shift" style={{ display: "block" }}>
-                    {shift.split("T")[1]}
-                  </span>
-                )}
-              </span>
-            ))}
-          </div>
-        );
-      }
     }
-
-    return (
-      <>
-        <div className="days row">{days}</div>
-        <div className="shifts-rows-container">{shiftsRows}</div>
-      </>
-    );
+    return <div className="days row">{days}</div>;
   };
 
   return (
     <div className="calendar container" style={{ width: "100%" }}>
-      {renderHeader()}
-      {renderWeekdays()}
-      {renderCells()}
+      {user ? (
+        <>
+          {renderHeader()}
+          {renderWeekdays()}
+          {renderCells()}
+        </>
+      ) : (
+        <h2>Log in to view page</h2>
+      )}
     </div>
   );
 }

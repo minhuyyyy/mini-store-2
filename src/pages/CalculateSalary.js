@@ -1,23 +1,21 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import {
-  Box,
-  Collapse,
-  IconButton,
-  Input,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Button, Input } from "@mui/material";
+import axios from "axios";
+
 function Row(props) {
   const { row, onBonusChange, onDeductionChange } = props;
   const [open, setOpen] = useState(false);
@@ -44,9 +42,21 @@ function Row(props) {
             currency: "VND",
           })}
         </TableCell>
-        <TableCell align="center">{row.totalWorkHours}</TableCell>
-        <TableCell align="center">{row.bonuses}</TableCell>
-        <TableCell align="center">{row.deductions}</TableCell>
+        <TableCell align="right">{row.totalWorkHours}</TableCell>
+        <TableCell align="right">
+          <Input
+            type="number"
+            value={row.bonuses}
+            onChange={(e) => onBonusChange(row.payslipId, e.target.value)}
+          />
+        </TableCell>
+        <TableCell align="right">
+          <Input
+            type="number"
+            value={row.deductions}
+            onChange={(e) => onDeductionChange(row.payslipId, e.target.value)}
+          />
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
@@ -95,31 +105,58 @@ Row.propTypes = {
     deductions: PropTypes.number.isRequired,
     workShifts: PropTypes.arrayOf(PropTypes.object).isRequired,
   }).isRequired,
+  onBonusChange: PropTypes.func.isRequired,
+  onDeductionChange: PropTypes.func.isRequired,
 };
-function ViewSalary() {
-  const [data, setData] = useState([]);
-  const { user } = useContext(AuthContext);
-  const [currentUser, setCurrentUser] = useState([]);
-  const fetchAll = async () => {
-    const response = await axios.get("http://vps.akabom.me/api/salary");
-    if (response.status === 200) setData(response.data);
-  };
-  const fetchWithID = async () => {
-    const response = await axios.get(
-      `http://vps.akabom.me/api/salary/${currentUser.id}`
+
+function CalculateSalary({ setData, data }) {
+  const [updatedData, setUpdatedData] = useState([data]);
+
+  const handleBonusChange = (payslipId, value) => {
+    const updated = updatedData.map((row) =>
+      row.payslipId === payslipId ? { ...row, bonuses: parseFloat(value) } : row
     );
-    if (response.status === 200) setData(response.data);
+    setUpdatedData(updated);
+  };
+
+  const handleDeductionChange = (payslipId, value) => {
+    const updated = updatedData.map((row) =>
+      row.payslipId === payslipId
+        ? { ...row, deductions: parseFloat(value) }
+        : row
+    );
+    setUpdatedData(updated);
   };
 
   useEffect(() => {
-    if (user) {
-      setCurrentUser(user);
+    if (data) {
+      setData(data);
     }
-  }, [user]);
+  });
 
-  useEffect(() => {
-    currentUser.position === "Manager" ? fetchAll() : fetchWithID();
-  }, [currentUser]);
+  const handleConfirm = (payslipId) => {
+    const updatedRow = updatedData.find((row) => row.payslipId === payslipId);
+    const totalSalary =
+      updatedRow.baseSalary + updatedRow.bonuses - updatedRow.deductions;
+
+    axios
+      .put(`http://vps.akabom.me/api/salary/${payslipId}`, {
+        salaryId: payslipId,
+        baseSalary: updatedRow.baseSalary,
+        deductions: updatedRow.deductions,
+        bonuses: updatedRow.bonuses,
+        totalSalary: totalSalary,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   return (
     <div style={{ marginBottom: 200 }}>
       <TableContainer component={Paper}>
@@ -130,16 +167,21 @@ function ViewSalary() {
               <TableCell>Payslip ID</TableCell>
               <TableCell align="right">Employee ID</TableCell>
               <TableCell align="right">Base Salary</TableCell>
-              <TableCell align="center">Total Work Hours</TableCell>
+              <TableCell align="right">Total Work Hours</TableCell>
               <TableCell align="center">Bonuses</TableCell>
               <TableCell align="center">Deductions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
-              <Row key={row.payslipId} row={row} />
+            {updatedData.map((row) => (
+              <Row
+                key={row.payslipId}
+                row={row}
+                onBonusChange={handleBonusChange}
+                onDeductionChange={handleDeductionChange}
+              />
             ))}
-            {data.length === 0 && (
+            {updatedData.length === 0 && (
               <TableRow>
                 <TableCell colSpan={7}>No data available</TableCell>
               </TableRow>
@@ -147,8 +189,9 @@ function ViewSalary() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Button onClick={() => handleConfirm(data.payslipId)}>Confirm</Button>
     </div>
   );
 }
 
-export default ViewSalary;
+export default CalculateSalary;

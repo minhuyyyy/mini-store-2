@@ -34,6 +34,7 @@ import {
 import ViewShifts from "./pages/ViewShifts";
 import WeekCalendar from "./components/ShiftCalendar";
 import ViewWorkShift from "./pages/ViewWorkShift";
+import GetSalary from "./components/GetSalary";
 function App() {
   const [user, setUser] = useState(null);
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);
@@ -70,7 +71,8 @@ function App() {
             path="/viewprofile/updateprofile"
             element={<UpdateProfile />}
           />
-          <Route path="/viewsalary" element={<ViewSalary />} />
+          <Route path="/calculate-salary" element={<GetSalary />} />
+          <Route path="/view-salary" element={<ViewSalary />} />
           <Route path="/view-shifts" element={<WeekCalendar />} />
           <Route path="/view-workshift" element={<ViewWorkShift />} />
           <Route path="/workshift" element={<RegisterWorkShift />} />

@@ -107,6 +107,8 @@ export default function Navigation() {
           })
           .then((response) => {
             if (response.status === 200) {
+              Cookies.remove("check-in");
+              window.location.reload();
               toast.success("Checked Out");
             }
           });
@@ -297,6 +299,12 @@ export default function Navigation() {
                   onClose={handleCloseUserMenu}
                 >
                   <Link
+                    to="/view-salary"
+                    style={{ textDecoration: "none", color: "#D4B887" }}
+                  >
+                    <MenuItem>View Salary</MenuItem>
+                  </Link>
+                  <Link
                     to="/viewprofile"
                     style={{ textDecoration: "none", color: "#D4B887" }}
                   >
@@ -311,10 +319,10 @@ export default function Navigation() {
                         <MenuItem>Manage Accounts</MenuItem>
                       </Link>
                       <Link
-                        to="/viewsalary"
+                        to="/calculate-salary"
                         style={{ textDecoration: "none", color: "#D4B887" }}
                       >
-                        <MenuItem>View Salary</MenuItem>
+                        <MenuItem>Calculate Salary</MenuItem>
                       </Link>
                       <Link
                         to="/view-shifts"
@@ -353,7 +361,7 @@ export default function Navigation() {
               </Box>
               <Button
                 style={{
-                  width: "10%",
+                  width: "13%",
                   borderRadius: "30px",
                   backgroundColor: "black",
                   marginRight: "20px",

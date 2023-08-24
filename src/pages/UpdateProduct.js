@@ -142,8 +142,8 @@ export default function UpdateProduct() {
               price: "",
               info: "",
             });
-            toast.success("Account updated");
-            navigate("/manageproducts");
+            toast.success("Product updated");
+            navigate(-1);
           } else {
             console.log();
           }

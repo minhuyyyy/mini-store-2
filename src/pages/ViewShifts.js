@@ -80,13 +80,15 @@ export default function ViewShifts({ startDate, endDate }) {
             <TableBody>
               {data.map((row) => (
                 <TableRow key={row.id}>
-                  {row.approvalStatusId == "1" && (
+                  {row.approvalStatusId == 1 && (
                     <>
                       <TableCell>{row.employeeId}</TableCell>
                       <TableCell>{row.startDate}</TableCell>
                       <TableCell>{row.coefficientsSalary}</TableCell>
                       <TableCell>{row.workshiftTypeId}</TableCell>
-                      <TableCell>{row.approvalStatusId}</TableCell>
+                      <TableCell>
+                        {row.approvalStatusId === 1 ? "Pending" : "Accepted"}
+                      </TableCell>
                       <TableCell>
                         <Button
                           variant="contained"

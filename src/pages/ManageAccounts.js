@@ -150,7 +150,7 @@ const ManageAccounts = () => {
       if (user.position === "Manager" || userData.position === "Manager") {
         setCurrentUser(user);
         await fetchData();
-      } else if (user.role !== "Manager") {
+      } else if (user.position !== "Manager") {
         setMsg("Only Managers can view this page");
       }
     } catch (e) {

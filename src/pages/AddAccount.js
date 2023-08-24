@@ -65,6 +65,17 @@ export default function AddAccount() {
 
   const postData = async () => {
     try {
+      let baseSalary = 0; // Initialize base salary to 0
+
+      // Determine base salary based on the selected role
+      if (role === "Saler") {
+        baseSalary = 30000; // Set base salary for Sales role
+      } else if (role === "Guard") {
+        baseSalary = 25000; // Set base salary for Guard role
+      } else if (role === "Manager") {
+        baseSalary = 45000; // Set base salary for Manager role
+      }
+
       const response = await axios({
         method: "post",
         url: "http://vps.akabom.me/api/Employee/register",
@@ -79,6 +90,7 @@ export default function AddAccount() {
           password: formData.password,
           imgUrl: imageUrl,
           roleName: role,
+          baseSalary: baseSalary, // Include the calculated base salary
         },
       });
 

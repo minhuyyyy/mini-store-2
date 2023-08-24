@@ -12,6 +12,7 @@ function Checkout({ cart, setCart }) {
   const { user } = useContext(AuthContext);
   const [order, setOrder] = useState([]);
   const [removedProducts, setRemovedProducts] = useState([]);
+
   useEffect(() => {
     let totalAmount = 0;
     Object.keys(cart).forEach((productId) => {
@@ -23,6 +24,7 @@ function Checkout({ cart, setCart }) {
       productId: productId,
       productName: cart[productId].name,
       unitPrice: cart[productId].price,
+      unit: cart[productId].unit,
       quantity: quantity[productId] || 0,
     }));
     setOrder(orderDetails);
@@ -37,18 +39,22 @@ function Checkout({ cart, setCart }) {
 
   const handleCashChange = (e) => {
     const cashValue = parseFloat(e.target.value);
-    setCash(cashValue);
-    setChange(Math.round(cashValue - amount));
+    setCash(cashValue.toLocaleString());
+    if (cashValue < amount) {
+      setChange(0);
+    } else {
+      setChange(Math.round(cashValue - amount));
+    }
   };
 
   const deleteProductInCart = (productId) => {
-    if (removedProducts.includes(productId)) {
-      setRemovedProducts(removedProducts.filter((id) => id !== productId));
-      setOrder(order.filter((item) => item.productId !== productId)); // Uncomment this line
-      setCart(order.filter((item) => item.productId !== productId));
-    } else {
-      setRemovedProducts([...removedProducts, productId]);
-    }
+    const updatedCart = { ...cart };
+    delete updatedCart[productId];
+
+    setCart(updatedCart);
+
+    const updatedOrder = order.filter((item) => item.productId !== productId);
+    setOrder(updatedOrder);
   };
 
   const submitOrder = async () => {
@@ -64,10 +70,11 @@ function Checkout({ cart, setCart }) {
           "http://vps.akabom.me/api/order",
           newOrder
         );
-        console.log("Order submitted successfully", response.data);
+        toast.success("Order submitted successfully");
         setRemovedProducts([]);
         setCart({});
         setOrder([]);
+        setCash(0); 
       } else {
         toast.error("Empty cart");
       }
@@ -81,33 +88,48 @@ function Checkout({ cart, setCart }) {
       <h1>
         <b>Receipt</b>
       </h1>
-      <h3>
-        <b>Description:</b>
-      </h3>
-      {order.map((orderItem) => (
-        <div key={orderItem.productId}>
-          <p>
-            {orderItem.productName}:{orderItem.unitPrice}
-          </p>
-          <Input
-            onChange={(e, productId) =>
-              handleInputChange(e, orderItem.productId)
-            }
-            disableUnderline={true}
-            placeholder="Enter quantity:"
-          ></Input>
-          <Button onClick={() => deleteProductInCart(orderItem.productId)}>
-            Delete product
-          </Button>
-        </div>
-      ))}
-      <p>Total amount: {amount} VND</p>
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Product Name</th>
+            <th scope="col">Unit Price</th>
+            <th scope="col">Unit</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody className="table-group-divider">
+          {order.map((orderItem) => (
+            <tr key={orderItem.productId} style={{}}>
+              <td>{orderItem.productName}</td>
+              <td>{orderItem.unitPrice.toLocaleString()}</td>
+              <td>{orderItem.unit}</td>
+              <td>
+                <Input
+                  value={quantity[orderItem.productId] || ""}
+                  onChange={(e) => handleInputChange(e, orderItem.productId)}
+                  disableUnderline={true}
+                  placeholder="Enter quantity..."
+                />
+              </td>
+              <td>
+                <Button
+                  onClick={() => deleteProductInCart(orderItem.productId)}
+                >
+                  Delete
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p>Total amount: {amount.toLocaleString()} VND</p>
       <Input
         onChange={(e) => handleCashChange(e)}
-        placeholder="Enter customer's cash:"
+        placeholder="Enter customer's cash..."
         disableUnderline={true}
-      ></Input>
-      <p>Change: {change}</p>
+      />
+      <p>Change: {change.toLocaleString()}</p>
       <Button onClick={submitOrder}>Submit Order</Button>
     </div>
   );

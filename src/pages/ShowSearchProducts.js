@@ -70,6 +70,15 @@ function ShowSearchProducts({ filteredProducts }) {
                 >
                   Stock: {product.stock}
                 </p>
+                <p
+                  style={{
+                    display: "inline",
+                    marginLeft: 20,
+                    marginRight: 20,
+                  }}
+                >
+                  Unit: {product.unit}
+                </p>
                 <Button variant="contained" onClick={() => addToCart(product)}>
                   Add to cart
                 </Button>
