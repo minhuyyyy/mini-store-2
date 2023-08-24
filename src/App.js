@@ -2,8 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import React from "react";
 import "./App.css";
 import Navigation from "./components/Navigation";
-import AboutPage from "./pages/AboutPage";
-import CheckAttendance from "./pages/CheckAttendance";
 import Details from "./components/Details";
 import "bootstrap/dist/css/bootstrap.min.css";
 import LoginPage from "./Login/LoginPage";
@@ -23,13 +21,10 @@ import { useMemo } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { useState } from "react";
 import ProductsPresentation from "./components/Home";
-import { memo } from "react";
 import CreateOrder from "./pages/CreateOrder";
-import Webcam from "react-webcam";
 import Capture from "./components/Webcam";
 import {
   RegisterWorkShift,
-  RegisterWorkShiftForm,
 } from "./pages/RegisterWorkShift";
 import ViewShifts from "./pages/ViewShifts";
 import WeekCalendar from "./components/ShiftCalendar";
@@ -49,7 +44,6 @@ function App() {
         <Routes>
           <Route path="/" element={<ProductsPresentation />} />
           <Route path="/manageproducts" element={<ManageProducts />} />
-          <Route path="/about" element={<AboutPage />} />
           <Route path="/checkattendance" element={<Capture />} />
           <Route path="/detail/:id" element={<Details />} />
           <Route path="/login" element={<LoginPage />} />

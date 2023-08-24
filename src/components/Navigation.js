@@ -193,25 +193,6 @@ export default function Navigation() {
             >
               <span>Manage Products</span>
             </Button>
-            <Button
-              key={"About Us"}
-              onClick={() => {
-                navigate("/about");
-                document.title = "About Us";
-              }}
-              style={
-                activeLink === "/about"
-                  ? { ...navLinkStyle, ...activeLinkStyle }
-                  : { ...navLinkStyle }
-              }
-              sx={{
-                color: "white",
-                padding: "0px 10px",
-                height: "30px",
-              }}
-            >
-              <span>About Us</span>
-            </Button>
             {checkIn == null ? (
               <Button
                 key={"Check In"}
@@ -332,12 +313,7 @@ export default function Navigation() {
                       </Link>
                     </div>
                   ) : (
-                    <Link
-                      to="/viewsalary"
-                      style={{ textDecoration: "none", color: "#D4B887" }}
-                    >
-                      <MenuItem>View Salary</MenuItem>
-                    </Link>
+                    <></>
                   )}
                   {currentUser.position !== "Manager" ? (
                     <>

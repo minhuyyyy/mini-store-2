@@ -13,6 +13,7 @@ import "../components/Calendar.css";
 
 function ViewWorkShift() {
   const { user } = useContext(AuthContext);
+  const [currentUser, setCurrentUser] = useState([]);
   const [data, setData] = useState([]);
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date())
@@ -38,19 +39,24 @@ function ViewWorkShift() {
     console.log(selectedDate);
   };
 
-  // Calculate next 7 days from the current date
   const currentDate = new Date();
   const nextSevenDays = new Date(currentDate);
   nextSevenDays.setDate(currentDate.getDate() + 7);
 
   useEffect(() => {
+    if (user) {
+      setCurrentUser(user);
+    }
+  }, [user]);
+
+  useEffect(() => {
     fetchShifts();
-  }, [user, currentWeekStart]); // Also trigger on currentWeekStart change
+  }, [currentUser, currentWeekStart]); // Also trigger on currentWeekStart change
 
   const fetchShifts = async () => {
     const response = await axios.get(
       `http://vps.akabom.me/api/work-shift/${
-        user.id
+        currentUser.id
       }?startDate=${currentWeekStart
         .toISOString()
         .slice(0, 10)}&endDate=${nextSevenDays.toISOString().slice(0, 10)}`
@@ -151,7 +157,7 @@ function ViewWorkShift() {
 
   return (
     <div className="calendar container" style={{ width: "100%" }}>
-      {user ? (
+      {currentUser ? (
         <>
           {renderHeader()}
           {renderWeekdays()}
