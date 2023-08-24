@@ -106,7 +106,7 @@ function ViewSalary() {
   };
   const fetchWithID = async () => {
     const response = await axios.get(
-      `http://vps.akabom.me/api/salary/${currentUser.id}`
+      `http://vps.akabom.me/api/salary/${user.id}`
     );
     if (response.status === 200) setData(response.data);
   };
