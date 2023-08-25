@@ -83,9 +83,9 @@ function Checkout({ cart, setCart }) {
 
   return (
     <div>
-      <h1>
+      <h2>
         <b>Receipt</b>
-      </h1>
+      </h2>
       <table className="table table-striped">
         <thead>
           <tr>

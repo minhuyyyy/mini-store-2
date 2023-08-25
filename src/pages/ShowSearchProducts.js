@@ -24,7 +24,7 @@ function ShowSearchProducts({ filteredProducts }) {
             <div
               key={product.id}
               style={{
-                transform: "translate(-12%, 0%)",
+                transform: "translate(-58%, 0%)",
                 marginTop: 0,
                 marginBottom: 20,
               }}
