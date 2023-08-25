@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { FormControl, Input, Button, ThemeProvider } from "@mui/material";
+import {
+  FormControl,
+  Input,
+  Button,
+  ThemeProvider,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,7 +15,7 @@ import { theme } from "./ManageAccounts";
 import { useNavigate, useParams } from "react-router-dom";
 import { uid } from "uid";
 
-export default function UpdateProduct() {
+export default function AddProduct() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [categories, setCategories] = useState([]);
@@ -21,6 +29,9 @@ export default function UpdateProduct() {
     price: "",
     description: "",
   });
+  const [category, setCategory] = useState(null);
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
   const API_URL = process.env.REACT_APP_API_URL;
 
   const navigate = useNavigate();
@@ -30,12 +41,8 @@ export default function UpdateProduct() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/product`);
-      const data = await response.json();
-      const allCategories = Array.from(
-        new Set(data.map((product) => product.category))
-      );
-      setCategories(allCategories);
+      const response = axios.get(`${API_URL}/category`);
+      if ((await response).status === 200) setCategories((await response).data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -56,6 +63,17 @@ export default function UpdateProduct() {
     }
   };
 
+  const handleChange = (event) => {
+    const value = event.target.value;
+    if (value === "add_new_category") {
+      setCategory("");
+      setShowNewCategoryInput(true);
+    } else {
+      setCategory(value);
+      setShowNewCategoryInput(false);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -68,17 +86,25 @@ export default function UpdateProduct() {
     e.preventDefault();
     try {
       let updatedFormData = formData;
-      // Upload image and update form data if an image is selected
+      const selectedCategory = newCategory || category;
+
       if (image) {
         const downloadURL = imageUrl;
         updatedFormData = { ...formData, imageUrl: downloadURL };
       }
-      // Update the product with the updated form data
-      const url = "http://vps.akabom.me/api/product";
+
+      if (selectedCategory) {
+        updatedFormData = {
+          ...updatedFormData,
+          category: selectedCategory,
+        };
+      }
+
+      const url = `${API_URL}/product`;
       const response = await axios.post(url, updatedFormData);
-      if (response.status == 200) {
-        toast.success("Product has been updated successfully");
-        // Reset state variables to initial values
+
+      if (response.status === 200) {
+        toast.success("Product has been added successfully");
         setFormData({
           imageUrl: "",
           name: "",
@@ -97,6 +123,7 @@ export default function UpdateProduct() {
       toast.error("An error occurred. Please try again later.");
     }
   };
+  
   return (
     <ThemeProvider theme={theme}>
       <>
@@ -137,16 +164,42 @@ export default function UpdateProduct() {
           </div>
           <div>
             <FormControl sx={{ width: "80%" }}>
-              <label>Product stock</label>
-              <Input
-                id="stock"
-                name="stock"
-                variant="standard"
-                value={formData.stock}
-                onChange={handleInputChange}
-              />
+              <label>Category</label>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select selectCate"
+                value={category}
+                label="Category"
+                onChange={handleChange}
+              >
+                {categories.map((cat) => (
+                  <MenuItem key={cat.id} value={cat.name}>
+                    {cat.name}
+                  </MenuItem>
+                ))}
+                <MenuItem value="add_new_category">Add new category</MenuItem>
+              </Select>
+              {showNewCategoryInput && (
+                <div>
+                  <FormControl sx={{ width: "80%" }}>
+                    <label>Product category:</label>
+                    <Input
+                      id="category"
+                      name="category"
+                      variant="standard"
+                      value={newCategory}
+                      onChange={(e) => {
+                        setNewCategory(e.target.value);
+                      }}
+                    />
+                    <br />
+                  </FormControl>
+                </div>
+              )}
+              {category && <p>You selected {category}</p>}
               <br />
             </FormControl>
+            <br />
           </div>
           <div>
             <FormControl sx={{ width: "80%" }}>
@@ -163,12 +216,12 @@ export default function UpdateProduct() {
           </div>
           <div>
             <FormControl sx={{ width: "80%" }}>
-              <label>Product category:</label>
+              <label>Product stock</label>
               <Input
-                id="category"
-                name="category"
+                id="stock"
+                name="stock"
                 variant="standard"
-                value={formData.category}
+                value={formData.stock}
                 onChange={handleInputChange}
               />
               <br />

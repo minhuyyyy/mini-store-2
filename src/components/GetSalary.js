@@ -1,8 +1,10 @@
-import { Button, FormControl, Input } from "@mui/material";
 import React, { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { Button, FormControl, Input, TextField } from "@mui/material";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 import CalculateSalary from "../pages/CalculateSalary";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function GetSalary() {
   const { user } = useContext(AuthContext);
@@ -28,20 +30,41 @@ function GetSalary() {
     }));
   };
 
+  const handleStartDateChange = (date) => {
+    if (date instanceof Date) {
+      const formattedDate = date.toISOString().split("T")[0];
+      setFormData((prevState) => ({
+        ...prevState,
+        startDate: formattedDate,
+      }));
+    }
+  };
+
+  const handleEndDateChange = (date) => {
+    if (date instanceof Date) {
+      const formattedDate = date.toISOString().split("T")[0];
+      setFormData((prevState) => ({
+        ...prevState,
+        endDate: formattedDate,
+      }));
+    }
+  };
+
   const fetchData = async () => {
-    const response = await axios.post(`${API_URL}/api/salary`, {
+    const response = await axios.post(`${API_URL}/salary`, {
       employeeId: formData.employeeId,
       baseSalaryPerHour: formData.base,
       month: formData.month,
       year: formData.year,
-      startDate: new Date(formData.startDate),
-      endDate: new Date(formData.endDate),
+      startDate: formData.startDate,
+      endDate: formData.endDate,
     });
     if (response.status === 200) {
       isSent(true);
       setData(response.data);
     }
   };
+
   return (
     <div className="container">
       <div>
@@ -99,30 +122,22 @@ function GetSalary() {
         </FormControl>
       </div>
       <div>
-        <FormControl sx={{ width: "80%" }}>
-          <label>Start Date:</label>
-          <Input
-            id="startDate"
-            name="startDate"
-            variant="standard"
-            value={formData.startDate}
-            onChange={handleInputChange}
-          />
-          <br />
-        </FormControl>
+        <label>Start Date:</label>
+        <DatePicker
+          selected={formData.startDate ? new Date(formData.startDate) : null}
+          onChange={handleStartDateChange}
+          dateFormat="yyyy-MM-dd"
+        />
+        <br />
       </div>
       <div>
-        <FormControl sx={{ width: "80%" }}>
-          <label>End Date:</label>
-          <Input
-            id="endDate"
-            name="endDate"
-            variant="standard"
-            value={formData.endDate}
-            onChange={handleInputChange}
-          />
-          <br />
-        </FormControl>
+        <label>End Date:</label>
+        <DatePicker
+          selected={formData.endDate ? new Date(formData.endDate) : null}
+          onChange={handleEndDateChange}
+          dateFormat="yyyy-MM-dd"
+        />
+        <br />
       </div>
       <Button onClick={fetchData} variant="contained">
         Load

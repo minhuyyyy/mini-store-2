@@ -20,15 +20,12 @@ export function CheckAttendanceForm({ imgSrc }) {
 
   const fetchShift = async () => {
     try {
-      // const response = await axios.get(
-      //   `http://vps.akabom.me/api/work-shift/${user.id}?startDate=${new Date()
-      //     .toISOString()
-      //     .substring(0, 10)}&endDate=${new Date()
-      //     .toISOString()
-      //     .substring(0, 10)}`
-      // );
       const response = await axios.get(
-        `${API_URL}/work-shift/${user.id}?startDate=2023-08-25&endDate=2023-08-25`
+        `${API_URL}/work-shift/${user.id}?startDate=${new Date()
+          .toISOString()
+          .substring(0, 10)}&endDate=${new Date()
+          .toISOString()
+          .substring(0, 10)}`
       );
       if (response.status === 200) {
         console.log(response.data);
