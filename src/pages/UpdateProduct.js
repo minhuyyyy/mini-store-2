@@ -28,12 +28,9 @@ export default function UpdateProduct() {
   const [product, setProduct] = useState([]);
   const [category, setCategory] = useState(null);
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
-  const [showNewUnitInput, setShowNewUnitInput] = useState(false);
   const [unit, setUnit] = useState(null);
-  const [units, setUnits] = useState([]);
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
-  const [newUnit, setNewUnit] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
   const API_URL = process.env.REACT_APP_API_URL;
@@ -41,12 +38,16 @@ export default function UpdateProduct() {
   useEffect(() => {
     fetchProduct();
     fetchCategories();
-    fetchUnits();
   }, []);
 
-  const fetchCategories = async () => {};
-
-  const fetchUnits = async () => {};
+  const fetchCategories = async () => {
+    try {
+      const response = axios.get(`${API_URL}/category`);
+      if ((await response).status === 200) setCategories((await response).data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   const fetchProduct = () => {
     try {
@@ -60,17 +61,6 @@ export default function UpdateProduct() {
         });
     } catch (e) {
       console.log(e);
-    }
-  };
-
-  const handleUnitChange = (event) => {
-    const value = event.target.value;
-    if (value === "add_new_unit") {
-      setUnit("");
-      setShowNewUnitInput(true);
-    } else {
-      setUnit(value);
-      setShowNewUnitInput(false);
     }
   };
 
@@ -121,17 +111,16 @@ export default function UpdateProduct() {
   const postData = async (e) => {
     e.preventDefault();
     try {
+      let updatedFormData = formData;
+      const selectedCategory = newCategory || category;
+      if (selectedCategory) {
+        updatedFormData = {
+          ...updatedFormData,
+          category: selectedCategory,
+        };
+      }
       axios
-        .put(`${API_URL}/product/${id}`, {
-          id: id,
-          name: formData.name,
-          description: formData.description,
-          price: formData.price,
-          imageUrl: imageUrl,
-          unit: formData.unit,
-          category: formData.category,
-          stock: formData.stock,
-        })
+        .put(`${API_URL}/product/${id}`, updatedFormData)
         .then((response) => {
           if (response.status == 200) {
             setFormData({
@@ -205,16 +194,44 @@ export default function UpdateProduct() {
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>
-                  <label>Product category</label>
-                  <Input
-                    id="category"
-                    name="category"
-                    variant="standard"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                  />
+                  <label>Category</label>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select selectCate"
+                    value={category}
+                    label="Category"
+                    onChange={handleChange}
+                  >
+                    {categories.map((cat) => (
+                      <MenuItem key={cat.id} value={cat.name}>
+                        {cat.name}
+                      </MenuItem>
+                    ))}
+                    <MenuItem value="add_new_category">
+                      Add new category
+                    </MenuItem>
+                  </Select>
+                  {showNewCategoryInput && (
+                    <div>
+                      <FormControl sx={{ width: "80%" }}>
+                        <label>Product category:</label>
+                        <Input
+                          id="category"
+                          name="category"
+                          variant="standard"
+                          value={newCategory}
+                          onChange={(e) => {
+                            setNewCategory(e.target.value);
+                          }}
+                        />
+                        <br />
+                      </FormControl>
+                    </div>
+                  )}
+                  {category && <p>You selected {category}</p>}
                   <br />
                 </FormControl>
+                <br />
               </div>
               <div>
                 <FormControl sx={{ width: "80%" }}>

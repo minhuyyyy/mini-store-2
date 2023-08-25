@@ -44,12 +44,6 @@ export default function ManageProductsPage() {
       });
   }, []);
 
-  useEffect(() => {
-    if (filteredProducts) {
-      setFilteredProducts(filteredProducts);
-    }
-  }, [filteredProducts]);
-
   const columns = [
     { id: "id", label: "ID", minWidth: 50 },
     { id: "name", label: "Name", minWidth: 150 },
@@ -100,6 +94,7 @@ export default function ManageProductsPage() {
       await axios.delete(`${API_URL}/product/${id}`).then((response) => {
         if (response.status == 200) {
           toast.success("Product deleted successfully");
+          window.location.reload();
         }
       });
     } catch (e) {
@@ -109,7 +104,7 @@ export default function ManageProductsPage() {
 
   return (
     <div style={{ backgroundColor: "#d3d3d3" }}>
-      <div style={{ color: "black", width: '90%' }} className="container">
+      <div style={{ color: "black", width: "90%" }} className="container">
         {user ? (
           <>
             <div
