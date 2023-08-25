@@ -8,19 +8,25 @@ import {
   isSameDay,
 } from "date-fns";
 import "./Calendar.css";
-import { RegisterWorkShiftForm } from "../pages/RegisterWorkShift";
+import { Button } from "@mui/material";
+import ViewShifts from "../pages/ViewShifts"; // Make sure the path is correct
 
 const WeekCalendar = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date())
   );
-  const [selectedDate, setSelectedDate] = useState("");
-  const [openShiftMenu, setOpenShiftMenu] = useState(false);
+  const [selectedDate, setSelectedDate] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [isViewButtonClicked, setIsViewButtonClicked] = useState(false);
 
   useEffect(() => {
-    if (selectedDate) {
-      onDateClickHandle(selectedDate);
-      setOpenShiftMenu(!openShiftMenu); 
+    if (selectedDate.length === 1) {
+      setStartDate(selectedDate[0]);
+      setEndDate(selectedDate[0]);
+    } else if (selectedDate.length === 2) {
+      setStartDate(selectedDate[0]);
+      setEndDate(selectedDate[1]);
     }
   }, [selectedDate]);
 
@@ -33,9 +39,25 @@ const WeekCalendar = () => {
     }
   };
 
+  const onViewButtonClick = () => {
+    setIsViewButtonClicked(true);
+  };
+
   const onDateClickHandle = (day) => {
-    setSelectedDate(day);
-    console.log(selectedDate);
+    if (selectedDate.length === 0) {
+      setSelectedDate([day]);
+    } else if (selectedDate.length === 1) {
+      const formattedDay = format(day, "yyyy-MM-dd");
+      const formattedSelected = format(selectedDate[0], "yyyy-MM-dd");
+
+      if (formattedDay < formattedSelected) {
+        setSelectedDate([formattedDay, formattedSelected]);
+      } else {
+        setSelectedDate([formattedSelected, formattedDay]);
+      }
+    } else {
+      setSelectedDate([day]);
+    }
   };
 
   const renderHeader = () => {
@@ -83,7 +105,7 @@ const WeekCalendar = () => {
           className={`col cell ${
             isSameDay(day, today)
               ? "today"
-              : isSameDay(day, selectedDate)
+              : selectedDate.some((date) => isSameDay(date, day))
               ? "selected"
               : ""
           }`}
@@ -104,7 +126,10 @@ const WeekCalendar = () => {
       {renderHeader()}
       {renderWeekdays()}
       {renderCells()}
-      {openShiftMenu && <RegisterWorkShiftForm selectedDate={selectedDate} />}
+      <Button onClick={onViewButtonClick}>View</Button>
+      {isViewButtonClicked && startDate && endDate && (
+        <ViewShifts startDate={startDate} endDate={endDate} />
+      )}
     </div>
   );
 };

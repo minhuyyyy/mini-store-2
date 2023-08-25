@@ -1,93 +1,96 @@
-import { Button, Grid } from "@mui/material";
 import React, { useState } from "react";
 import Checkout from "../components/Checkout";
+import { Button } from "@mui/material";
 
 function ShowSearchProducts({ filteredProducts }) {
   const [cart, setCart] = useState({});
   const [selectedProducts, setSelectedProducts] = useState([]);
 
   const addToCart = (product) => {
-    if (selectedProducts.includes(product.id)) {
-      setSelectedProducts(selectedProducts.filter((id) => id !== product.id));
-    } else {
+    if (!cart[product.id]) {
+      setCart((prevCart) => ({
+        ...prevCart,
+        [product.id]: product,
+      }));
       setSelectedProducts([...selectedProducts, product.id]);
     }
-
-    setCart((prevCart) => ({
-      ...prevCart,
-      [product.id]: product,
-    }));
   };
 
   return (
-    <>
-      <Grid container spacing={2}>
-        {filteredProducts.map((product) => (
-          <React.Fragment key={product.id}>
-            <Grid item sm={6} md={6} lg={6}>
+    <div className="container">
+      <div className="row" style={{ transform: "translate(0, -5%" }}>
+        <div className="col-sm-6 col-md-5 col-lg-5" style={{ marginTop: 50 }}>
+          {filteredProducts.map((product) => (
+            <div
+              key={product.id}
+              style={{
+                transform: "translate(-12%, 0%)",
+                marginTop: 0,
+                marginBottom: 20,
+              }}
+            >
+              <div style={{ width: "20%", display: "inline" }}>
+                <img
+                  src={product.imageUrl}
+                  style={{ width: "100px", height: "80px" }}
+                  alt={product.name}
+                />
+              </div>
               <div
                 style={{
-                  transform: "translate(3%, -150%)",
+                  display: "inline",
+                  transform: "translate(15%, 100%)",
                   marginTop: 0,
                 }}
               >
-                <div style={{ width: "20%", display: "inline" }}>
-                  <img
-                    src={product.imageUrl}
-                    style={{ width: "100px", height: "80px" }}
-                    alt={product.name}
-                  ></img>
-                </div>
-                <div
+                <p
                   style={{
                     display: "inline",
-                    transform: "translate(15%, 100%)",
                     marginTop: 0,
                   }}
                 >
-                  <p
-                    style={{
-                      display: "inline",
-                      marginTop: 0,
-                    }}
-                  >
-                    Name:
-                    <b> {product.name}</b>
-                  </p>
-                  <span
-                    style={{
-                      color: "#1a86ff",
-                      marginLeft: "20px",
-                      display: "inline",
-                    }}
-                  >
-                    Price: ${product.price}
-                  </span>
-                  <p
-                    style={{
-                      display: "inline",
-                      marginLeft: 20,
-                      marginRight: 20,
-                    }}
-                  >
-                    Stock: {product.stock}
-                  </p>
-                  <Button
-                    variant="contained"
-                    onClick={() => addToCart(product)}
-                  >
-                    Add to cart
-                  </Button>
-                </div>
+                  Name:
+                  <b> {product.name}</b>
+                </p>
+                <span
+                  style={{
+                    color: "#1a86ff",
+                    marginLeft: "20px",
+                    display: "inline",
+                  }}
+                >
+                  Price: {product.price} VND
+                </span>
+                <p
+                  style={{
+                    display: "inline",
+                    marginLeft: 20,
+                    marginRight: 20,
+                  }}
+                >
+                  Stock: {product.stock}
+                </p>
+                <p
+                  style={{
+                    display: "inline",
+                    marginLeft: 20,
+                    marginRight: 20,
+                  }}
+                >
+                  Unit: {product.unit}
+                </p>
+                <Button variant="contained" onClick={() => addToCart(product)}>
+                  Add to cart
+                </Button>
               </div>
-            </Grid>
-            <Grid item sm={6} md={6} lg={6}>
-              {Object.keys(cart).length > 0 && <Checkout cart={cart} />}
-            </Grid>
-          </React.Fragment>
-        ))}
-      </Grid>
-    </>
+            </div>
+          ))}
+        </div>
+        <div className="col-sm-6 col-md-7 col-lg-7" style={{ marginTop: 50 }}>
+          {Object.keys(cart) && <Checkout cart={cart} setCart={setCart} />}
+        </div>
+      </div>
+    </div>
   );
 }
 

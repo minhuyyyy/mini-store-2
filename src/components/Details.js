@@ -5,8 +5,10 @@ import { Container, Row } from "react-materialize";
 export default function Details() {
   const [product, setProduct] = useState(null);
   const { id } = useParams();
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    fetch(`http://vps.akabom.me/api/product/${id}`)
+    fetch(`${API_URL}/product/${id}`)
       .then((response) => response.json())
       .then((data) => {
         setProduct(data);

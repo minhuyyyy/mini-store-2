@@ -17,7 +17,6 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import env from "react-dotenv";
 export default function SetNewPassword() {
   const [input, setInput] = useState({
     password: "",

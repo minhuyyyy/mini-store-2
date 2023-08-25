@@ -36,6 +36,7 @@ export default function UpdateProduct() {
   const [newUnit, setNewUnit] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchProduct();
@@ -49,7 +50,7 @@ export default function UpdateProduct() {
 
   const fetchProduct = () => {
     try {
-      fetch(`http://vps.akabom.me/api/product/${id}`)
+      fetch(`${API_URL}/product/${id}`)
         .then((response) => response.json())
         .then((data) => {
           setFormData(data);
@@ -121,7 +122,7 @@ export default function UpdateProduct() {
     e.preventDefault();
     try {
       axios
-        .put(`http://vps.akabom.me/api/product/${id}`, {
+        .put(`${API_URL}/product/${id}`, {
           id: id,
           name: formData.name,
           description: formData.description,
@@ -142,8 +143,8 @@ export default function UpdateProduct() {
               price: "",
               info: "",
             });
-            toast.success("Account updated");
-            navigate("/manageproducts");
+            toast.success("Product updated");
+            navigate(-1);
           } else {
             console.log();
           }

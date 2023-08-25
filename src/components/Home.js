@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import axios from "axios";
-import env from "react-dotenv";
 import ProductsPresentation from "./Products";
 import Drawer from "./Drawer";
 
@@ -11,7 +10,8 @@ function Home() {
 
   useEffect(() => {
     // Fetch all products initially or when category changes
-    axios.get(`http://vps.akabom.me/api/product`).then((response) => {
+    const API_URL = process.env.REACT_APP_API_URL;
+    axios.get(`${API_URL}/product`).then((response) => {
       const data = response.data;
 
       // If a category is selected, filter products

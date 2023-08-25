@@ -10,7 +10,6 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
-import env from "react-dotenv";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -33,6 +32,8 @@ export default function UpdateProfile() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useContext(AuthContext);
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     getData();
   }, [user]);
@@ -89,9 +90,7 @@ export default function UpdateProfile() {
 
   const getData = async () => {
     try {
-      const response = await axios.get(
-        `http://vps.akabom.me/api/Employee/${user.id}`
-      );
+      const response = await axios.get(`${API_URL}/Employee/${user.id}`);
       if (response.status == 200) {
         setFormData(response.data);
         setPassword(response.data.password);
@@ -120,18 +119,15 @@ export default function UpdateProfile() {
 
   const handleUpdate = async () => {
     try {
-      const response = axios.put(
-        `http://vps.akabom.me/api/Employee/${user.id}`,
-        {
-          id: user.id,
-          email: formData.email,
-          fullName: formData.fullName,
-          password: password,
-          imgUrl: imageUrl,
-          roleName: formData.role,
-          isActive: formData.isActive,
-        }
-      );
+      const response = axios.put(`${API_URL}/Employee/${user.id}`, {
+        id: user.id,
+        email: formData.email,
+        fullName: formData.fullName,
+        password: password,
+        imgUrl: imageUrl,
+        roleName: formData.role,
+        isActive: formData.isActive,
+      });
       if ((await response).status == 200) {
         toast.success("Profile updated");
       } else toast.error("Something went wrong");

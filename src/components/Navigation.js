@@ -36,6 +36,7 @@ export default function Navigation() {
   const [checkIn, setCheckIn] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     checkUser();
@@ -99,7 +100,7 @@ export default function Navigation() {
     if (workShift) {
       try {
         axios
-          .post(`http://vps.akabom.me/api/checkout`, {
+          .post(`${API_URL}/checkout`, {
             employeeId: user.id,
             dateTime: new Date(),
             imageData: "",
@@ -107,6 +108,8 @@ export default function Navigation() {
           })
           .then((response) => {
             if (response.status === 200) {
+              Cookies.remove("check-in");
+              window.location.reload();
               toast.success("Checked Out");
             }
           });
@@ -190,25 +193,6 @@ export default function Navigation() {
               }}
             >
               <span>Manage Products</span>
-            </Button>
-            <Button
-              key={"About Us"}
-              onClick={() => {
-                navigate("/about");
-                document.title = "About Us";
-              }}
-              style={
-                activeLink === "/about"
-                  ? { ...navLinkStyle, ...activeLinkStyle }
-                  : { ...navLinkStyle }
-              }
-              sx={{
-                color: "white",
-                padding: "0px 10px",
-                height: "30px",
-              }}
-            >
-              <span>About Us</span>
             </Button>
             {checkIn == null ? (
               <Button
@@ -297,6 +281,12 @@ export default function Navigation() {
                   onClose={handleCloseUserMenu}
                 >
                   <Link
+                    to="/view-salary"
+                    style={{ textDecoration: "none", color: "#D4B887" }}
+                  >
+                    <MenuItem>View Salary</MenuItem>
+                  </Link>
+                  <Link
                     to="/viewprofile"
                     style={{ textDecoration: "none", color: "#D4B887" }}
                   >
@@ -311,10 +301,10 @@ export default function Navigation() {
                         <MenuItem>Manage Accounts</MenuItem>
                       </Link>
                       <Link
-                        to="/viewsalary"
+                        to="/calculate-salary"
                         style={{ textDecoration: "none", color: "#D4B887" }}
                       >
-                        <MenuItem>View Salary</MenuItem>
+                        <MenuItem>Calculate Salary</MenuItem>
                       </Link>
                       <Link
                         to="/view-shifts"
@@ -324,20 +314,23 @@ export default function Navigation() {
                       </Link>
                     </div>
                   ) : (
-                    <Link
-                      to="/viewsalary"
-                      style={{ textDecoration: "none", color: "#D4B887" }}
-                    >
-                      <MenuItem>View Salary</MenuItem>
-                    </Link>
+                    <></>
                   )}
                   {currentUser.position !== "Manager" ? (
-                    <Link
-                      to="/workshift"
-                      style={{ textDecoration: "none", color: "#D4B887" }}
-                    >
-                      <MenuItem>Register Work Shift</MenuItem>
-                    </Link>
+                    <>
+                      <Link
+                        to="/workshift"
+                        style={{ textDecoration: "none", color: "#D4B887" }}
+                      >
+                        <MenuItem>Register Work Shift</MenuItem>
+                      </Link>
+                      <Link
+                        to="/view-workshift"
+                        style={{ textDecoration: "none", color: "#D4B887" }}
+                      >
+                        <MenuItem>View Work Shift</MenuItem>
+                      </Link>
+                    </>
                   ) : (
                     <></>
                   )}
@@ -345,7 +338,7 @@ export default function Navigation() {
               </Box>
               <Button
                 style={{
-                  width: "10%",
+                  width: "13%",
                   borderRadius: "30px",
                   backgroundColor: "black",
                   marginRight: "20px",

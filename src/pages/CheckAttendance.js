@@ -11,6 +11,8 @@ export function CheckAttendanceForm({ imgSrc }) {
   const [currentUser, setCurrentUser] = useState(user);
   const [shifts, setShifts] = useState([]);
   const [selectedShift, setSelectedShift] = useState(null);
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const navigate = useNavigate();
   useEffect(() => {
     fetchShift();
@@ -18,12 +20,15 @@ export function CheckAttendanceForm({ imgSrc }) {
 
   const fetchShift = async () => {
     try {
+      // const response = await axios.get(
+      //   `http://vps.akabom.me/api/work-shift/${user.id}?startDate=${new Date()
+      //     .toISOString()
+      //     .substring(0, 10)}&endDate=${new Date()
+      //     .toISOString()
+      //     .substring(0, 10)}`
+      // );
       const response = await axios.get(
-        `http://vps.akabom.me/api/work-shift/${user.id}?startDate=${new Date()
-          .toISOString()
-          .substring(0, 10)}&endDate=${new Date()
-          .toISOString()
-          .substring(0, 10)}`
+        `${API_URL}/work-shift/${user.id}?startDate=2023-08-25&endDate=2023-08-25`
       );
       if (response.status === 200) {
         console.log(response.data);
@@ -43,15 +48,14 @@ export function CheckAttendanceForm({ imgSrc }) {
   };
 
   const handleCheckIn = async () => {
-    const response = await axios.post("http://vps.akabom.me/api/checkin", {
+    const response = await axios.post(`${API_URL}/checkin`, {
       employeeId: user.id,
-      dateTime: "2023-08-20T17:00:00.0000000Z",
+      dateTime: new Date(),
       imageData: imgSrc,
       workshiftId: selectedShift,
     });
     if (response.status == 200) {
       Cookies.set("check-in", `${selectedShift}`);
-      navigate("/");
       window.location.reload();
       toast.success("Attendance taken successfully");
     } else toast.error("Something went wrong");
@@ -65,7 +69,7 @@ export function CheckAttendanceForm({ imgSrc }) {
             <h2>Check In</h2>
             <p>Select a shift to check in</p>
             <Button onClick={() => setSelectedShift(shift.id)}>
-              {shift.id}
+              - {shift.startDate.split("T")[1]}
             </Button>
             <p>Take a picture of you at the store</p>
             {selectedShift && (

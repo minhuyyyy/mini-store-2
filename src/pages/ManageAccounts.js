@@ -105,6 +105,9 @@ const ManageAccounts = () => {
   const [msg, setMsg] = useState(null);
   let { user } = useContext(AuthContext);
   const { getItem } = useSessionStorage();
+
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const handleScrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -131,10 +134,12 @@ const ManageAccounts = () => {
 
   const fetchData = async () => {
     try {
-      axios.get("http://vps.akabom.me/api/employee").then((response) => {
-        setData(response.data);
-        return response.data;
-      });
+      if (currentUser.position === "Manager") {
+        axios.get(`${API_URL}/employee`).then((response) => {
+          setData(response.data);
+          return response.data;
+        });
+      } else setMsg("Only Manager and Saler can view this page");
     } catch (e) {
       toast.error("Something went wrong");
     }
@@ -142,16 +147,16 @@ const ManageAccounts = () => {
 
   useEffect(() => {
     checkUser();
-  }, [user, data]);
+  }, [user]);
+
+  useEffect(() => {
+    fetchData();
+  }, [currentUser]);
 
   const checkUser = async () => {
     try {
-      const userData = getItem("user"); // Assuming "user" is the key you've used for the user data
-      if (user.position === "Manager" || userData.role === "Manager") {
+      if (user) {
         setCurrentUser(user);
-        await fetchData();
-      } else if (user.role !== "Manager") {
-        setMsg("Only Managers can view this page");
       }
     } catch (e) {
       console.error(e);
@@ -178,11 +183,10 @@ const ManageAccounts = () => {
   };
 
   const columns = [
-    { id: "id", label: "ID", minWidth: 50 },
-    { id: "fullName", label: "Name", minWidth: 100 },
-    { id: "imgUrl", label: "Image", minWidth: 110 },
-    { id: "email", label: "Email", minWidth: 150 },
-    { id: "createDate", label: "Created on", minWidth: 150 },
+    { id: "id", label: "ID", minWidth: 30 },
+    { id: "fullName", label: "Name", minWidth: 80 },
+    { id: "imgUrl", label: "Image", minWidth: 90 },
+    { id: "email", label: "Email", minWidth: 120 },
     { id: "isActive", label: "Active", minWidth: 150 },
     { id: "role", label: "Role", minWidth: 120 },
     { id: "action", label: "Actions", minWidth: 120 },
@@ -203,13 +207,11 @@ const ManageAccounts = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios
-        .delete(`http://vps.akabom.me/api/employee/${id}`, {})
-        .then((response) => {
-          if (response.status == 200) {
-            toast.success("Account deleted successfully");
-          }
-        });
+      await axios.delete(`${API_URL}/employee/${id}`, {}).then((response) => {
+        if (response.status == 200) {
+          toast.success("Account deleted successfully");
+        }
+      });
     } catch (e) {
       console.log(e);
     }
@@ -263,7 +265,7 @@ const ManageAccounts = () => {
                       position: "absolute",
                       margin: 0,
                       top: "50%",
-                      transform: `translate(300%, -50%)`,
+                      transform: `translate(430%, -50%)`,
                       backgroundColor: "#fff",
                     }}
                   >

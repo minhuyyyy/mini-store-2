@@ -1,6 +1,2 @@
-const now = new Date();
-// const day = today.substring(0, 16);
-const datetime = now.getTime();
-const time = now.toLocaleTimeString();
-console.log("Date:", datetime);
-console.log("Time:", time);
+const env = require("dotenv").config({ path: ".env" });
+console.log(process.env.REACT_APP_API_URL);

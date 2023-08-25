@@ -19,6 +19,8 @@ export default function AddAccount() {
   const [imageUrl, setImageUrl] = useState("");
   const [added, setAdded] = useState(false);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     return () => {
       if (image) {
@@ -65,9 +67,20 @@ export default function AddAccount() {
 
   const postData = async () => {
     try {
+      let baseSalary = 0; // Initialize base salary to 0
+
+      // Determine base salary based on the selected role
+      if (role === "Saler") {
+        baseSalary = 30000; // Set base salary for Sales role
+      } else if (role === "Guard") {
+        baseSalary = 25000; // Set base salary for Guard role
+      } else if (role === "Manager") {
+        baseSalary = 45000; // Set base salary for Manager role
+      }
+
       const response = await axios({
         method: "post",
-        url: "http://vps.akabom.me/api/Employee/register",
+        url: `${API_URL}/employee/register`,
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
@@ -79,6 +92,7 @@ export default function AddAccount() {
           password: formData.password,
           imgUrl: imageUrl,
           roleName: role,
+          baseSalary: baseSalary, // Include the calculated base salary
         },
       });
 
@@ -191,7 +205,6 @@ export default function AddAccount() {
             >
               <MenuItem value="Saler">Sales</MenuItem>
               <MenuItem value={"Guard"}>Guard</MenuItem>
-              <MenuItem value={"Manager"}>Manager</MenuItem>
             </Select>
             {role && <p>You selected {role}</p>}
 

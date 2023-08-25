@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
 import {
   format,
   subWeeks,
@@ -7,20 +9,19 @@ import {
   addDays,
   isSameDay,
 } from "date-fns";
-import "./Calendar.css";
-import { RegisterWorkShiftForm } from "../pages/RegisterWorkShift";
+import "../components/Calendar.css";
 
-const WeekCalendar = () => {
+function ViewWorkShift() {
+  const { user } = useContext(AuthContext);
+  const [currentUser, setCurrentUser] = useState([]);
+  const [data, setData] = useState([]);
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date())
   );
   const [selectedDate, setSelectedDate] = useState("");
-  const [openShiftMenu, setOpenShiftMenu] = useState(false);
-
   useEffect(() => {
     if (selectedDate) {
       onDateClickHandle(selectedDate);
-      setOpenShiftMenu(!openShiftMenu); 
     }
   }, [selectedDate]);
 
@@ -38,16 +39,44 @@ const WeekCalendar = () => {
     console.log(selectedDate);
   };
 
+  const currentDate = new Date();
+  const nextSevenDays = new Date(currentDate);
+  nextSevenDays.setDate(currentDate.getDate() + 7);
+
+  useEffect(() => {
+    if (user) {
+      setCurrentUser(user);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchShifts();
+  }, [currentUser, currentWeekStart]); // Also trigger on currentWeekStart change
+
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  const fetchShifts = async () => {
+    const response = await axios.get(
+      `${API_URL}/work-shift/${currentUser.id}?startDate=${currentWeekStart
+        .toISOString()
+        .slice(0, 10)}&endDate=${nextSevenDays.toISOString().slice(0, 10)}`
+    );
+    if (response.status === 200) {
+      setData(response.data);
+      console.log(response.data);
+    }
+  };
+
   const renderHeader = () => {
     const dateFormat = "MMM d, yyyy";
     return (
       <div className="header row flex-middle">
-        <div className="col col-start">
+        <div className="col col-start center">
           <div className="icon" onClick={() => changeWeekHandle("prev")}>
             &lt;
           </div>
         </div>
-        <div className="col col-center">
+        <div className="col col-center center">
           <span>{format(currentWeekStart, dateFormat)}</span>
         </div>
         <div className="col col-end">
@@ -78,6 +107,13 @@ const WeekCalendar = () => {
     let startDate = currentWeekStart;
     for (let i = 0; i < 7; i++) {
       const day = addDays(startDate, i);
+      const hasShift = data.some((shift) =>
+        isSameDay(new Date(shift.startDate), day)
+      );
+      const shiftsForDay = data
+        .filter((shift) => isSameDay(new Date(shift.startDate), day))
+        .map((shift) => shift.startDate);
+
       days.push(
         <div
           className={`col cell ${
@@ -93,6 +129,26 @@ const WeekCalendar = () => {
           <span className={`number ${day < today ? "past-day" : ""}`}>
             {format(day, "d")}
           </span>
+          {hasShift && (
+            <div className="shifts-container">
+              {shiftsForDay.map((shift, index) => (
+                <span key={index} className="shift-type">
+                  {data.find(
+                    (shiftData) =>
+                      shiftData.startDate === shift &&
+                      shiftData.approvalStatusId === 2
+                  ) && (
+                    <span
+                      className="approved-shift"
+                      style={{ display: "block" }}
+                    >
+                      {shift.split("T")[1]}
+                    </span>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       );
     }
@@ -101,12 +157,17 @@ const WeekCalendar = () => {
 
   return (
     <div className="calendar container" style={{ width: "100%" }}>
-      {renderHeader()}
-      {renderWeekdays()}
-      {renderCells()}
-      {openShiftMenu && <RegisterWorkShiftForm selectedDate={selectedDate} />}
+      {currentUser ? (
+        <>
+          {renderHeader()}
+          {renderWeekdays()}
+          {renderCells()}
+        </>
+      ) : (
+        <h2>Log in to view page</h2>
+      )}
     </div>
   );
-};
+}
 
-export default WeekCalendar;
+export default ViewWorkShift;

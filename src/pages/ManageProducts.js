@@ -21,12 +21,7 @@ import { Button, Table } from "@mui/material";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import env from "react-dotenv";
-import {
-  KeyboardArrowDownOutlined,
-  SearchOutlined,
-  Translate,
-} from "@mui/icons-material";
+import { KeyboardArrowDownOutlined } from "@mui/icons-material";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
@@ -35,34 +30,19 @@ export default function ManageProductsPage() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
-  const [product, setProduct] = useState([]);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const tableContainerRef = useRef(null);
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    fetch("http://vps.akabom.me/api/product")
+    fetch(`${API_URL}/product`)
       .then((response) => response.json())
       .then((data) => {
         setFilteredProducts(data);
         setCategories([...new Set(data.map((product) => product.category))]);
       });
   }, []);
-
-  const handleSearch = () => {
-    const filtered = filteredProducts.filter((product) => {
-      return product.id.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-    setFilteredProducts(filtered);
-    setSearchTerm("");
-  };
-
-  const onInputChange = (event) => {
-    setSearchTerm(event.target.value);
-    if (searchTerm !== event.target.value) {
-      handleSearch(); // Call handleSearch whenever input changes
-    }
-  };
 
   useEffect(() => {
     if (filteredProducts) {
@@ -117,23 +97,11 @@ export default function ManageProductsPage() {
 
   const handleDelete = async (id) => {
     try {
-      await axios
-        .put(`http://vps.akabom.me/api/product/${id}`, {
-          id: id,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          unit: product.unit,
-          category: product.category,
-          stock: product.stock,
-          isActive: false,
-        })
-        .then((response) => {
-          if (response.status == 200) {
-            toast.success("Product deleted successfully");
-          }
-        });
+      await axios.delete(`${API_URL}/product/${id}`).then((response) => {
+        if (response.status == 200) {
+          toast.success("Product deleted successfully");
+        }
+      });
     } catch (e) {
       console.log(e);
     }
@@ -141,11 +109,10 @@ export default function ManageProductsPage() {
 
   return (
     <div style={{ backgroundColor: "#d3d3d3" }}>
-      <div style={{ color: "black" }} className="container">
+      <div style={{ color: "black", width: '90%' }} className="container">
         {user ? (
           <>
             <div
-              // className="container"
               style={{
                 backgroundColor: "#0A6EBD",
                 color: "white",
@@ -171,37 +138,13 @@ export default function ManageProductsPage() {
                     position: "absolute",
                     margin: 0,
                     top: "50%",
-                    transform: `translate(300%, -50%)`,
+                    transform: `translate(430%, -50%)`,
                     backgroundColor: "#fff",
                   }}
                 >
                   Add product
                 </Button>
               </Link>
-              <div>
-                <Input
-                  id="search"
-                  placeholder="Search products: (Enter ID)"
-                  sx={{
-                    transform: "translate(400%,15px)",
-                    backgroundColor: "whitesmoke",
-                    height: 30,
-                  }}
-                  value={searchTerm}
-                  // disableUnderline={true}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSearch();
-                  }}
-                  onChange={onInputChange}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleSearch}>
-                        <SearchOutlined />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                ></Input>
-              </div>
             </div>
             <div style={{ width: "100%" }}>
               <Paper
