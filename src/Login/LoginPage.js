@@ -19,7 +19,7 @@ export default function LoginPage() {
   const onLogin = (e) => {
     e.preventDefault();
     try {
-      fetch(`${API_URL}/Employee/login`, {
+      fetch(`${API_URL}/employee/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

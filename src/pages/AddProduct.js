@@ -30,7 +30,7 @@ export default function UpdateProduct() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/product`);
+      const response = await fetch(`${API_URL}/product`);
       const data = await response.json();
       const allCategories = Array.from(
         new Set(data.map((product) => product.category))
@@ -74,7 +74,7 @@ export default function UpdateProduct() {
         updatedFormData = { ...formData, imageUrl: downloadURL };
       }
       // Update the product with the updated form data
-      const url = "http://vps.akabom.me/api/product";
+      const url = `${API_URL}/product`;
       const response = await axios.post(url, updatedFormData);
       if (response.status == 200) {
         toast.success("Product has been updated successfully");

@@ -22,6 +22,7 @@ export function RegisterWorkShiftForm({ selectedDate }) {
   const [selectedShifts, setSelectedShifts] = useState([]);
   const [workshiftType, setWorkshiftType] = useState([]);
   const [dates, setDates] = useState([]); // Change 'date' to 'dates' here
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const SalerShifts = [
     { id: 1, time: "6.00-12.00", type: "shift-1" },
@@ -80,7 +81,7 @@ export function RegisterWorkShiftForm({ selectedDate }) {
       workshiftType: type,
     }));
 
-    const response = await axios.post("http://vps.akabom.me/api/work-shift", {
+    const response = await axios.post(`${API_URL}/work-shift/`, {
       employeeId: ID,
       workshifts: workshifts,
     });
