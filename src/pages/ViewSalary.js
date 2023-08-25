@@ -43,15 +43,32 @@ function Row(props) {
           {row.payslipId}
         </TableCell>
         <TableCell align="right">{row.employeeId}</TableCell>
+        <TableCell align="right">{row.employee.fullName}</TableCell>
+        <TableCell align="center">{row.totalWorkHours}</TableCell>
         <TableCell align="right">
           {row.baseSalary.toLocaleString("vi-VN", {
             style: "currency",
             currency: "VND",
           })}
         </TableCell>
-        <TableCell align="center">{row.totalWorkHours}</TableCell>
-        <TableCell align="center">{row.bonuses}</TableCell>
-        <TableCell align="center">{row.deductions}</TableCell>
+        <TableCell align="center">
+          {row.bonuses.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </TableCell>
+        <TableCell align="center">
+          {row.deductions.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </TableCell>
+        <TableCell align="right">
+          {row.totalSalary.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
@@ -139,10 +156,12 @@ function ViewSalary() {
                 <TableCell />
                 <TableCell>Payslip ID</TableCell>
                 <TableCell align="right">Employee ID</TableCell>
-                <TableCell align="right">Base Salary</TableCell>
+                <TableCell align="right">Employee Name</TableCell>
                 <TableCell align="center">Total Work Hours</TableCell>
+                <TableCell align="right">Base Salary</TableCell>
                 <TableCell align="center">Bonuses</TableCell>
                 <TableCell align="center">Deductions</TableCell>
+                <TableCell align="right">Total Salary</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -167,10 +186,12 @@ function ViewSalary() {
                     <TableCell />
                     <TableCell>Payslip ID</TableCell>
                     <TableCell align="right">Employee ID</TableCell>
-                    <TableCell align="right">Base Salary</TableCell>
+                    <TableCell align="right">Employee Name</TableCell>
                     <TableCell align="center">Total Work Hours</TableCell>
+                    <TableCell align="right">Base Salary</TableCell>
                     <TableCell align="center">Bonuses</TableCell>
                     <TableCell align="center">Deductions</TableCell>
+                    <TableCell align="right">Total Salary</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>

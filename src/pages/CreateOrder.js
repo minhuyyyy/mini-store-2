@@ -46,9 +46,6 @@ function CreateOrder() {
     <>
       {user ? (
         <>
-          <h2 className="center" style={{ marginTop: "20px" }}>
-            Create Order
-          </h2>
           <div
             style={{
               backgroundColor: "#1888E8",
