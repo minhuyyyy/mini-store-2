@@ -57,7 +57,7 @@ function Capture() {
           </div>
         </>
       ) : (
-        <h2>Login to check in</h2>
+        <h2 className="center">Login to check in</h2>
       )}
     </div>
   );

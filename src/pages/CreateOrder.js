@@ -88,7 +88,7 @@ function CreateOrder() {
           </div>
         </>
       ) : (
-        <h2>Login to view page</h2>
+        <h2 className="center">Login to view page</h2>
       )}
     </>
   );

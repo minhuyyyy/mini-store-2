@@ -67,7 +67,7 @@ function Checkout({ cart, setCart }) {
 
     try {
       if (order.length > 0) {
-        const response = await axios.post(`${API_URL}order`, newOrder);
+        const response = await axios.post(`${API_URL}/order`, newOrder);
         toast.success("Order submitted successfully");
         setRemovedProducts([]);
         setCart({});

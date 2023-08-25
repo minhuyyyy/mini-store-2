@@ -312,6 +312,12 @@ export default function Navigation() {
                       >
                         <MenuItem>View Shifts</MenuItem>
                       </Link>
+                      <Link
+                        to="/view-orders"
+                        style={{ textDecoration: "none", color: "#D4B887" }}
+                      >
+                        <MenuItem>View Orders</MenuItem>
+                      </Link>
                     </div>
                   ) : (
                     <></>
