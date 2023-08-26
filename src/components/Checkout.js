@@ -29,6 +29,7 @@ function Checkout({ cart, setCart }) {
       quantity: quantity[productId] || 0,
     }));
     setOrder(orderDetails);
+    console.log(order.length);
   }, [cart, quantity]);
 
   const handleInputChange = (e, productId) => {
@@ -39,9 +40,9 @@ function Checkout({ cart, setCart }) {
   };
 
   const handleCashChange = (e) => {
-    const cashValue = parseFloat(e.target.value);
-    setCash(cashValue.toLocaleString());
-    if (cashValue < amount) {
+    const cashValue = e.target.value;
+    setCash(cashValue);
+    if (cashValue <= amount) {
       setChange(0);
     } else {
       setChange(Math.round(cashValue - amount));
@@ -59,6 +60,8 @@ function Checkout({ cart, setCart }) {
   };
 
   const submitOrder = async () => {
+    console.log("Submitting order...");
+
     const newOrder = {
       customerName: "",
       salerId: user.id,
@@ -66,15 +69,39 @@ function Checkout({ cart, setCart }) {
     };
 
     try {
-      if (order.length > 0) {
-        const response = await axios.post(`${API_URL}/order`, newOrder);
-        toast.success("Order submitted successfully");
-        setRemovedProducts([]);
-        setCart({});
-        setOrder([]);
-        setCash(0);
-      } else {
+      if (order.length === 0) {
+        console.log("Empty cart.");
         toast.error("Empty cart");
+      } else if (cash < amount) {
+        console.log("Invalid cash.");
+        setChange(0);
+        toast.error("Invalid cash");
+      } else {
+        console.log("Submitting the order...");
+        if (cash >= amount) {
+          const response = await axios
+            .post(`${API_URL}/order`, newOrder)
+            .catch((error) => {
+              return error.response;
+            });
+          console.log("API Response:", response);
+          if (response.status === 200) {
+            console.log("Order submitted successfully.");
+            toast.success("Order submitted successfully");
+            setRemovedProducts([]);
+            setCart({});
+            setOrder([]);
+            setCash(0);
+            setChange(0);
+          } else if (response.status === 400) {
+            toast.error(response.data.message);
+          } else {
+            console.log(response.status.message);
+          }
+        } else {
+          console.log("Cash: " + cash);
+          console.log("Amout: " + amount);
+        }
       }
     } catch (error) {
       console.error("Error submitting order", error);
@@ -127,7 +154,7 @@ function Checkout({ cart, setCart }) {
         placeholder="Enter customer's cash..."
         disableUnderline={true}
       />
-      <p>Change: {change.toLocaleString()}</p>
+      <p>Change: {change.toLocaleString()} VND</p>
       <Button onClick={submitOrder}>Submit Order</Button>
     </div>
   );

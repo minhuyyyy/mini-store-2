@@ -20,6 +20,7 @@ export function CheckAttendanceForm({ imgSrc }) {
 
   const fetchShift = async () => {
     try {
+      console.log(user);
       const response = await axios.get(
         `${API_URL}/work-shift/${user.id}?startDate=${new Date()
           .toISOString()
@@ -28,7 +29,7 @@ export function CheckAttendanceForm({ imgSrc }) {
           .substring(0, 10)}`
       );
       if (response.status === 200) {
-        console.log(response.data);
+        // console.log(response.data);
         setShifts(response.data); // Wrap the response data in an array
       }
     } catch (error) {
@@ -51,10 +52,15 @@ export function CheckAttendanceForm({ imgSrc }) {
       imageData: imgSrc,
       workshiftId: selectedShift,
     });
-    if (response.status == 200) {
+
+    console.log(response.status);
+    if (response.status === 200) {
       Cookies.set("check-in", `${selectedShift}`);
       window.location.reload();
       toast.success("Attendance taken successfully");
+    } else if (response.status === 400) {
+      // toast.error(response.data);
+      console.log(response.data);
     } else toast.error("Something went wrong");
   };
 

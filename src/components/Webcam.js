@@ -21,7 +21,7 @@ function Capture() {
   }, [user]);
 
   useEffect(() => {
-    console.log("imgSrc:", imgSrc); // Log the imgSrc when it changes
+    // console.log("imgSrc:", imgSrc); // Log the imgSrc when it changes
   }, [imgSrc]);
   
   const capture = useCallback(() => {
