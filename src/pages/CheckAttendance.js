@@ -20,7 +20,6 @@ export function CheckAttendanceForm({ imgSrc }) {
 
   const fetchShift = async () => {
     try {
-      console.log(user);
       const response = await axios.get(
         `${API_URL}/work-shift/${user.id}?startDate=${new Date()
           .toISOString()
@@ -29,7 +28,7 @@ export function CheckAttendanceForm({ imgSrc }) {
           .substring(0, 10)}`
       );
       if (response.status === 200) {
-        // console.log(response.data);
+        console.log(response.data);
         setShifts(response.data); // Wrap the response data in an array
       }
     } catch (error) {
@@ -58,16 +57,12 @@ export function CheckAttendanceForm({ imgSrc }) {
         return error.response;
       });
 
-    console.log(response.status);
-
-    if (response.status === 200) {
+    if (response.status == 200) {
       Cookies.set("check-in", `${selectedShift}`);
       window.location.reload();
       toast.success("Attendance taken successfully");
-    } else if (response.status === 400) {
-      // toast.error(response.data);
-      console.log(response.data);
-    } else toast.error("Something went wrong");
+    } else if (response.status == 400) toast.error(response.data.message);
+    else toast.error("Something went wrong");
   };
 
   return (
@@ -76,8 +71,7 @@ export function CheckAttendanceForm({ imgSrc }) {
         shifts.map((shift) => (
           <div key={shift.id}>
             <h2>Check In</h2>
-            <p>Select a shift to check in</p>
-
+            <p>Select a shift to check in</p>+
             <Button
               onClick={() => setSelectedShift(shift.id)}
               unselectable={() => (shift.CheckinCheckout ? true : false)}
@@ -85,20 +79,20 @@ export function CheckAttendanceForm({ imgSrc }) {
               Shift: {shift.startDate.split("T")[1]} -{" "}
               {shift.endDate.split("T")[1]}
             </Button>
-
             <p>Take a picture of you at the store</p>
-            {selectedShift && (
-              <Button
-                onClick={onCheckIn}
-                variant="contained"
-                color="primary"
-                unselectable={() =>
-                  selectedShift.checkinCheckout ? false : false
-                }
-              >
-                Check In
-              </Button>
-            )}
+            {selectedShift &&
+              +(
+                <Button
+                  onClick={onCheckIn}
+                  variant="contained"
+                  color="primary"
+                  unselectable={() =>
+                    selectedShift.checkinCheckout ? false : false
+                  }
+                >
+                  Check In
+                </Button>
+              )}
           </div>
         ))
       ) : (
