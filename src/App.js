@@ -29,6 +29,8 @@ import WeekCalendar from "./components/ShiftCalendar";
 import ViewWorkShift from "./pages/ViewWorkShift";
 import GetSalary from "./components/GetSalary";
 import { ViewOrders } from "./pages/ViewOrders";
+import CheckinCheckout from "./pages/checkin-checkout/checkin-checkout";
+
 function App() {
   const [user, setUser] = useState(null);
   const value = useMemo(() => ({ user, setUser }), [user, setUser]);
@@ -50,6 +52,8 @@ function App() {
             path="/manageproducts/update/:id"
             element={<UpdateProduct />}
           />
+
+          <Route path="/checkin-checkout" element={<CheckinCheckout />} />
 
           <Route path="/manageproducts/add" element={<AddProduct />} />
           <Route path="/manageaccounts" element={<ManageAccountsPage />} />
