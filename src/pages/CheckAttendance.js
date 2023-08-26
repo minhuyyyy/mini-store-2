@@ -45,17 +45,24 @@ export function CheckAttendanceForm({ imgSrc }) {
   };
 
   const handleCheckIn = async () => {
-    const response = await axios.post(`${API_URL}/checkin`, {
-      employeeId: user.id,
-      dateTime: new Date(),
-      imageData: imgSrc,
-      workshiftId: selectedShift,
-    });
+    const response = await axios
+      .post(`${API_URL}/checkin`, {
+        employeeId: user.id,
+        dateTime: new Date(),
+        imageData: imgSrc,
+        workshiftId: selectedShift,
+      })
+      .catch((error) => {
+        console.log(error.response);
+        return error.response;
+      });
+
     if (response.status == 200) {
       Cookies.set("check-in", `${selectedShift}`);
       window.location.reload();
       toast.success("Attendance taken successfully");
-    } else toast.error("Something went wrong");
+    } else if (response.status == 400) toast.error(response.data.message);
+    else toast.error("Something went wrong");
   };
 
   return (
@@ -65,12 +72,25 @@ export function CheckAttendanceForm({ imgSrc }) {
           <div key={shift.id}>
             <h2>Check In</h2>
             <p>Select a shift to check in</p>
-            <Button onClick={() => setSelectedShift(shift.id)}>
-              - {shift.startDate.split("T")[1]}
+
+            <Button
+              onClick={() => setSelectedShift(shift.id)}
+              unselectable={() => (shift.CheckinCheckout ? true : false)}
+            >
+              Shift: {shift.startDate.split("T")[1]} -{" "}
+              {shift.endDate.split("T")[1]}
             </Button>
+
             <p>Take a picture of you at the store</p>
             {selectedShift && (
-              <Button onClick={onCheckIn} variant="contained" color="primary">
+              <Button
+                onClick={onCheckIn}
+                variant="contained"
+                color="primary"
+                unselectable={() =>
+                  selectedShift.checkinCheckout ? false : false
+                }
+              >
                 Check In
               </Button>
             )}

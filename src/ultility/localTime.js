@@ -1,6 +1,4 @@
-console.log(getLocaLTime());
-
-function getLocaLTime() {
+export default function getLocaLTime() {
   let time_zone_offset_in_hours = new Date().getTimezoneOffset() / 60;
   //get current datetime hour
   let current_hour = new Date().getHours();
