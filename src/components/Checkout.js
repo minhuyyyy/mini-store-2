@@ -13,7 +13,23 @@ function Checkout({ cart, setCart }) {
   const [order, setOrder] = useState([]);
   const [removedProducts, setRemovedProducts] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
+  const [currentUser, setCurrentUser] = useState([]);
+  const [msg, setMsg] = useState(null);
 
+  useEffect(() => {
+    checkUser();
+  }, [user]);
+
+  const checkUser = async () => {
+    try {
+      if (user) {
+        setCurrentUser(user);
+      }
+    } catch (e) {
+      console.error(e);
+      setMsg("Something went wrong");
+    }
+  };
   useEffect(() => {
     let totalAmount = 0;
     Object.keys(cart).forEach((productId) => {
@@ -110,52 +126,61 @@ function Checkout({ cart, setCart }) {
 
   return (
     <div>
-      <h2>
-        <b>Receipt</b>
-      </h2>
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">Product Name</th>
-            <th scope="col">Unit Price</th>
-            <th scope="col">Unit</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody className="table-group-divider">
-          {order.map((orderItem) => (
-            <tr key={orderItem.productId} style={{}}>
-              <td>{orderItem.productName}</td>
-              <td>{orderItem.unitPrice.toLocaleString()}</td>
-              <td>{orderItem.unit}</td>
-              <td>
-                <Input
-                  value={quantity[orderItem.productId] || ""}
-                  onChange={(e) => handleInputChange(e, orderItem.productId)}
-                  disableUnderline={true}
-                  placeholder="Enter quantity..."
-                />
-              </td>
-              <td>
-                <Button
-                  onClick={() => deleteProductInCart(orderItem.productId)}
-                >
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <p>Total amount: {amount.toLocaleString()} VND</p>
-      <Input
-        onChange={(e) => handleCashChange(e)}
-        placeholder="Enter customer's cash..."
-        disableUnderline={true}
-      />
-      <p>Change: {change.toLocaleString()} VND</p>
-      <Button onClick={submitOrder}>Submit Order</Button>
+      {currentUser.position === "Manager" ||
+      currentUser.position === "Saler" ? (
+        <>
+          <h2>
+            <b>Receipt</b>
+          </h2>
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Unit Price</th>
+                <th scope="col">Unit</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody className="table-group-divider">
+              {order.map((orderItem) => (
+                <tr key={orderItem.productId} style={{}}>
+                  <td>{orderItem.productName}</td>
+                  <td>{orderItem.unitPrice.toLocaleString()}</td>
+                  <td>{orderItem.unit}</td>
+                  <td>
+                    <Input
+                      value={quantity[orderItem.productId] || ""}
+                      onChange={(e) =>
+                        handleInputChange(e, orderItem.productId)
+                      }
+                      disableUnderline={true}
+                      placeholder="Enter quantity..."
+                    />
+                  </td>
+                  <td>
+                    <Button
+                      onClick={() => deleteProductInCart(orderItem.productId)}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p>Total amount: {amount.toLocaleString()} VND</p>
+          <Input
+            onChange={(e) => handleCashChange(e)}
+            placeholder="Enter customer's cash..."
+            disableUnderline={true}
+          />
+          <p>Change: {change.toLocaleString()} VND</p>
+          <Button onClick={submitOrder}>Submit Order</Button>
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

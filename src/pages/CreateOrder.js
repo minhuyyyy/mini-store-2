@@ -16,41 +16,39 @@ function CreateOrder() {
   const { user } = useContext(AuthContext);
   const { getItem } = useSessionStorage();
   const API_URL = process.env.REACT_APP_API_URL;
-  const [currentUser, setCurrentUser] = useState([]);
+  const [currentUser, setCurrentUser] = useState(
+    sessionStorage.getItem("user")
+  );
   const handleSearch = () => {
-    const filtered = filteredProducts.filter((product) => {
+    const filtered = products.filter((product) => {
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
     setFilteredProducts(filtered);
+    console.log(filteredProducts);
   };
 
-  useEffect(() => {
-    const user = getItem("user");
-    if (user.position !== "Guard") {
-      setCurrentUser(user);
-    }
-  }, [user]);
-
   const fetchProducts = () => {
-    axios
-      .get(`${API_URL}/product`)
-      .then((resonse) => setFilteredProducts(resonse.data));
+    if (currentUser.position == "Manager" || currentUser.position == "Saler") {
+      axios
+        .get(`${API_URL}/product`)
+        .then((resonse) => setProducts(resonse.data));
+    }
   };
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [currentUser]);
 
   const onInputChange = (event) => {
     setSearchTerm(event.target.value);
     if (searchTerm !== event.target.value) {
-      handleSearch();
+      handleSearch(); // Call handleSearch whenever input changes
     }
   };
 
   return (
     <>
-      {currentUser.position !== "Guard" ? (
+      {currentUser.position == "Manager" || currentUser.position == "Saler" ? (
         <>
           <div
             style={{
@@ -88,7 +86,9 @@ function CreateOrder() {
                 </InputAdornment>
               }
             ></Input>
-            <ShowSearchProducts filteredProducts={filteredProducts} />
+            {filteredProducts.length > 0 && (
+              <ShowSearchProducts filteredProducts={filteredProducts} />
+            )}
           </div>
         </>
       ) : (
