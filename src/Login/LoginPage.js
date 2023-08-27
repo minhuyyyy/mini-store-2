@@ -3,9 +3,7 @@ import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import "../App.css";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
-import setItem from "../hooks/useSessionStorage";
 import useSessionStorage from "../hooks/useSessionStorage";
-import axios from "axios";
 import { toast } from "react-toastify";
 
 export default function LoginPage() {

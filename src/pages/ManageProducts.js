@@ -39,12 +39,12 @@ export default function ManageProductsPage() {
 
   const fetchData = async () => {
     try {
-      if (currentUser.position === "Manager") {
+      if (
+        currentUser.position === "Manager" ||
+        currentUser.position === "Saler"
+      ) {
         axios.get(`${API_URL}/product`).then((response) => {
           setFilteredProducts(response.data);
-          setCategories([
-            ...new Set(response.data.map((product) => product.category)),
-          ]);
           return response.data;
         });
       } else setMsg("Only Manager can view this page");
@@ -133,7 +133,8 @@ export default function ManageProductsPage() {
   return (
     <div style={{ backgroundColor: "#d3d3d3" }}>
       <div style={{ color: "black", width: "90%" }} className="container">
-        {currentUser.position === "Manager" ? (
+        {currentUser.position === "Manager" ||
+        currentUser.position === "Saler" ? (
           <>
             <div
               style={{

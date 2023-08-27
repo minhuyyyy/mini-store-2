@@ -8,6 +8,7 @@ import ShowSearchProducts from "./ShowSearchProducts";
 import Checkout from "../components/Checkout";
 import { AuthContext } from "../context/AuthContext";
 import useSessionStorage from "../hooks/useSessionStorage";
+import { toast } from "react-toastify";
 
 function CreateOrder() {
   const [products, setProducts] = useState([]);
@@ -17,8 +18,9 @@ function CreateOrder() {
   const { getItem } = useSessionStorage();
   const API_URL = process.env.REACT_APP_API_URL;
   const [currentUser, setCurrentUser] = useState(
-    sessionStorage.getItem("user")
+    sessionStorage.getItem("user") || null
   );
+  const [msg, setMsg] = useState(null);
   const handleSearch = () => {
     const filtered = products.filter((product) => {
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -27,28 +29,52 @@ function CreateOrder() {
     console.log(filteredProducts);
   };
 
-  const fetchProducts = () => {
-    if (currentUser.position == "Manager" || currentUser.position == "Saler") {
-      axios
-        .get(`${API_URL}/product`)
-        .then((resonse) => setProducts(resonse.data));
+  const fetchData = async () => {
+    try {
+      if (
+        currentUser.position === "Manager" ||
+        currentUser.position === "Saler"
+      ) {
+        axios.get(`${API_URL}/product`).then((response) => {
+          setFilteredProducts(response.data);
+          return response.data;
+        });
+      } else setMsg("Only Manager can view this page");
+    } catch (e) {
+      toast.error("Something went wrong");
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    checkUser();
+  }, [user]);
+
+  useEffect(() => {
+    fetchData();
   }, [currentUser]);
+
+  const checkUser = async () => {
+    try {
+      if (user) {
+        setCurrentUser(user);
+      }
+    } catch (e) {
+      console.error(e);
+      setMsg("Something went wrong");
+    }
+  };
 
   const onInputChange = (event) => {
     setSearchTerm(event.target.value);
     if (searchTerm !== event.target.value) {
-      handleSearch(); // Call handleSearch whenever input changes
+      handleSearch();
     }
   };
 
   return (
     <>
-      {currentUser.position == "Manager" || currentUser.position == "Saler" ? (
+      {currentUser.position === "Manager" ||
+      currentUser.position === "Saler" ? (
         <>
           <div
             style={{

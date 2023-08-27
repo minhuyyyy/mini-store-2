@@ -139,7 +139,7 @@ const ManageAccounts = () => {
           setData(response.data);
           return response.data;
         });
-      } else setMsg("Only Manager and Saler can view this page");
+      } else setMsg("Only Manager can view this page");
     } catch (e) {
       toast.error("Something went wrong");
     }
