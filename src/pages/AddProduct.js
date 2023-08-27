@@ -134,7 +134,7 @@ export default function AddProduct() {
         };
       }
 
-      if (error) {
+      if (error || formData.name.length === 0 || formData.unit.length === 0) {
         toast.error("Invalid inputs");
       } else {
         const url = `${API_URL}/product`;
