@@ -1,28 +1,31 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+import HeaderCalender from "./components/header-calender";
 import {
-  format,
-  subWeeks,
-  addWeeks,
-  startOfWeek,
   addDays,
+  addWeeks,
+  format,
   isSameDay,
+  startOfWeek,
+  subWeeks,
 } from "date-fns";
+import { useEffect } from "react";
 import "./Calendar.css";
-import { RegisterWorkShiftForm } from "../pages/RegisterWorkShift";
+import ViewShifts from "../ViewShifts";
 
-const Calendar = () => {
+export default function ApproveWorksheets() {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date())
   );
-  const [selectedDate, setSelectedDate] = useState("");
-  const [openShiftMenu, setOpenShiftMenu] = useState(false);
+  const [selectedDate, setSelectedDate] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  // const [isViewButtonClicked, setIsViewButtonClicked] = useState(false);
 
   useEffect(() => {
-    if (selectedDate) {
-      onDateClickHandle(selectedDate);
-      setOpenShiftMenu(!openShiftMenu);
-    }
-  }, [selectedDate]);
+    console.log(currentWeekStart);
+    setStartDate(format(currentWeekStart, "yyyy-MM-dd"));
+    setEndDate(format(addDays(currentWeekStart, 6), "yyyy-MM-dd"));
+  }, [currentWeekStart]);
 
   const changeWeekHandle = (btnType) => {
     if (btnType === "prev") {
@@ -34,20 +37,32 @@ const Calendar = () => {
   };
 
   const onDateClickHandle = (day) => {
-    setSelectedDate(day);
-    console.log(selectedDate);
+    if (selectedDate.length === 0) {
+      setSelectedDate([day]);
+    } else if (selectedDate.length === 1) {
+      const formattedDay = format(day, "yyyy-MM-dd");
+      const formattedSelected = format(selectedDate[0], "yyyy-MM-dd");
+
+      if (formattedDay < formattedSelected) {
+        setSelectedDate([formattedDay, formattedSelected]);
+      } else {
+        setSelectedDate([formattedSelected, formattedDay]);
+      }
+    } else {
+      setSelectedDate([day]);
+    }
   };
 
   const renderHeader = () => {
     const dateFormat = "MMM d, yyyy";
     return (
       <div className="header row flex-middle">
-        <div className="col col-start">
+        <div className="col col-start center">
           <div className="icon" onClick={() => changeWeekHandle("prev")}>
             &lt;
           </div>
         </div>
-        <div className="col col-center">
+        <div className="col col-center center">
           <span>{format(currentWeekStart, dateFormat)}</span>
         </div>
         <div className="col col-end">
@@ -80,15 +95,8 @@ const Calendar = () => {
       const day = addDays(startDate, i);
       days.push(
         <div
-          className={`col cell ${
-            isSameDay(day, today)
-              ? "today"
-              : isSameDay(day, selectedDate)
-              ? "selected"
-              : ""
-          }`}
           key={day}
-          onClick={() => onDateClickHandle(day)}
+          // onClick={() => onDateClickHandle(day)}
         >
           <span className={`number ${day < today ? "past-day" : ""}`}>
             {format(day, "d")}
@@ -104,11 +112,7 @@ const Calendar = () => {
       {renderHeader()}
       {renderWeekdays()}
       {renderCells()}
-      {openShiftMenu && <RegisterWorkShiftForm selectedDate={selectedDate} />}
-
-      <h1>Hello</h1>
+      <ViewShifts startDate={startDate} endDate={endDate} />
     </div>
   );
-};
-
-export default Calendar;
+}

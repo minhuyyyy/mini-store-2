@@ -24,12 +24,14 @@ import ProductsPresentation from "./components/Home";
 import CreateOrder from "./pages/CreateOrder";
 import Capture from "./components/Webcam";
 import { RegisterWorkShift } from "./pages/RegisterWorkShift";
-import ViewShifts from "./pages/ViewShifts";
-import WeekCalendar from "./components/ShiftCalendar";
-import ViewWorkShift from "./pages/ViewWorkShift";
+import ViewWorkShift from "./pages/workshifts/ViewWorkShift";
 import GetSalary from "./components/GetSalary";
 import ViewOrders from "./pages/view-orders/view-orders";
 import CheckinCheckout from "./pages/checkin-checkout/checkin-checkout";
+
+import WeekCalendar from "./pages/workshifts/ShiftCalendar";
+import Hello from "./pages/workshifts/approve-workshift";
+import ApproveWorksheets from "./pages/workshifts/approve-workshift";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -52,9 +54,7 @@ function App() {
             path="/manageproducts/update/:id"
             element={<UpdateProduct />}
           />
-
           <Route path="/checkin-checkout" element={<CheckinCheckout />} />
-
           <Route path="/manageproducts/add" element={<AddProduct />} />
           <Route path="/manageaccounts" element={<ManageAccountsPage />} />
           <Route path="/manageaccounts/add" element={<AddAccount />} />
@@ -71,9 +71,9 @@ function App() {
           <Route path="/calculate-salary" element={<GetSalary />} />
           <Route path="/view-salary" element={<ViewSalary />} />
           <Route path="/view-orders" element={<ViewOrders />} />
-          <Route path="/view-shifts" element={<WeekCalendar />} />
-          <Route path="/view-workshift" element={<ViewWorkShift />} />
-          <Route path="/workshift" element={<RegisterWorkShift />} />
+          <Route path="/view-shifts" element={<ApproveWorksheets />} />
+          {/* <Route path="/view-workshift" element={<ViewWorkShift />} /> */}
+          {/* <Route path="/workshift" element={<RegisterWorkShift />} /> */}
           <Route path="/createorder" element={<CreateOrder />} />
           <Route
             path="/changepassword/setnewpassword"
