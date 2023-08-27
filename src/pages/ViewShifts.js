@@ -22,14 +22,21 @@ export default function ViewShifts({ startDate, endDate }) {
 
   useEffect(() => {
     fetchData();
-  }, [user]);
+  }, [startDate, endDate]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        `${API_URL}/work-shift?startDate=${startDate}&endDate=${endDate}`
-      );
-      setData(response.data);
+      const response = await axios
+        .get(`${API_URL}/work-shift?startDate=${startDate}&endDate=${endDate}`)
+        .catch((error) => {
+          return error.response;
+        });
+
+      if (response.status == 200) {
+        setData(response.data);
+      } else {
+        setData([]);
+      }
     } catch (error) {
       toast.error("Something went wrong");
     }
@@ -41,7 +48,7 @@ export default function ViewShifts({ startDate, endDate }) {
       workshiftId: id,
       isConfirm: true,
     });
-    if (response.status == 200) {
+    if (response.status === 200) {
       fetchData();
     }
   };
@@ -52,7 +59,7 @@ export default function ViewShifts({ startDate, endDate }) {
       workshiftId: id,
       isConfirm: false,
     });
-    if (response.status == 200) {
+    if (response.status === 200) {
       fetchData();
     }
   };
@@ -75,34 +82,30 @@ export default function ViewShifts({ startDate, endDate }) {
             <TableBody>
               {data.map((row) => (
                 <TableRow key={row.id}>
-                  {row.approvalStatusId == 1 && (
-                    <>
-                      <TableCell>{row.employeeId}</TableCell>
-                      <TableCell>{row.startDate}</TableCell>
-                      <TableCell>{row.coefficientsSalary}</TableCell>
-                      <TableCell>{row.workshiftTypeId}</TableCell>
-                      <TableCell>
-                        {row.approvalStatusId === 1 ? "Pending" : "Accepted"}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="contained"
-                          color="update"
-                          sx={{ marginRight: "10px" }}
-                          onClick={() => handleApprove(row.id, row.employeeId)}
-                        >
-                          Approved
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="reject"
-                          onClick={() => handleDeny(row.id, row.employeeId)}
-                        >
-                          Deny
-                        </Button>
-                      </TableCell>
-                    </>
-                  )}
+                  <TableCell>{row.employeeId}</TableCell>
+                  <TableCell>{row.startDate}</TableCell>
+                  <TableCell>{row.coefficientsSalary}</TableCell>
+                  <TableCell>{row.workshiftTypeId}</TableCell>
+                  <TableCell>
+                    {row.approvalStatusId === 1 ? "Pending" : "Accepted"}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="update"
+                      sx={{ marginRight: "10px" }}
+                      onClick={() => handleApprove(row.id, row.employeeId)}
+                    >
+                      Approved
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="reject"
+                      onClick={() => handleDeny(row.id, row.employeeId)}
+                    >
+                      Deny
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

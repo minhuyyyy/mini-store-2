@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import {
   format,
@@ -9,7 +9,7 @@ import {
   addDays,
   isSameDay,
 } from "date-fns";
-import "../components/Calendar.css";
+import "./Calendar.css";
 
 function ViewWorkShift() {
   const { user } = useContext(AuthContext);
@@ -18,12 +18,12 @@ function ViewWorkShift() {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date())
   );
+
   const [selectedDate, setSelectedDate] = useState("");
+
   useEffect(() => {
-    if (selectedDate) {
-      onDateClickHandle(selectedDate);
-    }
-  }, [selectedDate]);
+    console.log(currentWeekStart);
+  }, [currentWeekStart]);
 
   const changeWeekHandle = (btnType) => {
     if (btnType === "prev") {
@@ -166,6 +166,8 @@ function ViewWorkShift() {
       ) : (
         <h2>Log in to view page</h2>
       )}
+
+      <h1>Hello ViewWorkshift</h1>
     </div>
   );
 }

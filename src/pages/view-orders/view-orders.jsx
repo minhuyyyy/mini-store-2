@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import "./view-orders.css";
 import Row from "./components/row-detail";
+import { toast } from "materialize-css";
 
 export default function ViewOrders() {
   const [data, setData] = useState([]);
@@ -20,8 +21,15 @@ export default function ViewOrders() {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const fetchOrders = async () => {
-    const response = await axios.get(`${API_URL}/order`);
+    const response = await axios.get(`${API_URL}/order`).catch((err) => {
+      return err.response;
+    });
+
     if (response.status === 200) setData(response.data);
+    else if (response.status === 404) {
+      toast.error(response.data.message);
+      setData([]);
+    } else alert(response.data.message);
   };
 
   useEffect(() => {

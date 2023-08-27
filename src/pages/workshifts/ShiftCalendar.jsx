@@ -9,7 +9,7 @@ import {
 } from "date-fns";
 import "./Calendar.css";
 import { Button } from "@mui/material";
-import ViewShifts from "../pages/ViewShifts"; // Make sure the path is correct
+import ViewShifts from "../ViewShifts"; // Make sure the path is correct
 
 const WeekCalendar = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
@@ -18,17 +18,11 @@ const WeekCalendar = () => {
   const [selectedDate, setSelectedDate] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [isViewButtonClicked, setIsViewButtonClicked] = useState(false);
+  // const [isViewButtonClicked, setIsViewButtonClicked] = useState(false);
 
   useEffect(() => {
-    if (selectedDate.length === 1) {
-      setStartDate(selectedDate[0]);
-      setEndDate(selectedDate[0]);
-    } else if (selectedDate.length === 2) {
-      setStartDate(selectedDate[0]);
-      setEndDate(selectedDate[1]);
-    }
-  }, [selectedDate]);
+    console.log(currentWeekStart);
+  }, [currentWeekStart]);
 
   const changeWeekHandle = (btnType) => {
     if (btnType === "prev") {
@@ -37,10 +31,6 @@ const WeekCalendar = () => {
     if (btnType === "next") {
       setCurrentWeekStart(addWeeks(currentWeekStart, 1));
     }
-  };
-
-  const onViewButtonClick = () => {
-    setIsViewButtonClicked(true);
   };
 
   const onDateClickHandle = (day) => {
@@ -64,12 +54,12 @@ const WeekCalendar = () => {
     const dateFormat = "MMM d, yyyy";
     return (
       <div className="header row flex-middle">
-        <div className="col col-start">
+        <div className="col col-start center">
           <div className="icon" onClick={() => changeWeekHandle("prev")}>
             &lt;
           </div>
         </div>
-        <div className="col col-center">
+        <div className="col col-center center">
           <span>{format(currentWeekStart, dateFormat)}</span>
         </div>
         <div className="col col-end">
@@ -110,7 +100,7 @@ const WeekCalendar = () => {
               : ""
           }`}
           key={day}
-          onClick={() => onDateClickHandle(day)}
+          // onClick={() => onDateClickHandle(day)}
         >
           <span className={`number ${day < today ? "past-day" : ""}`}>
             {format(day, "d")}
@@ -122,15 +112,18 @@ const WeekCalendar = () => {
   };
 
   return (
-    <div className="calendar container" style={{ width: "100%" }}>
-      {renderHeader()}
-      {renderWeekdays()}
-      {renderCells()}
-      <Button onClick={onViewButtonClick}>View</Button>
-      {isViewButtonClicked && startDate && endDate && (
-        <ViewShifts startDate={startDate} endDate={endDate} />
-      )}
-    </div>
+    // <div className="calendar container" style={{ width: "100%" }}>
+    //   {renderHeader()}
+    //   {renderWeekdays()}
+    //   {/* {renderCells()} */}
+    //   {/* <Button onClick={onViewButtonClick}>View</Button> */}
+    //   {/* {isViewButtonClicked && startDate && endDate && (
+    //     <ViewShifts startDate={startDate} endDate={endDate} />
+    //   )} */}
+
+    //   <h1>Hello</h1>
+    // </div>
+    <h1>Hello</h1>
   );
 };
 
