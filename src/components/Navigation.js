@@ -194,45 +194,25 @@ export default function Navigation() {
             >
               <span>Manage Products</span>
             </Button>
-            {checkIn == null ? (
-              <Button
-                key={"Check In"}
-                onClick={() => {
-                  navigate("checkattendance");
-                  document.title = "Check In";
-                }}
-                style={
-                  activeLink === "/checkattendance"
-                    ? { ...navLinkStyle, ...activeLinkStyle }
-                    : { ...navLinkStyle }
-                }
-                sx={{
-                  color: "white",
-                  padding: "0px 10px",
-                  height: "30px",
-                }}
-              >
-                <span>Check In</span>
-              </Button>
-            ) : (
-              <Button
-                key={"Check Out"}
-                onClick={onCheckOut}
-                style={
-                  activeLink === ""
-                    ? { ...navLinkStyle, ...activeLinkStyle }
-                    : { ...navLinkStyle }
-                }
-                sx={{
-                  color: "white",
-                  padding: "0px 10px",
-                  height: "30px",
-                }}
-              >
-                <span>Check Out</span>
-              </Button>
-            )}
-
+            <Button
+              key={"Take Attendance"}
+              onClick={() => {
+                navigate("checkin-checkout");
+                document.title = "Take Attendance";
+              }}
+              style={
+                activeLink === "/checkin-checkout"
+                  ? { ...navLinkStyle, ...activeLinkStyle }
+                  : { ...navLinkStyle }
+              }
+              sx={{
+                color: "white",
+                padding: "0px 10px",
+                height: "30px",
+              }}
+            >
+              <span>Take Attendance</span>
+            </Button>
             <Button
               key={"Create Order"}
               onClick={() => {
@@ -311,12 +291,6 @@ export default function Navigation() {
                         style={{ textDecoration: "none", color: "#D4B887" }}
                       >
                         <MenuItem>View Shifts</MenuItem>
-                      </Link>
-                      <Link
-                        to="/view-orders"
-                        style={{ textDecoration: "none", color: "#D4B887" }}
-                      >
-                        <MenuItem>View Orders</MenuItem>
                       </Link>
                     </div>
                   ) : (

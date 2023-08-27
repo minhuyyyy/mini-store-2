@@ -15,10 +15,10 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
 import { theme } from "./ManageAccounts";
 import axios from "axios";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { toast } from "react-toastify";
 export default function UpdateAccount() {
   const [image, setImage] = useState(null);
   const [role, setRole] = useState("");
@@ -33,7 +33,8 @@ export default function UpdateAccount() {
   const navigate = useNavigate();
   const { id } = useParams();
   const API_URL = process.env.REACT_APP_API_URL;
-
+  const [error, setError] = useState(null);
+  const [email, setEmail] = useState("");
   useEffect(() => {
     return () => {
       if (image) {
@@ -60,8 +61,21 @@ export default function UpdateAccount() {
   };
 
   const handleStatusChange = (e) => {
-    const value = e.target.value === "true"; // Convert the string value back to boolean
-    setIsActive(value);
+    setIsActive(e.target.value === "true");
+  };
+
+  function isValidEmail(email) {
+    return /\S+@\S+\.\S+/.test(email);
+  }
+
+  const validateEmail = (event) => {
+    if (!isValidEmail(event.target.value)) {
+      setError("Email is invalid");
+    } else {
+      setError(null);
+    }
+
+    setEmail(event.target.value);
   };
 
   const handleAddPhoto = async (e) => {
@@ -128,6 +142,7 @@ export default function UpdateAccount() {
       setRole(response.data.position);
       setIsActive(response.data.isActive);
       setPassword(response.data.password);
+      setEmail(response.data.email);
       return response.data;
     });
   };
@@ -142,7 +157,7 @@ export default function UpdateAccount() {
           password: password,
           imgUrl: imageUrl,
           roleName: role,
-          isActive: formData.isActive,
+          isActive: isActive,
         })
         .then((response) => {
           if (response.status == 200) {
@@ -187,6 +202,7 @@ export default function UpdateAccount() {
         </div>
         <input
           type="file"
+          accept=".jpg,.jpeg,.png"
           id="handleAddPhoto"
           onChange={(e) => handleAddPhoto(e)}
           name="img"
@@ -212,9 +228,10 @@ export default function UpdateAccount() {
               id="email"
               name="email"
               variant="standard"
-              value={formData.email}
-              onChange={handleInputChange}
+              value={email}
+              onChange={validateEmail}
             />
+            {error && <p className="error">{error}</p>}
             <br />
           </FormControl>
         </div>
@@ -280,23 +297,12 @@ export default function UpdateAccount() {
             <RadioGroup
               aria-labelledby="demo-controlled-radio-buttons-group"
               name="controlled-radio-buttons-group"
-              value={isActive ? true : false}
+              value={isActive}
               onChange={(e) => handleStatusChange(e)}
+              defaultChecked={isActive}
             >
-              {isActive != null && (
-                <>
-                  <FormControlLabel
-                    value={true}
-                    control={<Radio />}
-                    label="Yes"
-                  />
-                  <FormControlLabel
-                    value={false}
-                    control={<Radio />}
-                    label="No"
-                  />
-                </>
-              )}
+              <FormControlLabel value="true" control={<Radio />} label="Yes" />
+              <FormControlLabel value="false" control={<Radio />} label="No" />
             </RadioGroup>
           </FormControl>
         </div>

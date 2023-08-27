@@ -19,22 +19,25 @@ export default function AddProduct() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState(null);
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+  const API_URL = process.env.REACT_APP_API_URL;
+  const navigate = useNavigate();
+  const [price, setPrice] = useState(null);
+  const [stock, setStock] = useState(null);
+  const [priceError, setPriceError] = useState(null);
+  const [stockError, setStockError] = useState(null);
   const [formData, setFormData] = useState({
     id: uid(8),
     imageUrl: "",
     name: "",
     category: "",
-    stock: "",
+    stock: stock,
     unit: "",
-    price: "",
+    price: price,
     description: "",
   });
-  const [category, setCategory] = useState(null);
-  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
-  const API_URL = process.env.REACT_APP_API_URL;
-
-  const navigate = useNavigate();
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -42,7 +45,12 @@ export default function AddProduct() {
   const fetchCategories = async () => {
     try {
       const response = axios.get(`${API_URL}/category`);
-      if ((await response).status === 200) setCategories((await response).data);
+      if ((await response).status === 200) {
+        setCategories((await response).data);
+        return setCategories(
+          categories.sort((a, b) => a.name.localeCompare(b.name))
+        );
+      }
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -72,6 +80,24 @@ export default function AddProduct() {
       setCategory(value);
       setShowNewCategoryInput(false);
     }
+  };
+
+  const handlePriceChange = (e) => {
+    if (price <= 1000 || typeof price != "number") {
+      setPriceError("Price must be more than 1.000 VND and not containing operators!");
+    } else {
+      setPriceError(null);
+    }
+    setPrice(e.target.value);
+  };
+
+  const handleStockChange = (e) => {
+    if (stock < 0) {
+      setStockError("Stock must be more than 0");
+    } else {
+      setStockError(null);
+    }
+    setStock(e.target.value);
   };
 
   const handleInputChange = (e) => {
@@ -123,7 +149,7 @@ export default function AddProduct() {
       toast.error("An error occurred. Please try again later.");
     }
   };
-  
+
   return (
     <ThemeProvider theme={theme}>
       <>
@@ -139,8 +165,9 @@ export default function AddProduct() {
           </Button>
           <input
             type="file"
+            accept=".jpg,.jpeg,.png"
             id="handleAddPhoto"
-            onChange={handleAddPhoto}
+            onChange={(e) => handleAddPhoto(e)}
             name="img"
             style={{ display: "none" }}
           />
@@ -157,6 +184,7 @@ export default function AddProduct() {
                 name="name"
                 variant="standard"
                 value={formData.name}
+                disableUnderline={true}
                 onChange={handleInputChange}
               />
               <br />
@@ -208,10 +236,13 @@ export default function AddProduct() {
                 id="price"
                 name="price"
                 variant="standard"
-                value={formData.price}
-                onChange={handleInputChange}
+                type="number"
+                disableUnderline={true}
+                value={price}
+                onChange={handlePriceChange}
               />
               <br />
+              {priceError && <p className="error">{priceError}</p>}
             </FormControl>
           </div>
           <div>
@@ -221,10 +252,12 @@ export default function AddProduct() {
                 id="stock"
                 name="stock"
                 variant="standard"
-                value={formData.stock}
-                onChange={handleInputChange}
+                disableUnderline={true}
+                value={stock}
+                onChange={handleStockChange}
               />
               <br />
+              {stockError && <p className="error">{stockError}</p>}
             </FormControl>
           </div>
           <div>
@@ -234,6 +267,7 @@ export default function AddProduct() {
                 id="unit"
                 name="unit"
                 variant="standard"
+                disableUnderline={true}
                 value={formData.unit}
                 onChange={handleInputChange}
               />
@@ -247,6 +281,7 @@ export default function AddProduct() {
                 id="description"
                 name="description"
                 variant="standard"
+                disableUnderline={true}
                 value={formData.description}
                 onChange={handleInputChange}
               />

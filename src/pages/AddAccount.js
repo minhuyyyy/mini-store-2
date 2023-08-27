@@ -6,12 +6,15 @@ import {
   Select,
   MenuItem,
   ThemeProvider,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { theme } from "./ManageAccounts";
 import axios from "axios";
 import { uid } from "uid";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export default function AddAccount() {
   const [image, setImage] = useState(null);
@@ -20,7 +23,13 @@ export default function AddAccount() {
   const [added, setAdded] = useState(false);
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
-
+  const [password, setPassword] = useState("");
+  const [input, setInput] = useState({
+    password: "",
+    showPassword: false,
+  });
+  const [error, setError] = useState(null);
+  const [email, setEmail] = useState("");
   useEffect(() => {
     return () => {
       if (image) {
@@ -36,6 +45,20 @@ export default function AddAccount() {
     password: "",
     role: "",
   });
+
+  function isValidEmail(email) {
+    return /\S+@\S+\.\S+/.test(email);
+  }
+
+  const validateEmail = (event) => {
+    if (!isValidEmail(event.target.value)) {
+      setError("Email is invalid");
+    } else {
+      setError(null);
+    }
+
+    setEmail(event.target.value);
+  };
 
   const handleChange = (e) => {
     setRole(e.target.value);
@@ -87,9 +110,9 @@ export default function AddAccount() {
         },
         data: {
           id: uid(8),
-          email: formData.email,
+          email: email,
           fullName: formData.name,
-          password: formData.password,
+          password: password,
           imgUrl: imageUrl,
           roleName: role,
           baseSalary: baseSalary, // Include the calculated base salary
@@ -117,6 +140,41 @@ export default function AddAccount() {
     }
   };
 
+  const handleClickShowPassword = () => {
+    setInput((prev) => ({
+      ...prev,
+      showPassword: !prev.showPassword,
+    }));
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const onInputChange = (e) => {
+    const { name, value } = e.target;
+    setInput((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  function makeid() {
+    let result = "";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+-=";
+    const charactersLength = 12;
+    let counter = 0;
+    while (counter <= charactersLength) {
+      result += characters.charAt(
+        Math.floor(Math.random() * 5 * charactersLength)
+      );
+      counter += 1;
+    }
+    setPassword(result);
+    return result;
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <div style={{ paddingLeft: "50px" }}>
@@ -136,6 +194,7 @@ export default function AddAccount() {
         </div>
         <input
           type="file"
+          accept=".jpg,.jpeg,.png"
           id="handleAddPhoto"
           onChange={(e) => handleAddPhoto(e)}
           name="img"
@@ -161,9 +220,10 @@ export default function AddAccount() {
               id="email"
               name="email"
               variant="standard"
-              value={formData.email}
-              onChange={handleInputChange}
+              value={email}
+              onChange={validateEmail}
             />
+            {error && <p className="error">{error}</p>}
             <br />
           </FormControl>
         </div>
@@ -181,14 +241,25 @@ export default function AddAccount() {
           </FormControl>
         </div>
         <div>
-          <FormControl sx={{ width: "80%" }}>
-            <label>Password</label>
+          <FormControl>
             <Input
               id="password"
+              type={input.showPassword ? "text" : "password"}
               name="password"
-              variant="standard"
-              value={formData.password}
-              onChange={handleInputChange}
+              placeholder="Enter Password"
+              value={password}
+              onChange={onInputChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {input.showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                  <Button onClick={makeid}>Generate new password</Button>
+                </InputAdornment>
+              }
             />
             <br />
           </FormControl>

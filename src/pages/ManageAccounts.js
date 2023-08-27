@@ -210,6 +210,7 @@ const ManageAccounts = () => {
       await axios.delete(`${API_URL}/employee/${id}`, {}).then((response) => {
         if (response.status == 200) {
           toast.success("Account deleted successfully");
+          fetchData();
         }
       });
     } catch (e) {
