@@ -43,10 +43,16 @@ export default function ManageProductsPage() {
         currentUser.position === "Manager" ||
         currentUser.position === "Saler"
       ) {
-        axios.get(`${API_URL}/product`).then((response) => {
-          setFilteredProducts(response.data);
-          return response.data;
+        const response = await axios.get(`${API_URL}/product`).catch((e) => {
+          return e.response;
         });
+        if (response.status === 200) {
+          setFilteredProducts(response.data);
+        } else if (response.status === 400) {
+          toast.error(response.data.message);
+        } else {
+          toast.error(response.status.message);
+        }
       } else setMsg("Only Manager can view this page");
     } catch (e) {
       toast.error("Something went wrong");

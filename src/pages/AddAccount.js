@@ -15,6 +15,8 @@ import { theme } from "./ManageAccounts";
 import axios from "axios";
 import { uid } from "uid";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export default function AddAccount() {
   const [image, setImage] = useState(null);
@@ -46,19 +48,28 @@ export default function AddAccount() {
     role: "",
   });
 
-  function isValidEmail(email) {
-    return /\S+@\S+\.\S+/.test(email);
-  }
-
-  const validateEmail = (event) => {
-    if (!isValidEmail(event.target.value)) {
-      setError("Email is invalid");
-    } else {
-      setError(null);
-    }
-
-    setEmail(event.target.value);
-  };
+  const formik = useFormik({
+    initialValues: {
+      img: "",
+      email: "",
+      name: "",
+      password: "",
+      role: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .min(1, "Must be more than 1 character")
+        .max(20, "Must be 20 characters or less")
+        .required("Required"),
+      email: Yup.string().email("Invalid email address").required("Required"),
+      img: Yup.string().required("Required"),
+      password: Yup.string().min(8, "Must be more than 8 characters"),
+      role: Yup.string().required("Required"),
+    }),
+    onSubmit: (values) => {
+      postData(values);
+    },
+  });
 
   const handleChange = (e) => {
     setRole(e.target.value);
@@ -80,45 +91,26 @@ export default function AddAccount() {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const postData = async () => {
+  const postData = async (values) => {
     try {
-      let baseSalary = 0; // Initialize base salary to 0
+      let baseSalary = 0;
 
-      // Determine base salary based on the selected role
-      if (role === "Saler") {
-        baseSalary = 30000; // Set base salary for Sales role
-      } else if (role === "Guard") {
-        baseSalary = 25000; // Set base salary for Guard role
-      } else if (role === "Manager") {
-        baseSalary = 45000; // Set base salary for Manager role
+      if (values.role === "Saler") {
+        baseSalary = 30000;
+      } else if (values.role === "Guard") {
+        baseSalary = 25000;
+      } else if (values.role === "Manager") {
+        baseSalary = 45000;
       }
-
-      const response = await axios({
-        method: "post",
-        url: `${API_URL}/employee/register`,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        data: {
-          id: uid(8),
-          email: email,
-          fullName: formData.name,
-          password: password,
-          imgUrl: imageUrl,
-          roleName: role,
-          baseSalary: baseSalary, // Include the calculated base salary
-        },
+      const response = await axios.post(`${API_URL}/employee/register`, {
+        id: uid(8),
+        email: formik.values.email,
+        fullName: formik.values.name,
+        password: password,
+        imgUrl: imageUrl,
+        roleName: formik.values.role,
+        baseSalary: baseSalary,
       });
-
       if (response.status === 200) {
         setFormData({
           img: "",
@@ -132,8 +124,11 @@ export default function AddAccount() {
         setAdded(true);
         toast.success("User added successfully");
         navigate("/manageaccounts");
+      } else if (response.status === 400) {
+        const errorMessage = response.data.message || "Bad Request";
+        toast.error(errorMessage);
       } else {
-        console.log("Response not successful:", response);
+        toast.error(response.statusText.toString());
       }
     } catch (error) {
       console.log("Error adding data to database:", error);
@@ -177,7 +172,7 @@ export default function AddAccount() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ paddingLeft: "50px" }}>
+      <form onSubmit={formik.handleSubmit} style={{ paddingLeft: "50px" }}>
         <div>
           <Button
             style={{
@@ -196,10 +191,18 @@ export default function AddAccount() {
           type="file"
           accept=".jpg,.jpeg,.png"
           id="handleAddPhoto"
-          onChange={(e) => handleAddPhoto(e)}
+          onChange={(e) => {
+            handleAddPhoto(e);
+            formik.setFieldValue("img", e.target.value); // Update the Formik field value
+          }}
+          onBlur={formik.handleBlur}
+          value={formik.values.img}
           name="img"
           style={{ display: "none" }}
         />
+        {formik.touched.img && formik.errors.img ? (
+          <p className="error">{formik.errors.img}</p>
+        ) : null}
         <br />
         {imageUrl && (
           <img
@@ -220,10 +223,13 @@ export default function AddAccount() {
               id="email"
               name="email"
               variant="standard"
-              value={email}
-              onChange={validateEmail}
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
-            {error && <p className="error">{error}</p>}
+            {formik.touched.email && formik.errors.email ? (
+              <p className="error">{formik.errors.email}</p>
+            ) : null}
             <br />
           </FormControl>
         </div>
@@ -234,9 +240,13 @@ export default function AddAccount() {
               id="name"
               name="name"
               variant="standard"
-              value={formData.name}
-              onChange={handleInputChange}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
+            {formik.touched.name && formik.errors.name ? (
+              <p className="error">{formik.errors.name}</p>
+            ) : null}
             <br />
           </FormControl>
         </div>
@@ -270,15 +280,20 @@ export default function AddAccount() {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select selectCate"
-              value={role}
+              value={formik.values.role}
+              onChange={(e) => {
+                handleChange(e);
+                formik.setFieldValue("role", e.target.value); // Update the Formik field value
+              }}
+              onBlur={formik.handleBlur}
               label="Role"
-              onChange={handleChange}
             >
               <MenuItem value="Saler">Sales</MenuItem>
               <MenuItem value={"Guard"}>Guard</MenuItem>
             </Select>
-            {role && <p>You selected {role}</p>}
-
+            {formik.values.role && (
+              <p className="error">You selected {formik.values.role}</p>
+            )}
             <br />
           </FormControl>
         </div>
@@ -288,7 +303,7 @@ export default function AddAccount() {
             Add Account
           </Button>
         </div>
-      </div>
+      </form>
     </ThemeProvider>
   );
 }

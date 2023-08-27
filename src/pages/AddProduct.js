@@ -138,8 +138,9 @@ export default function AddProduct() {
         toast.error("Invalid inputs");
       } else {
         const url = `${API_URL}/product`;
-        const response = await axios.post(url, updatedFormData);
-
+        const response = await axios.post(url, updatedFormData).catch((e) => {
+          return e.response;
+        });
         if (response.status === 200) {
           toast.success("Product has been added successfully");
           setFormData({
@@ -154,6 +155,10 @@ export default function AddProduct() {
           setImage(null);
           setImageUrl("");
           navigate("/manageproducts");
+        } else if (response.status === 400) {
+          toast.error(response.data.message);
+        } else {
+          toast.error(response.status.message);
         }
       }
     } catch (error) {

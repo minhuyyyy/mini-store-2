@@ -19,6 +19,9 @@ import { theme } from "./ManageAccounts";
 import axios from "axios";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { toast } from "react-toastify";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 export default function UpdateAccount() {
   const [image, setImage] = useState(null);
   const [role, setRole] = useState("");
@@ -56,6 +59,30 @@ export default function UpdateAccount() {
     getData();
   }, []);
 
+  const formik = useFormik({
+    initialValues: {
+      img: "",
+      email: "",
+      name: "",
+      password: "",
+      role: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .min(1, "Must be more than 1 character")
+        .max(20, "Must be 20 characters or less")
+        .required("Required"),
+      email: Yup.string().email("Invalid email address").required("Required"),
+      img: Yup.string().required("Required"),
+      password: Yup.string().min(8, "Must be more than 8 characters"),
+      role: Yup.string().required("Required"),
+      isActive: Yup.boolean().required("Required"),
+    }),
+    onSubmit: (values) => {
+      handleUpdate(values);
+    },
+  });
+
   const handleRoleChange = (e) => {
     setRole(e.target.value);
   };
@@ -67,16 +94,6 @@ export default function UpdateAccount() {
   function isValidEmail(email) {
     return /\S+@\S+\.\S+/.test(email);
   }
-
-  const validateEmail = (event) => {
-    if (!isValidEmail(event.target.value)) {
-      setError("Email is invalid");
-    } else {
-      setError(null);
-    }
-
-    setEmail(event.target.value);
-  };
 
   const handleAddPhoto = async (e) => {
     const file = e.target.files[0];
@@ -93,13 +110,6 @@ export default function UpdateAccount() {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
   const handleClickShowPassword = () => {
     setInput((prev) => ({
       ...prev,
@@ -137,46 +147,49 @@ export default function UpdateAccount() {
 
   const getData = async () => {
     axios.get(`${API_URL}/employee/${id}`).then((response) => {
-      setFormData(response.data);
-      setImageUrl(response.data.imgUrl);
-      setRole(response.data.position);
-      setIsActive(response.data.isActive);
-      setPassword(response.data.password);
-      setEmail(response.data.email);
+      formik.setFieldValue("imageUrl", response.data.imgUrl);
+      formik.setFieldValue("email", response.data.email);
+      formik.setFieldValue("name", response.data.fullName);
+      formik.setFieldValue("password", response.data.password);
+      formik.setFieldValue("role", response.data.position);
+      formik.setFieldValue("isAtive", response.data.isActive);
       return response.data;
     });
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (values) => {
     try {
-      axios
+      const response = await axios
         .put(`${API_URL}/employee/${id}`, {
           id: id,
-          email: formData.email,
-          fullName: formData.fullName,
+          email: formik.values.email,
+          fullName: formik.values.name,
           password: password,
           imgUrl: imageUrl,
-          roleName: role,
+          roleName: formik.values.role,
           isActive: isActive,
         })
-        .then((response) => {
-          if (response.status == 200) {
-            setFormData({
-              img: "",
-              email: "",
-              fullName: "",
-              role: "",
-              password: "",
-              isActive: "",
-            });
-            setRole("");
-            setIsActive("");
-            toast.success("Account updated");
-            navigate("/manageaccounts");
-          } else {
-            console.log();
-          }
+        .catch((e) => {
+          return e.response;
         });
+      if (response.status == 200) {
+        setFormData({
+          img: "",
+          email: "",
+          fullName: "",
+          role: "",
+          password: "",
+          isActive: "",
+        });
+        setRole("");
+        setIsActive("");
+        toast.success("Account updated");
+        navigate("/manageaccounts");
+      } else if (response.status === 400) {
+        toast.error(response.data.message);
+      } else {
+        toast.error(response.status.message);
+      }
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
@@ -185,29 +198,37 @@ export default function UpdateAccount() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ paddingLeft: "50px" }}>
+      <form onSubmit={formik.handleSubmit} style={{ paddingLeft: "50px" }}>
         <div>
           <Button
             style={{
               marginTop: 40,
             }}
-            variant="contained"
-            color="select"
             onClick={() => {
               document.querySelector("#handleAddPhoto").click();
             }}
+            variant="contained"
+            color="select"
           >
-            Change Photo
+            Select Photo
           </Button>
         </div>
         <input
           type="file"
           accept=".jpg,.jpeg,.png"
           id="handleAddPhoto"
-          onChange={(e) => handleAddPhoto(e)}
+          onChange={(e) => {
+            handleAddPhoto(e);
+            formik.setFieldValue("img", e.target.value); // Update the Formik field value
+          }}
+          onBlur={formik.handleBlur}
+          value={formik.values.img}
           name="img"
           style={{ display: "none" }}
         />
+        {formik.touched.img && formik.errors.img ? (
+          <p>{formik.errors.img}</p>
+        ) : null}
         <br />
         {imageUrl && (
           <img
@@ -228,10 +249,13 @@ export default function UpdateAccount() {
               id="email"
               name="email"
               variant="standard"
-              value={email}
-              onChange={validateEmail}
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
-            {error && <p className="error">{error}</p>}
+            {formik.touched.email && formik.errors.email ? (
+              <p>{formik.errors.email}</p>
+            ) : null}
             <br />
           </FormControl>
         </div>
@@ -242,15 +266,20 @@ export default function UpdateAccount() {
               id="name"
               name="name"
               variant="standard"
-              value={formData.fullName}
-              onChange={handleInputChange}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
+            {formik.touched.name && formik.errors.name ? (
+              <p>{formik.errors.name}</p>
+            ) : null}
             <br />
           </FormControl>
         </div>
         <div>
           <FormControl>
             <Input
+              id="password"
               type={input.showPassword ? "text" : "password"}
               name="password"
               placeholder="Enter Password"
@@ -268,6 +297,7 @@ export default function UpdateAccount() {
                 </InputAdornment>
               }
             />
+            {password.length === 0 ? <p>Required</p> : null}
             <br />
           </FormControl>
         </div>
@@ -277,9 +307,12 @@ export default function UpdateAccount() {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select selectCate"
-              value={role}
-              label="Role"
-              onChange={handleRoleChange}
+              value={formik.values.role}
+              onChange={(e) => {
+                handleRoleChange(e);
+                formik.setFieldValue("role", e.target.value); // Update the Formik field value
+              }}
+              onBlur={formik.handleBlur}
             >
               <MenuItem value="Saler">Sales</MenuItem>
               <MenuItem value="Guard">Guard</MenuItem>
@@ -297,21 +330,28 @@ export default function UpdateAccount() {
             <RadioGroup
               aria-labelledby="demo-controlled-radio-buttons-group"
               name="controlled-radio-buttons-group"
-              value={isActive}
-              onChange={(e) => handleStatusChange(e)}
+              onChange={(e) => {
+                handleStatusChange(e);
+                formik.setFieldValue("isActive", e.target.value); // Update the Formik field value
+              }}
+              onBlur={formik.handleBlur}
+              value={formik.values.isActive}
               defaultChecked={isActive}
             >
               <FormControlLabel value="true" control={<Radio />} label="Yes" />
               <FormControlLabel value="false" control={<Radio />} label="No" />
             </RadioGroup>
           </FormControl>
+          {formik.touched.isActive && formik.errors.isActive ? (
+              <p>{formik.errors.isActive}</p>
+            ) : null}
         </div>
         <div style={{ height: 200 }}>
           <Button variant="contained" onClick={handleUpdate}>
             Update Account
           </Button>
         </div>
-      </div>
+      </form>
     </ThemeProvider>
   );
 }

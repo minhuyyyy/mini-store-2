@@ -143,25 +143,29 @@ export default function UpdateProduct() {
           category: selectedCategory,
         };
       }
-      axios
-        .put(`${API_URL}/product/${id}`, updatedFormData)
-        .then((response) => {
-          if (response.status == 200) {
-            setFormData({
-              img: "",
-              name: "",
-              category: "",
-              stock: "",
-              unit: "",
-              price: "",
-              info: "",
-            });
-            toast.success("Product updated");
-            navigate(-1);
-          } else {
-            console.log();
-          }
+
+      const response = await axios.put(
+        `${API_URL}/product/${id}`,
+        updatedFormData
+      );
+
+      if (response.status === 200) {
+        setFormData({
+          img: "",
+          name: "",
+          category: "",
+          stock: "",
+          unit: "",
+          price: "",
+          info: "",
         });
+        toast.success("Product updated");
+        navigate(-1);
+      } else if (response.status === 400) {
+        toast.error(response.data.message);
+      } else {
+        toast.error(response.statusText); // Use response.statusText
+      }
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
@@ -209,6 +213,7 @@ export default function UpdateProduct() {
                   <Input
                     id="name"
                     name="name"
+                    disableUnderline={true}
                     variant="standard"
                     value={formData.name}
                     onChange={handleInputChange}
@@ -242,6 +247,7 @@ export default function UpdateProduct() {
                         <Input
                           id="category"
                           name="category"
+                          disableUnderline={true}
                           variant="standard"
                           value={newCategory}
                           onChange={(e) => {
@@ -263,6 +269,7 @@ export default function UpdateProduct() {
                   <Input
                     id="price"
                     type="number"
+                    disableUnderline={true}
                     name="price"
                     variant="standard"
                     value={price}
@@ -277,6 +284,7 @@ export default function UpdateProduct() {
                   <label>Product stock</label>
                   <Input
                     id="stock"
+                    disableUnderline={true}
                     name="stock"
                     variant="standard"
                     type="number"
@@ -292,6 +300,7 @@ export default function UpdateProduct() {
                   <label>Product unit</label>
                   <Input
                     id="unit"
+                    disableUnderline={true}
                     name="unit"
                     variant="standard"
                     value={formData.unit}
@@ -305,6 +314,7 @@ export default function UpdateProduct() {
                   <label>Product description:</label>
                   <Input
                     id="description"
+                    disableUnderline={true}
                     name="description"
                     variant="standard"
                     value={formData.description}

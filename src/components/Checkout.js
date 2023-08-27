@@ -112,7 +112,7 @@ function Checkout({ cart, setCart }) {
           } else if (response.status === 400) {
             toast.error(response.data.message);
           } else {
-            console.log(response.status.message);
+            toast.error(response.status.message);
           }
         } else {
           console.log("Cash: " + cash);

@@ -135,13 +135,19 @@ const ManageAccounts = () => {
   const fetchData = async () => {
     try {
       if (currentUser.position === "Manager") {
-        axios.get(`${API_URL}/employee`).then((response) => {
-          setData(response.data);
-          return response.data;
+        const response = await axios.get(`${API_URL}/employee`).catch((e) => {
+          return e.response;
         });
+        if (response.status === 200) {
+          setData(response.data);
+        } else if (response.status === 400) {
+          toast.error(response.data.message);
+        } else {
+          toast.error(response.status.message);
+        }
       } else setMsg("Only Manager can view this page");
     } catch (e) {
-      toast.error("Something went wrong");
+      toast.error();
     }
   };
 
@@ -208,8 +214,13 @@ const ManageAccounts = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${API_URL}/employee/${id}`, {}).then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           toast.success("Account deleted successfully");
+          fetchData();
+        } else if (response.status === 400) {
+          toast.error(response.data.message);
+        } else {
+          toast.error(response.status.message);
         }
       });
     } catch (e) {

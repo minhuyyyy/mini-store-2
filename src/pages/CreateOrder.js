@@ -22,12 +22,15 @@ function CreateOrder() {
   );
   const [msg, setMsg] = useState(null);
   const handleSearch = () => {
-    const filtered = products.filter((product) => {
+    const filtered = filteredProducts.filter((product) => {
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
     setFilteredProducts(filtered);
-    console.log(filteredProducts);
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm]);
 
   const fetchData = async () => {
     try {
