@@ -24,8 +24,8 @@ export default function AddProduct() {
   const [newCategory, setNewCategory] = useState("");
   const API_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
-  const [price, setPrice] = useState(null);
-  const [stock, setStock] = useState(null);
+  const [price, setPrice] = useState(0);
+  const [stock, setStock] = useState(0);
   const [priceError, setPriceError] = useState(null);
   const [stockError, setStockError] = useState(null);
   const [formData, setFormData] = useState({
@@ -83,21 +83,29 @@ export default function AddProduct() {
   };
 
   const handlePriceChange = (e) => {
-    if (price <= 1000 || typeof price != "number") {
-      setPriceError("Price must be more than 1.000 VND and not containing operators!");
+    const inputPrice = e.target.value;
+    const newPrice = parseFloat(inputPrice.replace(/^0+/, "")); // Remove leading zeros
+
+    if (isNaN(newPrice) || newPrice <= 1000) {
+      setPriceError("Price must be more than 1.000 VND and a valid number");
     } else {
       setPriceError(null);
     }
-    setPrice(e.target.value);
+
+    setPrice(newPrice);
   };
 
   const handleStockChange = (e) => {
-    if (stock < 0) {
+    const inputStock = e.target.value;
+    const newStock = parseInt(inputStock.replace(/^0+/, "")); // Remove leading zeros
+
+    if (newStock < 0) {
       setStockError("Stock must be more than 0");
     } else {
       setStockError(null);
     }
-    setStock(e.target.value);
+
+    setStock(newStock);
   };
 
   const handleInputChange = (e) => {
@@ -113,7 +121,7 @@ export default function AddProduct() {
     try {
       let updatedFormData = formData;
       const selectedCategory = newCategory || category;
-
+      const error = priceError || stockError;
       if (image) {
         const downloadURL = imageUrl;
         updatedFormData = { ...formData, imageUrl: downloadURL };
@@ -126,23 +134,27 @@ export default function AddProduct() {
         };
       }
 
-      const url = `${API_URL}/product`;
-      const response = await axios.post(url, updatedFormData);
+      if (error) {
+        toast.error("Invalid inputs");
+      } else {
+        const url = `${API_URL}/product`;
+        const response = await axios.post(url, updatedFormData);
 
-      if (response.status === 200) {
-        toast.success("Product has been added successfully");
-        setFormData({
-          imageUrl: "",
-          name: "",
-          category: "",
-          stock: "",
-          unit: "",
-          price: "",
-          description: "",
-        });
-        setImage(null);
-        setImageUrl("");
-        navigate("/manageproducts");
+        if (response.status === 200) {
+          toast.success("Product has been added successfully");
+          setFormData({
+            imageUrl: "",
+            name: "",
+            category: "",
+            stock: "",
+            unit: "",
+            price: "",
+            description: "",
+          });
+          setImage(null);
+          setImageUrl("");
+          navigate("/manageproducts");
+        }
       }
     } catch (error) {
       console.log(error.message);
@@ -251,6 +263,7 @@ export default function AddProduct() {
               <Input
                 id="stock"
                 name="stock"
+                type="number"
                 variant="standard"
                 disableUnderline={true}
                 value={stock}
