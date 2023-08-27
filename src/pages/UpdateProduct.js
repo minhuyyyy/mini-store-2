@@ -13,13 +13,6 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { theme } from "./ManageAccounts";
-import {
-  doc,
-  getDoc,
-  writeBatch,
-  updateDoc,
-  arrayUnion,
-} from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function UpdateProduct() {
@@ -33,6 +26,10 @@ export default function UpdateProduct() {
   const [newCategory, setNewCategory] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
+  const [price, setPrice] = useState(0);
+  const [stock, setStock] = useState(0);
+  const [priceError, setPriceError] = useState(null);
+  const [stockError, setStockError] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -55,6 +52,8 @@ export default function UpdateProduct() {
         .then((response) => response.json())
         .then((data) => {
           setFormData(data);
+          setPrice(data.price);
+          setStock(data.stock);
           setImageUrl(data.imageUrl);
           setCategory(data.category);
           setUnit(data.unit);
@@ -94,9 +93,9 @@ export default function UpdateProduct() {
     img: "",
     name: "",
     category: "",
-    stock: "",
+    stock: stock,
     unit: "",
-    price: "",
+    price: price,
     description: "",
   });
 
@@ -106,6 +105,31 @@ export default function UpdateProduct() {
       ...prevState,
       [name]: value,
     }));
+  };
+  const handlePriceChange = (e) => {
+    const inputPrice = e.target.value;
+    const newPrice = parseFloat(inputPrice.replace(/^0+/, "")); // Remove leading zeros
+
+    if (isNaN(newPrice) || newPrice <= 1000) {
+      setPriceError("Price must be more than 1.000 VND and a valid number");
+    } else {
+      setPriceError(null);
+    }
+
+    setPrice(newPrice);
+  };
+
+  const handleStockChange = (e) => {
+    const inputStock = e.target.value;
+    const newStock = parseInt(inputStock.replace(/^0+/, "")); // Remove leading zeros
+
+    if (newStock < 0) {
+      setStockError("Stock must be more than 0");
+    } else {
+      setStockError(null);
+    }
+
+    setStock(newStock);
   };
 
   const postData = async (e) => {
@@ -238,11 +262,13 @@ export default function UpdateProduct() {
                   <label>Product price</label>
                   <Input
                     id="price"
+                    type="number"
                     name="price"
                     variant="standard"
-                    value={formData.price}
-                    onChange={handleInputChange}
+                    value={price}
+                    onChange={handlePriceChange}
                   />
+                  {priceError && <p className="error">{priceError}</p>}
                   <br />
                 </FormControl>
               </div>
@@ -253,9 +279,11 @@ export default function UpdateProduct() {
                     id="stock"
                     name="stock"
                     variant="standard"
-                    value={formData.stock}
-                    onChange={handleInputChange}
+                    type="number"
+                    value={stock}
+                    onChange={handleStockChange}
                   />
+                  {stockError && <p className="error">{stockError}</p>}
                   <br />
                 </FormControl>
               </div>

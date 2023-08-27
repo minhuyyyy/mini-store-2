@@ -18,17 +18,16 @@ function CreateOrder() {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSearch = () => {
-    const filtered = products.filter((product) => {
+    const filtered = filteredProducts.filter((product) => {
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
     setFilteredProducts(filtered);
-    console.log(filteredProducts);
   };
 
   const fetchProducts = () => {
     axios
       .get(`${API_URL}/product`)
-      .then((resonse) => setProducts(resonse.data));
+      .then((resonse) => setFilteredProducts(resonse.data));
   };
 
   useEffect(() => {
@@ -38,7 +37,7 @@ function CreateOrder() {
   const onInputChange = (event) => {
     setSearchTerm(event.target.value);
     if (searchTerm !== event.target.value) {
-      handleSearch(); // Call handleSearch whenever input changes
+      handleSearch();
     }
   };
 
@@ -82,9 +81,7 @@ function CreateOrder() {
                 </InputAdornment>
               }
             ></Input>
-            {filteredProducts.length > 0 && (
-              <ShowSearchProducts filteredProducts={filteredProducts} />
-            )}
+            <ShowSearchProducts filteredProducts={filteredProducts} />
           </div>
         </>
       ) : (
