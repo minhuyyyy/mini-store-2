@@ -28,7 +28,7 @@ import ViewShifts from "./pages/ViewShifts";
 import WeekCalendar from "./components/ShiftCalendar";
 import ViewWorkShift from "./pages/ViewWorkShift";
 import GetSalary from "./components/GetSalary";
-import { ViewOrders } from "./pages/ViewOrders";
+import ViewOrders from "./pages/view-orders/view-orders";
 import CheckinCheckout from "./pages/checkin-checkout/checkin-checkout";
 
 function App() {

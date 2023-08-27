@@ -29,20 +29,48 @@ export default function ManageProductsPage() {
   const { user } = useContext(AuthContext);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [currentUser, setCurrentUser] = useState([]);
   const [categories, setCategories] = useState([]);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [msg, setMsg] = useState(null);
   const tableContainerRef = useRef(null);
   const API_URL = process.env.REACT_APP_API_URL;
 
+  const fetchData = async () => {
+    try {
+      if (currentUser.position === "Manager") {
+        axios.get(`${API_URL}/product`).then((response) => {
+          setFilteredProducts(response.data);
+          setCategories([
+            ...new Set(response.data.map((product) => product.category)),
+          ]);
+          return response.data;
+        });
+      } else setMsg("Only Manager can view this page");
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  };
+
   useEffect(() => {
-    fetch(`${API_URL}/product`)
-      .then((response) => response.json())
-      .then((data) => {
-        setFilteredProducts(data);
-        setCategories([...new Set(data.map((product) => product.category))]);
-      });
-  }, []);
+    checkUser();
+  }, [user]);
+
+  useEffect(() => {
+    fetchData();
+  }, [currentUser]);
+
+  const checkUser = async () => {
+    try {
+      if (user) {
+        setCurrentUser(user);
+      }
+    } catch (e) {
+      console.error(e);
+      setMsg("Something went wrong");
+    }
+  };
 
   const columns = [
     { id: "id", label: "ID", minWidth: 50 },
@@ -105,7 +133,7 @@ export default function ManageProductsPage() {
   return (
     <div style={{ backgroundColor: "#d3d3d3" }}>
       <div style={{ color: "black", width: "90%" }} className="container">
-        {user ? (
+        {currentUser.position === "Manager" ? (
           <>
             <div
               style={{

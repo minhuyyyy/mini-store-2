@@ -16,7 +16,9 @@ function CreateOrder() {
   const { user } = useContext(AuthContext);
   const { getItem } = useSessionStorage();
   const API_URL = process.env.REACT_APP_API_URL;
-
+  const [currentUser, setCurrentUser] = useState(
+    sessionStorage.getItem("user")
+  );
   const handleSearch = () => {
     const filtered = products.filter((product) => {
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -26,14 +28,16 @@ function CreateOrder() {
   };
 
   const fetchProducts = () => {
-    axios
-      .get(`${API_URL}/product`)
-      .then((resonse) => setProducts(resonse.data));
+    if (currentUser.position == "Manager" || currentUser.position == "Saler") {
+      axios
+        .get(`${API_URL}/product`)
+        .then((resonse) => setProducts(resonse.data));
+    }
   };
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [currentUser]);
 
   const onInputChange = (event) => {
     setSearchTerm(event.target.value);
@@ -44,7 +48,7 @@ function CreateOrder() {
 
   return (
     <>
-      {user ? (
+      {currentUser.position == "Manager" || currentUser.position == "Saler" ? (
         <>
           <div
             style={{

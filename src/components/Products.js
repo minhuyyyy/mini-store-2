@@ -84,6 +84,12 @@ const ProductsPresentation = ({ filteredProducts }) => {
               >
                 {product.name}
               </Typography>
+              <Typography>
+                {product.price.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </Typography>
               <Link
                 to={`/detail/${product.id}`}
                 style={{ marginTop: "auto", marginBottom: "10px" }}

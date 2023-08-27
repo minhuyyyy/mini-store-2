@@ -210,7 +210,6 @@ const ManageAccounts = () => {
       await axios.delete(`${API_URL}/employee/${id}`, {}).then((response) => {
         if (response.status == 200) {
           toast.success("Account deleted successfully");
-          fetchData();
         }
       });
     } catch (e) {
@@ -515,7 +514,7 @@ const ManageAccounts = () => {
               </div>
             </>
           ) : (
-            <h2 style={{ transform: "translate(30%, 300%)" }}>{msg}</h2>
+            <h2>{msg}</h2>
           )}
         </div>
       </div>
