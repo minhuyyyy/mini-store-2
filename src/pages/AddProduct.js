@@ -14,7 +14,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { theme } from "./ManageAccounts";
 import { useNavigate, useParams } from "react-router-dom";
 import { uid } from "uid";
-
+import { useFormik } from "formik";
+import * as Yup from "yup";
 export default function AddProduct() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
@@ -38,18 +39,72 @@ export default function AddProduct() {
     price: price,
     description: "",
   });
+
+  const formik = useFormik({
+    initialValues: {
+      imageUrl: "",
+      name: "",
+      category: "",
+      stock: 0,
+      unit: "",
+      price: 0,
+      description: "",
+    },
+    validationSchema: Yup.object({
+      imageUrl: Yup.string().required("Required"),
+      name: Yup.string()
+        .min(1, "Must be more than 1 character")
+        .max(20, "Must be 20 characters or less")
+        .required("Required"),
+      category: Yup.string()
+        .min(3, "Must be more than 3 characters")
+        .max(15, "Must be 15 characters or less")
+        .required("Required"),
+      stock: Yup.number()
+        .min(1, "Must be more than 1 item")
+        .max(100, "Must be less than 100 items")
+        .required("Required"),
+      unit: Yup.string()
+        .min(3, "Must be more than 3 characters")
+        .max(15, "Must be 15 characters or less")
+        .required("Required"),
+      price: Yup.number()
+        .min(1000, "Must be more than 1.000 VND")
+        .max(1000000, "Must be less than 1.000.000 VND")
+        .required("Required"),
+      description: Yup.string().max(100, "Must be 100 characters or less"),
+    }),
+    onSubmit: (values) => {
+      postData(values);
+    },
+  });
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  const sortCategories = (data) => {
+    let sortedData;
+    sortedData = data.sort(function (a, b) {
+      let x = a.name.toLowerCase();
+      let y = b.name.toLowerCase();
+      if (x > y) {
+        return 1;
+      }
+      if (x < y) {
+        return -1;
+      }
+      return 0;
+    });
+
+    return sortedData;
+  };
 
   const fetchCategories = async () => {
     try {
       const response = axios.get(`${API_URL}/category`);
       if ((await response).status === 200) {
-        setCategories((await response).data);
-        return setCategories(
-          categories.sort((a, b) => a.name.localeCompare(b.name))
-        );
+        const sortedCategories = sortCategories((await response).data); // Sort the fetched categories
+        setCategories(sortedCategories);
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -116,16 +171,14 @@ export default function AddProduct() {
     }));
   };
 
-  const postData = async (e) => {
-    e.preventDefault();
+  const postData = async () => {
     try {
-      let updatedFormData = formData;
-      const selectedCategory = newCategory || category;
-      const error = priceError || stockError;
-      if (image) {
-        const downloadURL = imageUrl;
-        updatedFormData = { ...formData, imageUrl: downloadURL };
-      }
+      const selectedCategory = newCategory || formik.values.category;
+      let updatedFormData = {
+        ...formik.values,
+        id: uid(8),
+        imageUrl: imageUrl || formData.imageUrl,
+      };
 
       if (selectedCategory) {
         updatedFormData = {
@@ -134,32 +187,21 @@ export default function AddProduct() {
         };
       }
 
-      if (error || formData.name.length === 0 || formData.unit.length === 0) {
-        toast.error("Invalid inputs");
+      const url = `${API_URL}/product`;
+      const response = await axios.post(url, updatedFormData).catch((e) => {
+        return e.response;
+      });
+
+      if (response.status === 200) {
+        toast.success("Product has been added successfully");
+        formik.resetForm(); // Reset the form after successful submission
+        setImage(null);
+        setImageUrl("");
+        navigate("/manageproducts");
+      } else if (response.status === 400) {
+        toast.error(response.data.message);
       } else {
-        const url = `${API_URL}/product`;
-        const response = await axios.post(url, updatedFormData).catch((e) => {
-          return e.response;
-        });
-        if (response.status === 200) {
-          toast.success("Product has been added successfully");
-          setFormData({
-            imageUrl: "",
-            name: "",
-            category: "",
-            stock: "",
-            unit: "",
-            price: "",
-            description: "",
-          });
-          setImage(null);
-          setImageUrl("");
-          navigate("/manageproducts");
-        } else if (response.status === 400) {
-          toast.error(response.data.message);
-        } else {
-          toast.error(response.status.message);
-        }
+        toast.error(response.status.message);
       }
     } catch (error) {
       console.log(error.message);
@@ -170,7 +212,10 @@ export default function AddProduct() {
   return (
     <ThemeProvider theme={theme}>
       <>
-        <div style={{ paddingLeft: "50px", marginTop: 20 }}>
+        <form
+          onSubmit={formik.handleSubmit}
+          style={{ paddingLeft: "50px", marginTop: 20 }}
+        >
           <Button
             onClick={() => {
               document.querySelector("#handleAddPhoto").click();
@@ -184,10 +229,18 @@ export default function AddProduct() {
             type="file"
             accept=".jpg,.jpeg,.png"
             id="handleAddPhoto"
-            onChange={(e) => handleAddPhoto(e)}
+            onChange={(e) => {
+              handleAddPhoto(e);
+              formik.setFieldValue("imageUrl", e.target.value); // Update the Formik field value
+            }}
+            onBlur={formik.handleBlur}
+            value={formik.values.imageUrl}
             name="img"
             style={{ display: "none" }}
           />
+          {formik.touched.imageUrl && formik.errors.imageUrl ? (
+            <p className="error">{formik.errors.imageUrl}</p>
+          ) : null}
           <br />
           {imageUrl && (
             <img src={imageUrl} alt="Preview" style={{ maxWidth: "200px" }} />
@@ -200,10 +253,13 @@ export default function AddProduct() {
                 id="name"
                 name="name"
                 variant="standard"
-                value={formData.name}
-                disableUnderline={true}
-                onChange={handleInputChange}
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.name && formik.errors.name ? (
+                <p className="error">{formik.errors.name}</p>
+              ) : null}
               <br />
             </FormControl>
           </div>
@@ -213,9 +269,13 @@ export default function AddProduct() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select selectCate"
-                value={category}
                 label="Category"
-                onChange={handleChange}
+                value={formik.values.category}
+                onChange={(e) => {
+                  handleChange(e);
+                  formik.setFieldValue("category", e.target.value); // Update the Formik field value
+                }}
+                onBlur={formik.handleBlur}
               >
                 {categories.map((cat) => (
                   <MenuItem key={cat.id} value={cat.name}>
@@ -241,7 +301,9 @@ export default function AddProduct() {
                   </FormControl>
                 </div>
               )}
-              {category && <p>You selected {category}</p>}
+              {formik.values.category && (
+                <p className="error">You selected {formik.values.category}</p>
+              )}
               <br />
             </FormControl>
             <br />
@@ -255,11 +317,17 @@ export default function AddProduct() {
                 variant="standard"
                 type="number"
                 disableUnderline={true}
-                value={price}
-                onChange={handlePriceChange}
+                value={formik.values.price}
+                onChange={(e) => {
+                  handlePriceChange(e);
+                  formik.setFieldValue("price", e.target.value); // Update the Formik field value
+                }}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.price && formik.errors.price ? (
+                <p className="error">{formik.errors.price}</p>
+              ) : null}
               <br />
-              {priceError && <p className="error">{priceError}</p>}
             </FormControl>
           </div>
           <div>
@@ -271,11 +339,16 @@ export default function AddProduct() {
                 type="number"
                 variant="standard"
                 disableUnderline={true}
-                value={stock}
-                onChange={handleStockChange}
+                value={formik.values.stock}
+                onChange={(e) => {
+                  handleStockChange(e);
+                  formik.setFieldValue("stock", e.target.value); // Update the Formik field value
+                }}
+                onBlur={formik.handleBlur}
               />
-              <br />
-              {stockError && <p className="error">{stockError}</p>}
+              {formik.touched.stock && formik.errors.stock ? (
+                <p className="error">{formik.errors.stock}</p>
+              ) : null}
             </FormControl>
           </div>
           <div>
@@ -286,9 +359,13 @@ export default function AddProduct() {
                 name="unit"
                 variant="standard"
                 disableUnderline={true}
-                value={formData.unit}
-                onChange={handleInputChange}
+                value={formik.values.unit}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.unit && formik.errors.unit ? (
+                <p className="error">{formik.errors.unit}</p>
+              ) : null}
               <br />
             </FormControl>
           </div>
@@ -300,9 +377,13 @@ export default function AddProduct() {
                 name="description"
                 variant="standard"
                 disableUnderline={true}
-                value={formData.description}
-                onChange={handleInputChange}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.description && formik.errors.description ? (
+                <p className="error">{formik.errors.description}</p>
+              ) : null}
               <br />
             </FormControl>
           </div>
@@ -316,7 +397,7 @@ export default function AddProduct() {
               Add product
             </Button>
           </div>
-        </div>
+        </form>
         <ToastContainer />
       </>
     </ThemeProvider>

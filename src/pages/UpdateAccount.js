@@ -36,8 +36,7 @@ export default function UpdateAccount() {
   const navigate = useNavigate();
   const { id } = useParams();
   const API_URL = process.env.REACT_APP_API_URL;
-  const [error, setError] = useState(null);
-  const [email, setEmail] = useState("");
+
   useEffect(() => {
     return () => {
       if (image) {
@@ -45,15 +44,6 @@ export default function UpdateAccount() {
       }
     };
   }, [image]);
-
-  const [formData, setFormData] = useState({
-    img: "",
-    fullName: "",
-    email: "",
-    role: "",
-    password: "",
-    isActive: "",
-  });
 
   useEffect(() => {
     getData();
@@ -173,16 +163,6 @@ export default function UpdateAccount() {
           return e.response;
         });
       if (response.status == 200) {
-        setFormData({
-          img: "",
-          email: "",
-          fullName: "",
-          role: "",
-          password: "",
-          isActive: "",
-        });
-        setRole("");
-        setIsActive("");
         toast.success("Account updated");
         navigate("/manageaccounts");
       } else if (response.status === 400) {
@@ -343,8 +323,8 @@ export default function UpdateAccount() {
             </RadioGroup>
           </FormControl>
           {formik.touched.isActive && formik.errors.isActive ? (
-              <p>{formik.errors.isActive}</p>
-            ) : null}
+            <p>{formik.errors.isActive}</p>
+          ) : null}
         </div>
         <div style={{ height: 200 }}>
           <Button variant="contained" onClick={handleUpdate}>

@@ -30,8 +30,7 @@ export default function AddAccount() {
     password: "",
     showPassword: false,
   });
-  const [error, setError] = useState(null);
-  const [email, setEmail] = useState("");
+
   useEffect(() => {
     return () => {
       if (image) {
@@ -39,14 +38,6 @@ export default function AddAccount() {
       }
     };
   }, [image]);
-
-  const [formData, setFormData] = useState({
-    img: "",
-    email: "",
-    name: "",
-    password: "",
-    role: "",
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -112,16 +103,6 @@ export default function AddAccount() {
         baseSalary: baseSalary,
       });
       if (response.status === 200) {
-        setFormData({
-          img: "",
-          email: "",
-          name: "",
-          password: "",
-          role: "",
-        });
-        setImage(null);
-        setImageUrl("");
-        setAdded(true);
         toast.success("User added successfully");
         navigate("/manageaccounts");
       } else if (response.status === 400) {
