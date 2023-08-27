@@ -35,10 +35,9 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell>{row.orderId}</TableCell>
-        <TableCell align="right">{row.salerId}</TableCell>
-        <TableCell align="right">{row.saler}</TableCell>
-        <TableCell align="center">{row.totalItems}</TableCell>
-        <TableCell align="right">
+        <TableCell align="left">{row.salerId}</TableCell>
+        <TableCell align="left">{row.totalItems}</TableCell>
+        <TableCell align="left">
           {row.totalAmount.toLocaleString("vi-VN", {
             style: "currency",
             currency: "VND",
@@ -81,7 +80,6 @@ Row.propTypes = {
   row: PropTypes.shape({
     orderId: PropTypes.string.isRequired,
     salerId: PropTypes.string.isRequired,
-    saler: PropTypes.string.isRequired,
     totalItems: PropTypes.number.isRequired,
     totalAmount: PropTypes.number.isRequired,
     orderDetails: PropTypes.arrayOf(PropTypes.object),
@@ -118,10 +116,9 @@ export function ViewOrders() {
               <TableRow>
                 <TableCell />
                 <TableCell>Order ID</TableCell>
-                <TableCell align="right">Saler ID</TableCell>
-                <TableCell align="right">Saler</TableCell>
-                <TableCell align="center">Total Items</TableCell>
-                <TableCell align="right">Total Amount</TableCell>
+                <TableCell align="left">Seller ID</TableCell>
+                <TableCell align="left">Total Items</TableCell>
+                <TableCell align="left">Total Amount</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

@@ -16,13 +16,20 @@ function CreateOrder() {
   const { user } = useContext(AuthContext);
   const { getItem } = useSessionStorage();
   const API_URL = process.env.REACT_APP_API_URL;
-
+  const [currentUser, setCurrentUser] = useState([]);
   const handleSearch = () => {
     const filtered = filteredProducts.filter((product) => {
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
     setFilteredProducts(filtered);
   };
+
+  useEffect(() => {
+    const user = getItem("user");
+    if (user.position !== "Guard") {
+      setCurrentUser(user);
+    }
+  }, [user]);
 
   const fetchProducts = () => {
     axios
@@ -43,7 +50,7 @@ function CreateOrder() {
 
   return (
     <>
-      {user ? (
+      {currentUser.position !== "Guard" ? (
         <>
           <div
             style={{
