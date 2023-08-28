@@ -28,9 +28,6 @@ import ViewWorkShift from "./pages/workshifts/ViewWorkShift";
 import GetSalary from "./components/GetSalary";
 import ViewOrders from "./pages/view-orders/view-orders";
 import CheckinCheckout from "./pages/checkin-checkout/checkin-checkout";
-
-import WeekCalendar from "./pages/workshifts/ShiftCalendar";
-import Hello from "./pages/workshifts/approve-workshift";
 import ApproveWorksheets from "./pages/workshifts/approve-workshift";
 
 function App() {
