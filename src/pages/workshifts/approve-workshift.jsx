@@ -1,16 +1,11 @@
 import { useState } from "react";
 import HeaderCalender from "./components/header-calender";
-import {
-  addDays,
-  addWeeks,
-  format,
-  isSameDay,
-  startOfWeek,
-  subWeeks,
-} from "date-fns";
+import { addDays, addWeeks, format, startOfWeek, subWeeks } from "date-fns";
 import { useEffect } from "react";
 import "./Calendar.css";
-import ViewShifts from "../ViewShifts";
+import ViewShifts from "./components/ViewShifts";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function ApproveWorksheets() {
   const [currentWeekStart, setCurrentWeekStart] = useState(
@@ -19,6 +14,8 @@ export default function ApproveWorksheets() {
   const [selectedDate, setSelectedDate] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const { user } = useContext(AuthContext);
+
   // const [isViewButtonClicked, setIsViewButtonClicked] = useState(false);
 
   useEffect(() => {
@@ -108,11 +105,17 @@ export default function ApproveWorksheets() {
   };
 
   return (
-    <div className="calendar container" style={{ width: "100%" }}>
-      {renderHeader()}
-      {renderWeekdays()}
-      {renderCells()}
-      <ViewShifts startDate={startDate} endDate={endDate} />
-    </div>
+    <>
+      {user ? (
+        <div className="calendar container" style={{ width: "100%" }}>
+          {renderHeader()}
+          {renderWeekdays()}
+          {renderCells()}
+          <ViewShifts startDate={startDate} endDate={endDate} />
+        </div>
+      ) : (
+        <h1>Not authorized</h1>
+      )}
+    </>
   );
 }
