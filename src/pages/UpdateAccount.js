@@ -56,6 +56,7 @@ export default function UpdateAccount() {
       name: "",
       password: "",
       role: "",
+      isActive: true,
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -78,7 +79,7 @@ export default function UpdateAccount() {
   };
 
   const handleStatusChange = (e) => {
-    setIsActive(e.target.value === "true");
+    formik.setFieldValue("isActive", e.target.value === "true");
   };
 
   const handleAddPhoto = async (e) => {
@@ -87,7 +88,7 @@ export default function UpdateAccount() {
       setImage(file);
       const reader = new FileReader();
       reader.onload = () => {
-        setImageUrl(reader.result);
+        formik.setFieldValue("img", reader.result);
       };
       reader.readAsDataURL(file);
     } else {
@@ -109,10 +110,7 @@ export default function UpdateAccount() {
 
   const onInputChange = (e) => {
     const { name, value } = e.target;
-    setInput((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    formik.setFieldValue(name, value); // Use Formik's setFieldValue to update the value
   };
 
   function makeid() {
@@ -127,33 +125,39 @@ export default function UpdateAccount() {
       );
       counter += 1;
     }
-    setPassword(result);
-    return result;
+    onInputChange({
+      target: {
+        name: "password",
+        value: result,
+      },
+    });
   }
 
   const getData = async () => {
     axios.get(`${API_URL}/employee/${id}`).then((response) => {
-      formik.setFieldValue("imageUrl", response.data.imgUrl);
+      formik.setFieldValue("img", response.data.imgUrl);
       formik.setFieldValue("email", response.data.email);
       formik.setFieldValue("name", response.data.fullName);
       formik.setFieldValue("password", response.data.password);
       formik.setFieldValue("role", response.data.position);
-      formik.setFieldValue("isAtive", response.data.isActive);
+      formik.setFieldValue("isActive", response.data.isActive);
       return response.data;
     });
   };
 
   const handleUpdate = async (values) => {
     try {
+      let imgUrl = formik.values.img; // Use the current image URL as default
+      let active = formik.values.isActive;
       const response = await axios
         .put(`${API_URL}/employee/${id}`, {
           id: id,
           email: formik.values.email,
           fullName: formik.values.name,
-          password: password,
-          imgUrl: imageUrl,
+          password: formik.values.password,
+          imgUrl: imgUrl,
           roleName: formik.values.role,
-          isActive: isActive,
+          isActive: active,
         })
         .catch((e) => {
           return e.response;
@@ -193,12 +197,8 @@ export default function UpdateAccount() {
           type="file"
           accept=".jpg,.jpeg,.png"
           id="handleAddPhoto"
-          onChange={(e) => {
-            handleAddPhoto(e);
-            formik.setFieldValue("img", e.target.value); // Update the Formik field value
-          }}
+          onChange={handleAddPhoto}
           onBlur={formik.handleBlur}
-          value={formik.values.img}
           name="img"
           style={{ display: "none" }}
         />
@@ -206,9 +206,9 @@ export default function UpdateAccount() {
           <p>{formik.errors.img}</p>
         ) : null}
         <br />
-        {imageUrl && (
+        {formik.values.img && (
           <img
-            src={imageUrl}
+            src={formik.values.img}
             alt="Preview"
             style={{
               maxWidth: "200px",
@@ -259,8 +259,12 @@ export default function UpdateAccount() {
               type={input.showPassword ? "text" : "password"}
               name="password"
               placeholder="Enter Password"
-              value={password}
-              onChange={onInputChange}
+              onChange={(e) => {
+                onInputChange(e);
+                formik.handleChange(e.target.value);
+              }}
+              onBlur={formik.handleBlur}
+              value={formik.values.password}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -306,16 +310,12 @@ export default function UpdateAccount() {
             <RadioGroup
               aria-labelledby="demo-controlled-radio-buttons-group"
               name="controlled-radio-buttons-group"
-              onChange={(e) => {
-                handleStatusChange(e);
-                formik.setFieldValue("isActive", e.target.value); // Update the Formik field value
-              }}
+              onChange={handleStatusChange} // Use the handleStatusChange function here
               onBlur={formik.handleBlur}
               value={formik.values.isActive}
-              defaultChecked={isActive}
             >
-              <FormControlLabel value="true" control={<Radio />} label="Yes" />
-              <FormControlLabel value="false" control={<Radio />} label="No" />
+              <FormControlLabel value={true} control={<Radio />} label="Yes" />
+              <FormControlLabel value={false} control={<Radio />} label="No" />
             </RadioGroup>
           </FormControl>
           {formik.touched.isActive && formik.errors.isActive ? (

@@ -69,8 +69,8 @@ function App() {
           <Route path="/view-salary" element={<ViewSalary />} />
           <Route path="/view-orders" element={<ViewOrders />} />
           <Route path="/view-shifts" element={<ApproveWorksheets />} />
-          {/* <Route path="/view-workshift" element={<ViewWorkShift />} /> */}
-          {/* <Route path="/workshift" element={<RegisterWorkShift />} /> */}
+          <Route path="/view-workshift" element={<ViewWorkShift />} />
+          <Route path="/workshift" element={<RegisterWorkShift />} />
           <Route path="/createorder" element={<CreateOrder />} />
           <Route
             path="/changepassword/setnewpassword"

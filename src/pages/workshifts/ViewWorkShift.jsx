@@ -166,8 +166,6 @@ function ViewWorkShift() {
       ) : (
         <h2>Log in to view page</h2>
       )}
-
-      <h1>Hello ViewWorkshift</h1>
     </div>
   );
 }
