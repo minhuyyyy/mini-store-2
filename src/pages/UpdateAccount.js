@@ -81,10 +81,6 @@ export default function UpdateAccount() {
     setIsActive(e.target.value === "true");
   };
 
-  function isValidEmail(email) {
-    return /\S+@\S+\.\S+/.test(email);
-  }
-
   const handleAddPhoto = async (e) => {
     const file = e.target.files[0];
     if (file) {

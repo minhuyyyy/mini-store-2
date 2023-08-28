@@ -65,7 +65,7 @@ export default function AddProduct() {
         .max(100, "Must be less than 100 items")
         .required("Required"),
       unit: Yup.string()
-        .min(3, "Must be more than 3 characters")
+        .min(2, "Must be more than 3 characters")
         .max(15, "Must be 15 characters or less")
         .required("Required"),
       price: Yup.number()
@@ -194,7 +194,7 @@ export default function AddProduct() {
 
       if (response.status === 200) {
         toast.success("Product has been added successfully");
-        formik.resetForm(); // Reset the form after successful submission
+        formik.resetForm();
         setImage(null);
         setImageUrl("");
         navigate("/manageproducts");

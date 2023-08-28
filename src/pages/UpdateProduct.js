@@ -14,7 +14,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { theme } from "./ManageAccounts";
 import { useNavigate, useParams } from "react-router-dom";
-
+import { useFormik } from "formik";
+import * as Yup from "yup";
 export default function UpdateProduct() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
@@ -31,16 +32,73 @@ export default function UpdateProduct() {
   const [priceError, setPriceError] = useState(null);
   const [stockError, setStockError] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
-
+  const formik = useFormik({
+    initialValues: {
+      imageUrl: "",
+      name: "",
+      category: "",
+      stock: 0,
+      unit: "",
+      price: 0,
+      description: "",
+    },
+    validationSchema: Yup.object({
+      img: Yup.string().required("Required"),
+      name: Yup.string()
+        .min(1, "Must be more than 1 character")
+        .max(20, "Must be 20 characters or less")
+        .required("Required"),
+      category: Yup.string()
+        .min(3, "Must be more than 3 characters")
+        .max(15, "Must be 15 characters or less")
+        .required("Required"),
+      stock: Yup.number()
+        .min(1, "Must be more than 1 item")
+        .max(100, "Must be less than 100 items")
+        .required("Required"),
+      unit: Yup.string()
+        .min(2, "Must be more than 3 characters")
+        .max(15, "Must be 15 characters or less")
+        .required("Required"),
+      price: Yup.number()
+        .min(1000, "Must be more than 1.000 VND")
+        .max(1000000, "Must be less than 1.000.000 VND")
+        .required("Required"),
+      description: Yup.string().max(100, "Must be 100 characters or less"),
+    }),
+    onSubmit: (values) => {
+      postData(values);
+    },
+  });
   useEffect(() => {
     fetchProduct();
     fetchCategories();
   }, []);
 
+  const sortCategories = (data) => {
+    let sortedData;
+    sortedData = data.sort(function (a, b) {
+      let x = a.name.toLowerCase();
+      let y = b.name.toLowerCase();
+      if (x > y) {
+        return 1;
+      }
+      if (x < y) {
+        return -1;
+      }
+      return 0;
+    });
+
+    return sortedData;
+  };
+
   const fetchCategories = async () => {
     try {
       const response = axios.get(`${API_URL}/category`);
-      if ((await response).status === 200) setCategories((await response).data);
+      if ((await response).status === 200) {
+        const sortedCategories = sortCategories((await response).data);
+        setCategories(sortedCategories);
+      }
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -51,12 +109,16 @@ export default function UpdateProduct() {
       fetch(`${API_URL}/product/${id}`)
         .then((response) => response.json())
         .then((data) => {
-          setFormData(data);
-          setPrice(data.price);
-          setStock(data.stock);
-          setImageUrl(data.imageUrl);
-          setCategory(data.category);
-          setUnit(data.unit);
+          formik.setFieldValue("imageUrl", data.imageUrl);
+          formik.setFieldValue("name", data.name);
+          formik.setFieldValue("category", data.category);
+          formik.setFieldValue("stock", data.stock);
+          formik.setFieldValue("unit", data.unit);
+          formik.setFieldValue("price", data.price);
+          formik.setFieldValue("description", data.description);
+          if (data.category === "add_new_category") {
+            setShowNewCategoryInput(true);
+          }
         });
     } catch (e) {
       console.log(e);
@@ -135,7 +197,11 @@ export default function UpdateProduct() {
   const postData = async (e) => {
     e.preventDefault();
     try {
-      let updatedFormData = formData;
+      let updatedFormData = {
+        ...formik.values,
+        id: id,
+        imageUrl: imageUrl,
+      };
       const selectedCategory = newCategory || category;
       if (selectedCategory) {
         updatedFormData = {
@@ -150,16 +216,8 @@ export default function UpdateProduct() {
       );
 
       if (response.status === 200) {
-        setFormData({
-          img: "",
-          name: "",
-          category: "",
-          stock: "",
-          unit: "",
-          price: "",
-          info: "",
-        });
         toast.success("Product updated");
+        formik.resetForm();
         navigate(-1);
       } else if (response.status === 400) {
         toast.error(response.data.message);
@@ -172,173 +230,195 @@ export default function UpdateProduct() {
     }
   };
 
-  const handleKeep = () => {
-    navigate("/manageproducts");
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <>
-        <div style={{ paddingLeft: "50px", marginTop: 20 }}>
-          {product && (
-            <>
-              <Button
-                onClick={() => {
-                  document.querySelector("#handleAddPhoto").click();
-                }}
-                variant="contained"
-                color="select"
-              >
-                Change Photo
-              </Button>
-              <input
-                type="file"
-                id="handleAddPhoto"
-                onChange={handleAddPhoto}
-                name="img"
-                style={{ display: "none" }}
+        <form
+          onSubmit={formik.handleSubmit}
+          style={{ paddingLeft: "50px", marginTop: 20 }}
+        >
+          <Button
+            onClick={() => {
+              document.querySelector("#handleAddPhoto").click();
+            }}
+            variant="contained"
+            color="select"
+          >
+            Change Photo
+          </Button>
+          <input
+            type="file"
+            accept=".jpg,.jpeg,.png"
+            id="handleAddPhoto"
+            onChange={(e) => {
+              handleAddPhoto(e);
+              formik.setFieldValue("imageUrl", e.target.value); // Update the Formik field value
+            }}
+            onBlur={formik.handleBlur}
+            value={formik.values.im}
+            name="img"
+            style={{ display: "none" }}
+          />
+          {formik.touched.imageUrl && formik.errors.imageUrl ? (
+            <p className="error">{formik.errors.imageUrl}</p>
+          ) : null}
+          <br />
+          {imageUrl && (
+            <img src={imageUrl} alt="Preview" style={{ maxWidth: "200px" }} />
+          )}
+          <br />
+          <div>
+            <FormControl sx={{ width: "80%" }}>
+              <label>Product name</label>
+              <Input
+                id="name"
+                name="name"
+                variant="standard"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.name && formik.errors.name ? (
+                <p className="error">{formik.errors.name}</p>
+              ) : null}
               <br />
-              {imageUrl && (
-                <img
-                  src={imageUrl}
-                  alt="Preview"
-                  style={{ maxWidth: "200px" }}
-                />
+            </FormControl>
+          </div>
+          <div>
+            <FormControl sx={{ width: "80%" }}>
+              <label>Category</label>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select selectCate"
+                label="Category"
+                value={formik.values.category}
+                onChange={(e) => {
+                  handleChange(e);
+                  formik.setFieldValue("category", e.target.value);
+                }}
+                onBlur={formik.handleBlur}
+              >
+                {categories.map((cat) => (
+                  <MenuItem key={cat.id} value={cat.name}>
+                    {cat.name}
+                  </MenuItem>
+                ))}
+                <MenuItem value="add_new_category">Add new category</MenuItem>
+              </Select>
+              {showNewCategoryInput && (
+                <div>
+                  <FormControl sx={{ width: "80%" }}>
+                    <label>Product category:</label>
+                    <Input
+                      id="category"
+                      name="category"
+                      variant="standard"
+                      value={newCategory}
+                      onChange={(e) => {
+                        setNewCategory(e.target.value);
+                      }}
+                    />
+                    <br />
+                  </FormControl>
+                </div>
+              )}
+              {formik.values.category && (
+                <p className="error">You selected {formik.values.category}</p>
               )}
               <br />
-              <div>
-                <FormControl sx={{ width: "80%" }}>
-                  <label>Product name</label>
-                  <Input
-                    id="name"
-                    name="name"
-                    disableUnderline={true}
-                    variant="standard"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                  />
-                  <br />
-                </FormControl>
-              </div>
-              <div>
-                <FormControl sx={{ width: "80%" }}>
-                  <label>Category</label>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select selectCate"
-                    value={category}
-                    label="Category"
-                    onChange={handleChange}
-                  >
-                    {categories.map((cat) => (
-                      <MenuItem key={cat.id} value={cat.name}>
-                        {cat.name}
-                      </MenuItem>
-                    ))}
-                    <MenuItem value="add_new_category">
-                      Add new category
-                    </MenuItem>
-                  </Select>
-                  {showNewCategoryInput && (
-                    <div>
-                      <FormControl sx={{ width: "80%" }}>
-                        <label>Product category:</label>
-                        <Input
-                          id="category"
-                          name="category"
-                          disableUnderline={true}
-                          variant="standard"
-                          value={newCategory}
-                          onChange={(e) => {
-                            setNewCategory(e.target.value);
-                          }}
-                        />
-                        <br />
-                      </FormControl>
-                    </div>
-                  )}
-                  {category && <p>You selected {category}</p>}
-                  <br />
-                </FormControl>
-                <br />
-              </div>
-              <div>
-                <FormControl sx={{ width: "80%" }}>
-                  <label>Product price</label>
-                  <Input
-                    id="price"
-                    type="number"
-                    disableUnderline={true}
-                    name="price"
-                    variant="standard"
-                    value={price}
-                    onChange={handlePriceChange}
-                  />
-                  {priceError && <p className="error">{priceError}</p>}
-                  <br />
-                </FormControl>
-              </div>
-              <div>
-                <FormControl sx={{ width: "80%" }}>
-                  <label>Product stock</label>
-                  <Input
-                    id="stock"
-                    disableUnderline={true}
-                    name="stock"
-                    variant="standard"
-                    type="number"
-                    value={stock}
-                    onChange={handleStockChange}
-                  />
-                  {stockError && <p className="error">{stockError}</p>}
-                  <br />
-                </FormControl>
-              </div>
-              <div>
-                <FormControl sx={{ width: "80%" }}>
-                  <label>Product unit</label>
-                  <Input
-                    id="unit"
-                    disableUnderline={true}
-                    name="unit"
-                    variant="standard"
-                    value={formData.unit}
-                    onChange={handleInputChange}
-                  />
-                  <br />
-                </FormControl>
-              </div>
-              <div>
-                <FormControl sx={{ width: "80%" }}>
-                  <label>Product description:</label>
-                  <Input
-                    id="description"
-                    disableUnderline={true}
-                    name="description"
-                    variant="standard"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                  />
-                  <br />
-                </FormControl>
-              </div>
-              <div style={{ height: 200 }}>
-                <Button
-                  onClick={postData}
-                  variant="contained"
-                  color="add"
-                  style={{ marginRight: 20 }}
-                >
-                  Update product
-                </Button>
-                <Button onClick={handleKeep} variant="contained" color="select">
-                  Keep product
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
+            </FormControl>
+            <br />
+          </div>
+          <div>
+            <FormControl sx={{ width: "80%" }}>
+              <label>Product price</label>
+              <Input
+                id="price"
+                name="price"
+                variant="standard"
+                type="number"
+                disableUnderline={true}
+                value={formik.values.price}
+                onChange={(e) => {
+                  handlePriceChange(e);
+                  formik.setFieldValue("price", e.target.value); // Update the Formik field value
+                }}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.price && formik.errors.price ? (
+                <p className="error">{formik.errors.price}</p>
+              ) : null}
+              <br />
+            </FormControl>
+          </div>
+          <div>
+            <FormControl sx={{ width: "80%" }}>
+              <label>Product stock</label>
+              <Input
+                id="stock"
+                name="stock"
+                type="number"
+                variant="standard"
+                disableUnderline={true}
+                value={formik.values.stock}
+                onChange={(e) => {
+                  handleStockChange(e);
+                  formik.setFieldValue("stock", e.target.value); // Update the Formik field value
+                }}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.stock && formik.errors.stock ? (
+                <p className="error">{formik.errors.stock}</p>
+              ) : null}
+            </FormControl>
+          </div>
+          <div>
+            <FormControl sx={{ width: "80%" }}>
+              <label>Product unit:</label>
+              <Input
+                id="unit"
+                name="unit"
+                variant="standard"
+                disableUnderline={true}
+                value={formik.values.unit}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.unit && formik.errors.unit ? (
+                <p className="error">{formik.errors.unit}</p>
+              ) : null}
+              <br />
+            </FormControl>
+          </div>
+          <div>
+            <FormControl sx={{ width: "80%" }}>
+              <label>Product description:</label>
+              <Input
+                id="description"
+                name="description"
+                variant="standard"
+                disableUnderline={true}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.description && formik.errors.description ? (
+                <p className="error">{formik.errors.description}</p>
+              ) : null}
+              <br />
+            </FormControl>
+          </div>
+          <div style={{ height: 200 }}>
+            <Button
+              onClick={postData}
+              variant="contained"
+              color="add"
+              style={{ marginRight: 20 }}
+            >
+              Update product
+            </Button>
+          </div>
+        </form>
         <ToastContainer />
       </>
     </ThemeProvider>
