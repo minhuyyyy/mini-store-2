@@ -73,6 +73,7 @@ function GetSalary() {
           <Input
             id="employeeId"
             name="employeeId"
+            disableUnderline={true}
             variant="standard"
             value={formData.employeeId}
             onChange={handleInputChange}
@@ -87,6 +88,7 @@ function GetSalary() {
             id="baseSalary"
             name="base"
             variant="standard"
+            disableUnderline={true}
             value={formData.base}
             onChange={handleInputChange}
           />
@@ -106,6 +108,7 @@ function GetSalary() {
             id="month"
             name="month"
             variant="standard"
+            disableUnderline={true}
             value={formData.month}
             onChange={handleInputChange}
           />
@@ -114,6 +117,7 @@ function GetSalary() {
           <Input
             id="year"
             name="year"
+            disableUnderline={true}
             variant="standard"
             value={formData.year}
             onChange={handleInputChange}

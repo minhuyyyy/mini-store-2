@@ -54,15 +54,18 @@ export default function UpdateProduct() {
         .required("Required"),
       stock: Yup.number()
         .min(1, "Must be more than 1 item")
-        .max(100, "Must be less than 100 items")
-        .required("Required"),
+        .max(500, "Must be less than 500 items")
+        .required("Required")
+        .integer("Stock must be a whole number")
+        .positive("Stock must be a positive number"),
       unit: Yup.string()
         .min(2, "Must be more than 3 characters")
         .max(15, "Must be 15 characters or less")
         .required("Required"),
       price: Yup.number()
         .min(500, "Must be more than 500 VND")
-        .required("Required"),
+        .required("Required")
+        .positive("Price must be a positive number"),
       description: Yup.string().max(100, "Must be 100 characters or less"),
     }),
     onSubmit: (values) => {
@@ -284,6 +287,7 @@ export default function UpdateProduct() {
               <Input
                 id="name"
                 name="name"
+                disableUnderline={true}
                 variant="standard"
                 value={formik.values.name}
                 onChange={formik.handleChange}
@@ -350,10 +354,7 @@ export default function UpdateProduct() {
                 type="number"
                 disableUnderline={true}
                 value={formik.values.price}
-                onChange={(e) => {
-                  handlePriceChange(e);
-                  formik.setFieldValue("price", e.target.value); // Update the Formik field value
-                }}
+                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
               {formik.touched.price && formik.errors.price ? (
@@ -372,10 +373,7 @@ export default function UpdateProduct() {
                 variant="standard"
                 disableUnderline={true}
                 value={formik.values.stock}
-                onChange={(e) => {
-                  handleStockChange(e);
-                  formik.setFieldValue("stock", e.target.value); // Update the Formik field value
-                }}
+                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
               {formik.touched.stock && formik.errors.stock ? (

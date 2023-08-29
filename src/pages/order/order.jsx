@@ -185,7 +185,7 @@ export default function Order() {
         });
 
       if (response.status === 200) {
-        setSuccess(!success);
+        setSuccess(true);
         toast.success(
           `Create order ${response.data.orderId} successfully` ||
             "Order success"

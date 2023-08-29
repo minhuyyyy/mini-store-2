@@ -54,7 +54,9 @@ export default function AddAccount() {
         .required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       img: Yup.string().required("Required"),
-      password: Yup.string().min(8, "Must be more than 8 characters"),
+      password: Yup.string()
+        .min(8, "Must be more than 8 characters")
+        .required("Required"),
       role: Yup.string().required("Required"),
     }),
     onSubmit: (values) => {
@@ -83,17 +85,17 @@ export default function AddAccount() {
   };
 
   const postData = async (values) => {
-    try {
-      let baseSalary = 0;
+    let baseSalary = 0;
 
-      if (values.role === "Saler") {
-        baseSalary = 30000;
-      } else if (values.role === "Guard") {
-        baseSalary = 25000;
-      } else if (values.role === "Manager") {
-        baseSalary = 45000;
-      }
-      const response = await axios.post(`${API_URL}/employee/register`, {
+    if (values.role === "Saler") {
+      baseSalary = 30000;
+    } else if (values.role === "Guard") {
+      baseSalary = 25000;
+    } else if (values.role === "Manager") {
+      baseSalary = 45000;
+    }
+    const response = await axios
+      .post(`${API_URL}/employee/register`, {
         id: uid(8),
         email: formik.values.email,
         fullName: formik.values.name,
@@ -101,18 +103,15 @@ export default function AddAccount() {
         imgUrl: imageUrl,
         roleName: formik.values.role,
         baseSalary: baseSalary,
+      })
+      .catch((err) => {
+        return err.response;
       });
-      if (response.status === 200) {
-        toast.success("User added successfully");
-        navigate("/manageaccounts");
-      } else if (response.status === 400) {
-        const errorMessage = response.data.message || "Bad Request";
-        toast.error(errorMessage);
-      } else {
-        toast.error(response.statusText.toString());
-      }
-    } catch (error) {
-      console.log("Error adding data to database:", error);
+    if (response.status === 200) {
+      toast.success("User added successfully");
+      navigate("/manageaccounts");
+    } else if (response.status === 400) {
+      toast.error(response.data.message || "Order error");
     }
   };
 
@@ -204,6 +203,7 @@ export default function AddAccount() {
               id="email"
               name="email"
               variant="standard"
+              disableUnderline={true}
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -219,6 +219,7 @@ export default function AddAccount() {
             <label>Name</label>
             <Input
               id="name"
+              disableUnderline={true}
               name="name"
               variant="standard"
               value={formik.values.name}
@@ -238,6 +239,7 @@ export default function AddAccount() {
               type={input.showPassword ? "text" : "password"}
               name="password"
               placeholder="Enter Password"
+              disableUnderline={true}
               value={password}
               onChange={onInputChange}
               endAdornment={

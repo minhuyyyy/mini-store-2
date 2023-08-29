@@ -15,6 +15,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { Button, Input } from "@mui/material";
 import axios from "axios";
+import { toast } from "materialize-css";
 
 function Row(props) {
   const { row, onBonusChange, onDeductionChange } = props;
@@ -150,7 +151,8 @@ function CalculateSalary({ setData, data }) {
       })
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.data);
+          toast.success(`Confirmed ${payslipId}`);
+          setData(null);
         }
       })
       .catch((error) => {
