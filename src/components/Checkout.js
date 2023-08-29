@@ -3,9 +3,11 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { set } from "date-fns";
 
 function Checkout({ cart, setCart }) {
-  const [quantity, setQuantity] = useState({});
+  const [quantity, setQuantity] = useState([]);
+  const [totalItem, setTotalItem] = useState([]);
   const [amount, setAmount] = useState(0);
   const [cash, setCash] = useState(0.0);
   const [change, setChange] = useState(0.0);
@@ -36,6 +38,12 @@ function Checkout({ cart, setCart }) {
       totalAmount += cart[productId].price * (quantity[productId] || 0);
     });
     setAmount(totalAmount);
+
+    let totalItem = 0;
+    Object.keys(cart).forEach((productId) => {
+      totalItem += quantity[productId] * 1;
+    });
+    setTotalItem(totalItem);
 
     const orderDetails = Object.keys(cart).map((productId) => ({
       productId: productId,
@@ -82,6 +90,9 @@ function Checkout({ cart, setCart }) {
       customerName: "",
       salerId: user.id,
       orderDetails: order,
+      totalAmount: amount,
+      cash: cash,
+      totalItem: totalItem,
     };
 
     try {
@@ -112,7 +123,7 @@ function Checkout({ cart, setCart }) {
           } else if (response.status === 400) {
             toast.error(response.data.message);
           } else {
-            toast.error(response.status.message);
+            toast.error("Something went wrong");
           }
         } else {
           console.log("Cash: " + cash);
@@ -170,7 +181,11 @@ function Checkout({ cart, setCart }) {
             </tbody>
           </table>
           <p>Total amount: {amount.toLocaleString()} VND</p>
+
+          <label htmlFor="cash">Customer's cash:</label>
+          <br />
           <Input
+            id="cash"
             onChange={(e) => handleCashChange(e)}
             placeholder="Enter customer's cash..."
             disableUnderline={true}
