@@ -21,6 +21,7 @@ function CreateOrder() {
     sessionStorage.getItem("user") || null
   );
   const [msg, setMsg] = useState(null);
+
   const handleSearch = () => {
     const filtered = filteredProducts.filter((product) => {
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -32,27 +33,26 @@ function CreateOrder() {
     handleSearch();
   }, [searchTerm]);
 
-  const fetchData = async () => {
-    try {
-      if (
-        currentUser.position === "Manager" ||
-        currentUser.position === "Saler"
-      ) {
-        axios.get(`${API_URL}/product`).then((response) => {
-          setFilteredProducts(response.data);
-          return response.data;
-        });
-      } else setMsg("Only Manager can view this page");
-    } catch (e) {
-      toast.error("Something went wrong");
-    }
-  };
-
   useEffect(() => {
     checkUser();
   }, [user]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (
+          currentUser.position === "Manager" ||
+          currentUser.position === "Saler"
+        ) {
+          axios.get(`${API_URL}/product`).then((response) => {
+            setFilteredProducts(response.data);
+            return response.data;
+          });
+        } else setMsg("Only Manager can view this page");
+      } catch (e) {
+        toast.error("Something went wrong");
+      }
+    };
     fetchData();
   }, [currentUser]);
 
