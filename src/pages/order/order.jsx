@@ -169,7 +169,7 @@ export default function Order() {
       <div className="m-2">
         <div className="row">
           <div className="col-7">
-            <h2>Receipt</h2>
+            <h2>Create Order</h2>
             <label htmlFor="txtSearch">Search Product</label>
             <input
               id="txtSearch"
@@ -190,6 +190,7 @@ export default function Order() {
                     <TableCell align="left">Product Name</TableCell>
                     <TableCell align="left">Price</TableCell>
                     <TableCell align="left">Stock</TableCell>
+                    <TableCell align="left">Unit</TableCell>
                     <TableCell align="left"></TableCell>
                   </TableRow>
                 </TableHead>
@@ -210,6 +211,7 @@ export default function Order() {
                           })}
                         </TableCell>
                         <TableCell align="left">{product.stock}</TableCell>
+                        <TableCell align="left">{product.unit}</TableCell>
                         <TableCell align="left">
                           <button onClick={() => handleAddToCart(product)}>
                             Add to cart

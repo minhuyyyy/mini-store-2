@@ -220,7 +220,7 @@ export default function Navigation() {
                 <Button
                   key={"Create Order"}
                   onClick={() => {
-                    navigate("createorder");
+                    navigate("order");
                     document.title = "Create Order";
                   }}
                   style={
