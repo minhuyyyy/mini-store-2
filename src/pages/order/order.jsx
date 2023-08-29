@@ -91,6 +91,12 @@ export default function Order() {
     const existingItemIndex = cart.findIndex((item) => item.id === productId);
 
     if (existingItemIndex !== -1) {
+      if (quantity * 1 < 0) {
+        const updatedCart = [...cart];
+        updatedCart[existingItemIndex].quantity = 0;
+        setCart(updatedCart);
+        return toast.error("Quantity must be greater than 0");
+      }
       // If the item already exists in the cart, update its quantity
       const updatedCart = [...cart];
       updatedCart[existingItemIndex].quantity = quantity;
