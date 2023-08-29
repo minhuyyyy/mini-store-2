@@ -14,7 +14,6 @@ import UpdateAccount from "./pages/UpdateAccount";
 import ChangePassword from "./pages/ChangePassword";
 import ViewProfile from "./pages/Profile";
 import AddAccount from "./pages/AddAccount";
-import SetNewPassword from "./pages/SetNewPassword";
 import UpdateProfile from "./pages/UpdateProfile";
 import { ToastContainer } from "react-toastify";
 import { useMemo } from "react";
@@ -73,10 +72,6 @@ function App() {
           <Route path="/view-workshift" element={<ViewWorkShift />} />
           <Route path="/workshift" element={<RegisterWorkShift />} />
           <Route path="/createorder" element={<CreateOrder />} />
-          <Route
-            path="/changepassword/setnewpassword"
-            element={<SetNewPassword />}
-          />
           <Route path="/order" element={<Order />}></Route>
         </Routes>
       </AuthContext.Provider>

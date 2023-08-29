@@ -61,8 +61,7 @@ export default function UpdateProduct() {
         .max(15, "Must be 15 characters or less")
         .required("Required"),
       price: Yup.number()
-        .min(1000, "Must be more than 1.000 VND")
-        .max(1000000, "Must be less than 1.000.000 VND")
+        .min(500, "Must be more than 500 VND")
         .required("Required"),
       description: Yup.string().max(100, "Must be 100 characters or less"),
     }),

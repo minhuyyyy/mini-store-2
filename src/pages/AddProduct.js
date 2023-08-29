@@ -62,7 +62,7 @@ export default function AddProduct() {
         .required("Required"),
       stock: Yup.number()
         .min(1, "Must be more than 1 item")
-        .max(100, "Must be less than 100 items")
+        .max(500, "Must be less than 500 items")
         .required("Required"),
       unit: Yup.string()
         .min(2, "Must be more than 3 characters")

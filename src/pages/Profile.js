@@ -6,43 +6,48 @@ import { Button, ThemeProvider } from "@mui/material";
 import { Link } from "react-router-dom";
 import { theme } from "./ManageAccounts";
 import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
 export default function ViewProfile() {
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState([]);
   const [loggedIn, setIsLoggedIn] = useState(false);
-  const { user } = useContext(AuthContext);
+  const [currentUser, setCurrentUser] = useState(
+    JSON.parse(sessionStorage.getItem("user"))
+  );
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    if (user != null) {
-      setProfile(user);
+    if (currentUser) {
+      const getData = async () => {
+        const res = await axios.get(`${API_URL}/employee/${currentUser.id}`);
+        if (res.status === 200) {
+          setProfile(res.data);
+        }
+      };
+      getData();
       setIsLoggedIn(true);
     } else {
       setProfile(null);
       setIsLoggedIn(false);
     }
-  }, []);
-
-  useEffect(() => {
-    // Update session storage when the user profile changes
-    if (profile) {
-      sessionStorage.setItem("user", JSON.stringify(profile));
-    }
-  }, [profile]);
+  }, [currentUser]);
 
   return (
     <ThemeProvider theme={theme}>
       <div style={{ padding: "16px" }}>
-        {user ? (
+        {currentUser ? (
           <>
             <Grid container alignItems="center" spacing={2}>
               <Grid item>
                 <Avatar
                   style={{ width: "80px", height: "80px", marginRight: "16px" }}
-                  src={user.imgUrl}
+                  src={profile.imgUrl}
                 />
               </Grid>
               <Grid item>
-                <Typography variant="h5">{user.email}</Typography>
-                <Typography variant="subtitle1">Role: {user.position}</Typography>
+                <Typography variant="h5">{profile.email}</Typography>
+                <Typography variant="subtitle1">
+                  Role: {profile.position}
+                </Typography>
                 <Link to={"/viewprofile/updateprofile"}>
                   <Button
                     variant="contained"
