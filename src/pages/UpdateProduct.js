@@ -34,7 +34,7 @@ export default function UpdateProduct() {
   const API_URL = process.env.REACT_APP_API_URL;
   const formik = useFormik({
     initialValues: {
-      imageUrl: "",
+      img: "",
       name: "",
       category: "",
       stock: 0,
@@ -109,7 +109,7 @@ export default function UpdateProduct() {
       fetch(`${API_URL}/product/${id}`)
         .then((response) => response.json())
         .then((data) => {
-          formik.setFieldValue("imageUrl", data.imageUrl);
+          formik.setFieldValue("img", data.imageUrl);
           formik.setFieldValue("name", data.name);
           formik.setFieldValue("category", data.category);
           formik.setFieldValue("stock", data.stock);
@@ -131,7 +131,7 @@ export default function UpdateProduct() {
       setImage(file);
       const reader = new FileReader();
       reader.onload = () => {
-        setImageUrl(reader.result);
+        formik.setFieldValue("img", reader.result);
       };
       reader.readAsDataURL(file);
     } else {
@@ -197,10 +197,12 @@ export default function UpdateProduct() {
   const postData = async (e) => {
     e.preventDefault();
     try {
+      let imgUrl = formik.values.img; // Use the current image URL as default
+
       let updatedFormData = {
         ...formik.values,
         id: id,
-        imageUrl: imageUrl,
+        imageUrl: imgUrl,
       };
       const selectedCategory = newCategory || category;
       if (selectedCategory) {
@@ -237,35 +239,45 @@ export default function UpdateProduct() {
           onSubmit={formik.handleSubmit}
           style={{ paddingLeft: "50px", marginTop: 20 }}
         >
-          <Button
-            onClick={() => {
-              document.querySelector("#handleAddPhoto").click();
-            }}
-            variant="contained"
-            color="select"
-          >
-            Change Photo
-          </Button>
+          <div>
+            <Button
+              style={{
+                marginTop: 40,
+              }}
+              onClick={() => {
+                document.querySelector("#handleAddPhoto").click();
+              }}
+              variant="contained"
+              color="select"
+            >
+              Select Photo
+            </Button>
+          </div>
           <input
             type="file"
             accept=".jpg,.jpeg,.png"
             id="handleAddPhoto"
-            onChange={(e) => {
-              handleAddPhoto(e);
-              formik.setFieldValue("imageUrl", e.target.value); // Update the Formik field value
-            }}
+            onChange={handleAddPhoto}
             onBlur={formik.handleBlur}
-            value={formik.values.im}
             name="img"
             style={{ display: "none" }}
           />
-          {formik.touched.imageUrl && formik.errors.imageUrl ? (
-            <p className="error">{formik.errors.imageUrl}</p>
+          {formik.touched.img && formik.errors.img ? (
+            <p>{formik.errors.img}</p>
           ) : null}
           <br />
-          {imageUrl && (
-            <img src={imageUrl} alt="Preview" style={{ maxWidth: "200px" }} />
+          {formik.values.img && (
+            <img
+              src={formik.values.img}
+              alt="Preview"
+              style={{
+                maxWidth: "200px",
+                maxHeight: "250px",
+                marginBottom: "30px",
+              }}
+            />
           )}
+
           <br />
           <div>
             <FormControl sx={{ width: "80%" }}>

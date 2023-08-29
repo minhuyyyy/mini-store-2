@@ -15,9 +15,7 @@ export default function ApproveWorksheets() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const { user } = useContext(AuthContext);
-
-  // const [isViewButtonClicked, setIsViewButtonClicked] = useState(false);
-
+  
   useEffect(() => {
     console.log(currentWeekStart);
     setStartDate(format(currentWeekStart, "yyyy-MM-dd"));
@@ -30,23 +28,6 @@ export default function ApproveWorksheets() {
     }
     if (btnType === "next") {
       setCurrentWeekStart(addWeeks(currentWeekStart, 1));
-    }
-  };
-
-  const onDateClickHandle = (day) => {
-    if (selectedDate.length === 0) {
-      setSelectedDate([day]);
-    } else if (selectedDate.length === 1) {
-      const formattedDay = format(day, "yyyy-MM-dd");
-      const formattedSelected = format(selectedDate[0], "yyyy-MM-dd");
-
-      if (formattedDay < formattedSelected) {
-        setSelectedDate([formattedDay, formattedSelected]);
-      } else {
-        setSelectedDate([formattedSelected, formattedDay]);
-      }
-    } else {
-      setSelectedDate([day]);
     }
   };
 
@@ -101,7 +82,7 @@ export default function ApproveWorksheets() {
         </div>
       );
     }
-    return <div className="days row">{days}</div>;
+    return <div className="days row center">{days}</div>;
   };
 
   return (
