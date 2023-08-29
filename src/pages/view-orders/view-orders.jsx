@@ -71,32 +71,7 @@ export default function ViewOrders() {
         </TableContainer>
       ) : (
         <>
-          {data && (
-            <TableContainer component={Paper}>
-              <Table aria-label="collapsible table">
-                <TableHead>
-                  <TableRow>
-                    {/* <TableCell /> */}
-                    <TableCell>Order ID</TableCell>
-                    <TableCell align="right">Saler ID</TableCell>
-                    <TableCell align="right">Saler</TableCell>
-                    <TableCell align="center">Total Items</TableCell>
-                    <TableCell align="right">Total Amount</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data.map((row) => (
-                    <Row key={row.orderId} row={row} />
-                  ))}
-                  {data.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={6}>No data available</TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
+          <h1>Unauthorized</h1>
         </>
       )}
     </div>

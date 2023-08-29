@@ -29,6 +29,7 @@ import GetSalary from "./components/GetSalary";
 import ViewOrders from "./pages/view-orders/view-orders";
 import CheckinCheckout from "./pages/checkin-checkout/checkin-checkout";
 import ApproveWorksheets from "./pages/workshifts/approve-workshift";
+import Order from "./pages/order/order";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -76,6 +77,7 @@ function App() {
             path="/changepassword/setnewpassword"
             element={<SetNewPassword />}
           />
+          <Route path="/order" element={<Order />}></Route>
         </Routes>
       </AuthContext.Provider>
       <ToastContainer />
