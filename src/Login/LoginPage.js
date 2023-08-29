@@ -36,7 +36,7 @@ export default function LoginPage() {
           }
         })
         .then((data) => {
-          setItem("user", data);
+          setItem("user", { id: data.id, position: data.position });
           setUser(data);
           navigate("/");
           toast.success("Logged in successfully");

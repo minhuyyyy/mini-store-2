@@ -16,12 +16,10 @@ import {
   Avatar,
   Toolbar,
   Typography,
-  Fade,
 } from "@mui/material";
 import "../App.css";
 import { AuthContext } from "../context/AuthContext";
 import useAuth from "../hooks/useAuth";
-import RegisterWorkShift from "../pages/RegisterWorkShift";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -119,10 +117,6 @@ export default function Navigation() {
     } // Add a closing bracket here
   };
 
-  const onCheckOut = () => {
-    handleCheckOut();
-  };
-
   return (
     <>
       <AppBar
@@ -156,82 +150,106 @@ export default function Navigation() {
             </IconButton>
           </Box>
           <Box className="left hide-on-med-and-down" sx={{ flexGrow: 1 }}>
-            <Button
-              key={"Home"}
-              onClick={() => {
-                navigate("");
-                document.title = "Mini Store";
-              }}
-              style={
-                activeLink === "/"
-                  ? { ...navLinkStyle, ...activeLinkStyle }
-                  : { ...navLinkStyle }
-              }
-              sx={{
-                color: "white",
-                padding: "0px 10px",
-                height: "30px",
-              }}
-            >
-              <span>Home</span>
-            </Button>
-            <Button
-              key={"Manage Products"}
-              onClick={() => {
-                navigate("manageproducts");
-                document.title = "Manage Products";
-              }}
-              style={
-                activeLink === "/manageproducts"
-                  ? { ...navLinkStyle, ...activeLinkStyle }
-                  : { ...navLinkStyle }
-              }
-              sx={{
-                color: "white",
-                padding: "0px 10px",
-                height: "30px",
-              }}
-            >
-              <span>Manage Products</span>
-            </Button>
-            <Button
-              key={"Take Attendance"}
-              onClick={() => {
-                navigate("checkin-checkout");
-                document.title = "Take Attendance";
-              }}
-              style={
-                activeLink === "/checkin-checkout"
-                  ? { ...navLinkStyle, ...activeLinkStyle }
-                  : { ...navLinkStyle }
-              }
-              sx={{
-                color: "white",
-                padding: "0px 10px",
-                height: "30px",
-              }}
-            >
-              <span>Take Attendance</span>
-            </Button>
-            <Button
-              key={"Create Order"}
-              onClick={() => {
-                navigate("createorder");
-                document.title = "Create Order";
-              }}
-              style={
-                activeLink === "/createorder"
-                  ? { ...navLinkStyle, ...activeLinkStyle }
-                  : { ...navLinkStyle }
-              }
-              sx={{
-                color: "white",
-                padding: "0px 10px",
-                height: "30px",
-              }}
-            >
-              <span>Create Order</span>
-            </Button>
+            {currentUser ? (
+              <>
+                <Button
+                  key={"Home"}
+                  onClick={() => {
+                    navigate("");
+                    document.title = "Mini Store";
+                  }}
+                  style={
+                    activeLink === "/"
+                      ? { ...navLinkStyle, ...activeLinkStyle }
+                      : { ...navLinkStyle }
+                  }
+                  sx={{
+                    color: "white",
+                    padding: "0px 10px",
+                    height: "30px",
+                  }}
+                >
+                  <span>Home</span>
+                </Button>
+                <Button
+                  key={"Manage Products"}
+                  onClick={() => {
+                    navigate("manageproducts");
+                    document.title = "Manage Products";
+                  }}
+                  style={
+                    activeLink === "/manageproducts"
+                      ? { ...navLinkStyle, ...activeLinkStyle }
+                      : { ...navLinkStyle }
+                  }
+                  sx={{
+                    color: "white",
+                    padding: "0px 10px",
+                    height: "30px",
+                  }}
+                >
+                  <span>Manage Products</span>
+                </Button>
+                <Button
+                  key={"Take Attendance"}
+                  onClick={() => {
+                    navigate("checkin-checkout");
+                    document.title = "Take Attendance";
+                  }}
+                  style={
+                    activeLink === "/checkin-checkout"
+                      ? { ...navLinkStyle, ...activeLinkStyle }
+                      : { ...navLinkStyle }
+                  }
+                  sx={{
+                    color: "white",
+                    padding: "0px 10px",
+                    height: "30px",
+                  }}
+                >
+                  <span>Take Attendance</span>
+                </Button>
+                <Button
+                  key={"Create Order"}
+                  onClick={() => {
+                    navigate("createorder");
+                    document.title = "Create Order";
+                  }}
+                  style={
+                    activeLink === "/createorder"
+                      ? { ...navLinkStyle, ...activeLinkStyle }
+                      : { ...navLinkStyle }
+                  }
+                  sx={{
+                    color: "white",
+                    padding: "0px 10px",
+                    height: "30px",
+                  }}
+                >
+                  <span>Create Order</span>
+                </Button>
+              </>
+            ) : (
+              <Button
+                key={"Home"}
+                onClick={() => {
+                  navigate("");
+                  document.title = "Mini Store";
+                }}
+                style={
+                  activeLink === "/"
+                    ? { ...navLinkStyle, ...activeLinkStyle }
+                    : { ...navLinkStyle }
+                }
+                sx={{
+                  color: "white",
+                  padding: "0px 10px",
+                  height: "30px",
+                }}
+              >
+                <span>Home</span>
+              </Button>
+            )}
           </Box>
           {currentUser ? (
             <>
@@ -279,6 +297,12 @@ export default function Navigation() {
                         style={{ textDecoration: "none", color: "#D4B887" }}
                       >
                         <MenuItem>Manage Accounts</MenuItem>
+                      </Link>
+                      <Link
+                        to="/view-orders"
+                        style={{ textDecoration: "none", color: "#D4B887" }}
+                      >
+                        <MenuItem>View Orders</MenuItem>
                       </Link>
                       <Link
                         to="/calculate-salary"
