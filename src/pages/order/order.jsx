@@ -375,7 +375,6 @@ export default function Order() {
                         Change
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {/* Display calculated change */}
                         {formik.values.amount > total
                           ? (formik.values.amount - total).toLocaleString(
                               "vi-VN",
@@ -385,7 +384,6 @@ export default function Order() {
                               }
                             )
                           : "0"}
-                        {/* If amount is less than or equal to total, display 0 */}
                       </TableCell>
                     </TableRow>
                   </TableBody>

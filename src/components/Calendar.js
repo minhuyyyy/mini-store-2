@@ -105,8 +105,6 @@ const Calendar = () => {
       {renderWeekdays()}
       {renderCells()}
       {openShiftMenu && <RegisterWorkShiftForm selectedDate={selectedDate} />}
-
-      <h1>Hello</h1>
     </div>
   );
 };
