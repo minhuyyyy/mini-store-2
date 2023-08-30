@@ -35,6 +35,7 @@ export default function Order() {
     },
   ]);
   const [cart, setCart] = useState([]);
+<<<<<<< Updated upstream
   const [total, setTotal] = useState(0.0);
 
   const formik = useFormik({
@@ -61,6 +62,9 @@ export default function Order() {
       createOrder(values);
     },
   });
+=======
+  const [cash, setCash] = useState(0);
+>>>>>>> Stashed changes
 
   useEffect(() => {
     handleSearch();
@@ -392,10 +396,94 @@ export default function Order() {
                 </Table>
               </TableContainer>
 
+<<<<<<< Updated upstream
               <button id="button-order" onClick={handleOrder}>
                 Order
               </button>
             </form>
+=======
+                          <TableCell component="th" scope="row">
+                            <button onClick={() => handleDeleteItem(product)}>
+                              Delete
+                            </button>
+                          </TableCell>
+                        </TableRow>
+                      </>
+                    );
+                  })}
+                  {/* <TableRow>
+                    <TableCell component="th" scope="row">
+                      Total
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      {cart
+                        .reduce((total, item) => {
+                          return total + item.price * item.quantity;
+                        }, 0)
+                        .toLocaleString("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      {cart.reduce((total, item) => {
+                        return total + item.quantity * 1;
+                      }, 0)}
+                    </TableCell>
+                  </TableRow> */}
+                  <TableRow>
+                    <TableCell component="th" scope="row" />
+                    <TableCell component="th" scope="row" align="right">
+                      Quantity:
+                    </TableCell>
+                    <TableCell component="th" scope="row" align="right">
+                      {cart.reduce((total, item) => {
+                        return total + item.quantity * 1;
+                      }, 0)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row" />
+                    <TableCell component="th" scope="row" align="right">
+                      Total:
+                    </TableCell>
+                    <TableCell component="th" scope="row" align="right">
+                      {cart
+                        .reduce((total, item) => {
+                          return total + item.price * item.quantity;
+                        }, 0)
+                        .toLocaleString("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row" />
+                    <TableCell component="th" scope="row" align="right">
+                      Cash:
+                    </TableCell>
+                    <TableCell component="th" scope="row" align="right">
+                      <input
+                        value={cash}
+                        onChange={(e) => {
+                          setCash(e.target.value);
+                        }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            <button
+              id="button-order"
+              onClick={handleOrder}
+              disabled={cart.length === 0 ? true : false}
+            >
+              Order
+            </button>
+>>>>>>> Stashed changes
           </div>
         </div>
       </div>
